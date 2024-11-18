@@ -1,0 +1,17 @@
+# delete after project upload
+
+# start venv
+source venv/Scripts/activate
+
+# initiate flask server
+python main.py
+
+# initiate vite frontend
+npm run dev
+
+# run spider for review collection
+cd reviewcollector/reviewcollector/spiders
+scrapy crawl cameraspider -o camerareviews.json
+
+#flask url
+http://127.0.0.1:8080/api/cameras

@@ -1,49 +1,39 @@
-import { useState, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
 function App() {
-  const [count, setCount] = useState(0)
-  const [array, setArray] = useState([]);
+  const [cameraReviews, setCameraReviews] = useState([]);
 
-  const fetchAPI = async () => {
-    const response = await axios.get("http://127.0.0.1:8080/api/users");
-    setArray(response.data.users);
-  }
-
+  // Fetch data from the Flask API
   useEffect(() => {
-    fetchAPI();
+    fetch('http://127.0.0.1:8080/api/cameras') // Ensure this matches your Flask server URL
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok ' + response.statusText);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setCameraReviews(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching the camera reviews:', error);
+      });
   }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-          {array.map((user, index) => (
-            <div key={index}>
-            <span>{user}</span>
-            <br></br>
-            </div>
-          ))}
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <h1>Camera Reviews</h1>
+      <ul>
+        {cameraReviews.map((review, index) => (
+          <li key={index}>
+            <a href={review.link} target="_blank" rel="noopener noreferrer">
+              {review.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
-export default App
+export default App;

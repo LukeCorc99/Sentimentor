@@ -1,22 +1,29 @@
-# Import Flask and jsonify from the flask package
 from flask import Flask, jsonify
-
-# Import CORS from the flask_cors package
 from flask_cors import CORS
+import json
 
 # Create a new Flask application instance
 app = Flask(__name__)
 
 # Enable Cross-Origin Resource Sharing (CORS) for the app, allowing all origins
-cors = CORS(app, origins='*')
+cors = CORS(app, origins="*")
 
-# Define a route for the /api/users endpoint, accepting GET requests
-@app.route("/api/users", methods=["GET"])
-def users():
-    # Return a JSON response with a list of users
-    return jsonify({"users": ["Alice", "Bob", "Charlie"]})
+# Load camera reviews from the JSON file
+def load_camera_reviews():
+    with open('reviewcollector/reviewcollector/spiders/camerareviews.json', 'r') as file:
+        return json.load(file)
+
+# Define a route for the /api/cameras endpoint, accepting GET requests
+@app.route('/api/cameras', methods=["GET"])
+def cameras():
+    # Return the JSON content of the camera reviews file
+    try:
+        reviews = load_camera_reviews()
+        return jsonify(reviews)
+    except Exception as e:
+        return jsonify({"error": "Failed to load camera reviews", "message": str(e)}), 500
 
 # Check if the script is being run directly (not imported as a module)
-if __name__ == "__main__":
+if __name__ == '__main__':
     # Run the Flask app in debug mode on port 8080
     app.run(debug=True, port=8080)
