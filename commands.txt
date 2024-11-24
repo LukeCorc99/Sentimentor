@@ -1,6 +1,7 @@
 # delete after project upload
 
 # start venv
+cd backend
 source venv/Scripts/activate
 
 # initiate flask server
@@ -11,7 +12,7 @@ npm run dev
 
 # run spider for review collection
 cd reviewcollector/reviewcollector/spiders
-scrapy crawl cameraspider -o camerareviews.json
+scrapy crawl cameraspider -o ../../../../frontend/public/camerareviews.json
 
 #flask url
 http://127.0.0.1:8080/api/cameras
