@@ -12,7 +12,7 @@ npm run dev
 
 # run spider for review collection
 cd reviewcollector/reviewcollector/spiders
-scrapy crawl cameraspider -o ../../../../frontend/public/camerareviews.json
+scrapy crawl cameraspider -O ../../../../frontend/public/camerareviews.json
 
 #flask url
 http://127.0.0.1:8080/api/cameras

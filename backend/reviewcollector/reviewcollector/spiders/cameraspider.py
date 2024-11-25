@@ -1,39 +1,60 @@
 import scrapy
 from urllib.parse import urljoin  # For creating absolute URLs from relative ones
 
-
 class CameraSpider(scrapy.Spider):
     # Name of the spider
     name = "cameraspider"
 
-    # Starting URL for the spider
-    start_urls = ["https://uk.pcmag.com/cameras-1"]
+    # URLs for the spider
+    start_urls = [
+        "https://uk.pcmag.com/cameras-1",
+        "https://www.cameralabs.com/camera-reviews/",
+        "https://www.imaging-resource.com/CAMDB/camera_finder_results.php"
+    ]
 
-    # Main parsing method that handles the response from each page
+    # Words to remove from the name of the product, e.g., "review"
+    removeWords = [
+    "review", "preview", "best", "for", "so", "far", "vs",
+    "long term", "hands-on", "test", "first look", "comparison",
+    "buying guide", "camera guide", "sample images", " –", "--",
+    "/", "the best", "beginners", "travel", "waterproof", " p",
+    "black", "mini", "system", "mark", "monochrom", "generation"
+    ]
+
+
+    # Method to parse the response
     def parse(self, response):
-        """
-        This method is called to handle the content of each page.
-        It extracts camera data and follows pagination links.
-        """
+        # Check if the current page is from PCMag
+        if "pcmag.com" in response.url:
+            yield from self.parseCamReviews(response, "div.articlecontainer", "a::text", "a::attr(href)")
+        # Check if the current page is from Camera Labs
+        elif "cameralabs.com" in response.url:
+            yield from self.parseCamReviews(response, "ul.lcp_catlist li", "a::text", "a::attr(href)")
+        # Check if the current page is from Imaging Resource
+        elif "imaging_resource.com" in response.url:
+            yield from self.parseCamReviews(response, "td.compare_col_desc > a", "::text", "::attr(href)")
+
+    # Method to parse the camera reviews
+    def parseCamReviews(self, response, htmlTag, nameTag, linkTag):
         # Loop through each product container on the current page
-        for product in response.css("div.articlecontainer"):
+        for product in response.css(htmlTag):
             # Extract the name and link of the product
+            rawName = product.css(nameTag).get()
+            # Remove specified words from the product name
+            for word in self.removeWords:
+                rawName = rawName.replace(word, "")
+            # Clean up extra whitespace
+            cleanName = rawName.strip()
+
+            # Yield the cleaned data
             yield {
-                "name": product.css("a::text").get(),  # Get the product name
-                "link": urljoin(response.url, product.css("a::attr(href)").get()),  # Create an absolute URL for the product link
+                "name": cleanName,
+                "link": urljoin(response.url, product.css(linkTag).get()),  # Get URL for the product link
             }
 
         # Find the link to the next page using the `rel="next"` attribute
-        next_page = response.css('link[rel="next"]::attr(href)').get()
-        if next_page:
-            # If a next page is found, construct the absolute URL
-            next_page_url = urljoin(response.url, next_page)
-            
-            # Log the URL of the next page for debugging purposes
-            self.logger.info(f"Following next page: {next_page_url}")
-            
+        nextPage = response.css('link[rel="next"]::attr(href)').get()
+        if nextPage:
+            nextPageURL = urljoin(response.url, nextPage)
             # Make a request to the next page and call the same `parse` method
-            yield scrapy.Request(next_page_url, callback=self.parse)
-
-
-
+            yield scrapy.Request(nextPageURL, callback=self.parse)
