@@ -12,7 +12,13 @@ npm run dev
 
 # run spider for review collection
 cd reviewcollector/reviewcollector/spiders
+# camera
 scrapy crawl cameraspider -O ../../../../frontend/public/camerareviews.json
+
+# televisions
+scrapy crawl televisionspider -O ../../../../frontend/public/televisionreviews.json
 
 #flask url
 http://127.0.0.1:8080/api/cameras
+
+# run scrapy shell "url here", then response.css("selectro here"").getall(), to see which selector works

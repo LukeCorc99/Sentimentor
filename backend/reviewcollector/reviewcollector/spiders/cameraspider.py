@@ -1,5 +1,5 @@
 import scrapy
-from urllib.parse import urljoin  # For creating absolute URLs from relative ones
+from urllib.parse import urljoin
 
 class CameraSpider(scrapy.Spider):
     # Name of the spider
@@ -9,15 +9,21 @@ class CameraSpider(scrapy.Spider):
     start_urls = [
         "https://uk.pcmag.com/cameras-1",
         "https://www.cameralabs.com/camera-reviews/",
-        "https://www.imaging-resource.com/CAMDB/camera_finder_results.php"
+        "https://www.imaging-resource.com/compact-cameras",
+        "https://www.imaging-resource.com/dslr-cameras",
+        "https://www.imaging-resource.com/mirrorless-cameras",
+        "https://www.imaging-resource.com/full-frame-cameras",
+        "https://www.imaging-resource.com/waterproof-cameras",
+        "https://photographylife.com/camera-reviews",
+        "https://www.photographyblog.com/reviews"
     ]
 
     # Words to remove from the name of the product, e.g., "review"
     removeWords = [
     "review", "preview", "best", "for", "so", "far", "vs",
     "long term", "hands-on", "test", "first look", "comparison",
-    "buying guide", "camera guide", "sample images", " –", "--",
-    "/", "the best", "beginners", "travel", "waterproof", " p",
+    "buying guide", "guide", "sample images", " –", "--",
+    "/", "the", "best", "beginners", "travel", "waterproof", " p",
     "black", "mini", "system", "mark", "monochrom", "generation"
     ]
 
@@ -31,8 +37,13 @@ class CameraSpider(scrapy.Spider):
         elif "cameralabs.com" in response.url:
             yield from self.parseCamReviews(response, "ul.lcp_catlist li", "a::text", "a::attr(href)")
         # Check if the current page is from Imaging Resource
-        elif "imaging_resource.com" in response.url:
-            yield from self.parseCamReviews(response, "td.compare_col_desc > a", "::text", "::attr(href)")
+        elif "imaging-resource.com" in response.url:
+            yield from self.parseCamReviews(response, "a.product-name", "::text", "::attr(href)")
+        # Check if the current page is from Photography Life
+        elif "photographylife.com" in response.url:
+            yield from self.parseCamReviews(response, "ol.rv li", "a::text", "a::attr(href)")
+       
+
 
     # Method to parse the camera reviews
     def parseCamReviews(self, response, htmlTag, nameTag, linkTag):
