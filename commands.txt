@@ -22,7 +22,11 @@ scrapy crawl cameraspider -O ../../../../frontend/public/camerareviews.json
 # televisions
 scrapy crawl televisionspider -O ../../../../frontend/public/televisionreviews.json
 
-#flask url
-http://127.0.0.1:8080/api/cameras
+#review collector url:
+http://127.0.0.1:8080/cameras
+
+#sentiment analyzer url: 
+http://127.0.0.1:8081/sentimentanalyzer
+
 
 # run scrapy shell "url here", then response.css("selectro here"").getall(), to see which selector works

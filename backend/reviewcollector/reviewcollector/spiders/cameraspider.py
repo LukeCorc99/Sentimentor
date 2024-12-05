@@ -93,7 +93,7 @@ class CameraSpider(scrapy.Spider):
                 "name": cleanName,
                 "link": urljoin(
                     response.url, product.css(linkTag).get()
-                ),  # Get URL for the product link
+                ), 
             }
 
         # Find the link to the next page using the `rel="next"` attribute
