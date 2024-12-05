@@ -1,28 +1,32 @@
 import scrapy
 from urllib.parse import urljoin
 
+
 class TelevisionSpider(scrapy.Spider):
     # Name of the spider
     name = "televisionspider"
 
     # URLs for the spider
-    start_urls = [
-        "https://uk.pcmag.com/tvs"
-    ]
+    start_urls = ["https://uk.pcmag.com/tvs"]
 
     # Words to remove from the name of the product, e.g., "review"
     removeWords = [
-    "review", "preview", "best", "for", "so", "far", "vs",
+        "review",
+        "preview",
+        "best",
+        "for",
+        "so",
+        "far",
+        "vs",
     ]
-
 
     # Method to parse the response
     def parse(self, response):
         # Check if the current page is from PCMag
         if "pcmag.com" in response.url:
-            yield from self.parseTelevisionReviews(response, "div.articlecontainer", "a::text", "a::attr(href)")
-       
-
+            yield from self.parseTelevisionReviews(
+                response, "div.articlecontainer", "a::text", "a::attr(href)"
+            )
 
     # Method to parse the television reviews
     def parseTelevisionReviews(self, response, htmlTag, nameTag, linkTag):
@@ -39,7 +43,9 @@ class TelevisionSpider(scrapy.Spider):
             # Yield the cleaned data
             yield {
                 "name": cleanName,
-                "link": urljoin(response.url, product.css(linkTag).get()),  # Get URL for the product link
+                "link": urljoin(
+                    response.url, product.css(linkTag).get()
+                ),  # Get URL for the product link
             }
 
         # Find the link to the next page using the `rel="next"` attribute

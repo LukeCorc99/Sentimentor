@@ -4,3 +4,7 @@ flask-cors==3.0.10
 Scrapy==2.6.2
 requests==2.31.0
 pyOpenSSL==22.0.0
+transformers==4.34.0 # Requires Rust programming language to be installed for tokenizers: https://www.rust-lang.org/tools/install
+torch>=1.13.0
+tensorflow>=2.11.0 
+flax>=0.6.10

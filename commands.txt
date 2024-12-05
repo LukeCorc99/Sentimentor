@@ -5,6 +5,10 @@ cd backend
 source venv/Scripts/activate
 
 # initiate flask server
+cd backend/reviewcollector
+or
+cd backend/sentimentanalyzer
+then
 python main.py
 
 # initiate vite frontend
