@@ -91,9 +91,7 @@ class CameraSpider(scrapy.Spider):
             # Yield the cleaned data
             yield {
                 "name": cleanName,
-                "link": urljoin(
-                    response.url, product.css(linkTag).get()
-                ), 
+                "link": urljoin(response.url, product.css(linkTag).get()),
             }
 
         # Find the link to the next page using the `rel="next"` attribute
