@@ -11,6 +11,8 @@ const App = () => {
   const [filteredReviews, setFilteredReviews] = useState([]);
   // State to indicate if a search has been performed
   const [isSearching, setIsSearching] = useState(false);
+  // State for storing the sentiment analysis data of a review
+  const [reviewData, setReviewData] = useState(null);
 
 
   // Fetch reviews when the component starts
@@ -37,10 +39,10 @@ const App = () => {
 
   // Function to analyze the sentiment of a review
   const analyzeReview = (cameraName) => {
-    // Call the sentimentanalyzer microservice
+    // Call the Sentiment Analyzer microservice with the review name as a query parameter
     fetch(`http://127.0.0.1:8081/sentimentanalyzer?name=${encodeURIComponent(cameraName)}`)
       .then((response) => response.json())
-      .then((json) => console.log(json)) // For debugging purposes
+      .then((json) => setReviewData(json)); // Update the reviewData state with the sentiment analysis data
   };
 
   return (
@@ -62,7 +64,20 @@ const App = () => {
           Search
         </button>
       </div>
-
+      <div>
+        {reviewData && ( // Display the sentiment analysis result if it exists
+          <div>
+            {/* Display the name of the product review */}
+            <h3>{reviewData.name}</h3>
+            {/* Display the sentiment analysis result */}
+            <p>Sentiment: {JSON.stringify(reviewData.sentiment)}</p>
+            {/* Provide a link to the product, opening it in a new tab */}
+            <a href={reviewData.link} target="_blank" rel="noopener noreferrer">
+              View Product
+            </a>
+          </div>
+        )}
+      </div>
       {/* Display filtered reviews or a message if no results are found */}
       {isSearching && (
         <div>
@@ -73,7 +88,7 @@ const App = () => {
                 <li key={index} className="reviewlink">
                   <h3>{review.name}</h3>
                   <button
-                    button onClick={() => analyzeReview(review.name)} // Aanalyze the sentiment of the review on button click
+                    onClick={() => analyzeReview(review.name)} // Analyze the sentiment of the review on button click
                     className="analyzebutton"
                   >Analyze
                   </button>
@@ -81,12 +96,11 @@ const App = () => {
               ))}
             </ul>
           ) : (
-            // Display a message if no results match the search query
-            <p>No results found.</p>
+            <p>No reviews found.</p>
           )}
         </div>
+
       )}
-      
     </div>
   );
 };
