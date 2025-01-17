@@ -21,11 +21,6 @@ model = AutoModelForSequenceClassification.from_pretrained(modelName)
 # Use a Hugging Face pipeline as it abstracts a lot of the complexity of NLP tasks.
 sentimentPipeline = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
 
-# For testing purposes
-goodCamera = "Fujifilm X100VI"
-badCamera = "Polaroid Go Generation 2"
-mediocreCamera = "Leica D-Lux 8"
-
 
 # Load camera reviews from the JSON file
 def loadCameraReviews():
@@ -33,7 +28,7 @@ def loadCameraReviews():
         return json.load(file)
 
 
-# Scrape all text from a webpage. Uses BeautifulSoup instead of Scrapy to extract text from the entire webpage instead of specific elements.
+# Scrape all text from a webpage.
 def scrapeWebpage(link):
     # Send a GET request to the webpage
     response = requests.get(link)
@@ -50,7 +45,9 @@ def scrapeWebpage(link):
 # Define a route for the endpoint, accepting GET requests
 @app.route("/sentimentanalyzer", methods=["GET"])
 def analyzer():
-    cameraName = request.args.get("name", "")  # Get the name from the request query parameters.
+    cameraName = request.args.get(
+        "name", ""
+    )  # Get the name from the request query parameters.
     try:
         reviews = loadCameraReviews()
         # Search for the review associated with the specified name

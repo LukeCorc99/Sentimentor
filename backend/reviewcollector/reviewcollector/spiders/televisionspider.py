@@ -7,11 +7,12 @@ class TelevisionSpider(scrapy.Spider):
     name = "televisionspider"
 
     # URLs for the spider
-    start_urls = ["https://uk.pcmag.com/tvs"]
+    start_urls = ["https://uk.pcmag.com/tvs", "https://www.whathifi.com/products/tvs"]
 
     # Words to remove from the name of the product, e.g., "review"
     removeWords = [
         "review",
+        "Review",
         "preview",
         "best",
         "for",
@@ -26,6 +27,11 @@ class TelevisionSpider(scrapy.Spider):
         if "pcmag.com" in response.url:
             yield from self.parseTelevisionReviews(
                 response, "div.articlecontainer", "a::text", "a::attr(href)"
+            )
+        # Check if the current page is from PCMag
+        elif "whathifi.com" in response.url:
+            yield from self.parseTelevisionReviews(
+                response, "div.listingResults ", "a::attr(aria-label)", "a::attr(href)"
             )
 
     # Method to parse the television reviews

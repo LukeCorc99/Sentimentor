@@ -64,7 +64,13 @@ A Python and React.js microservice-based project designed to simplify product re
    cd backend
    source venv\Scripts\activate
    ```
-2. **Start the Frontend Development Server:**
+2. **Initialize Sentiment Analyzer Microservice:**
+   Navigate to the sentiment analyzer service and run it:
+   ```
+   cd backend/sentimentanalyzer
+   python main.py
+   ```
+3. **Start the Frontend Development Server:**
 Open a new terminal, navigate to the frontend folder, and run the Vite server:
    ```
    cd frontend

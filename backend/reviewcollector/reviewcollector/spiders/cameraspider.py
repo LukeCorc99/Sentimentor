@@ -22,6 +22,7 @@ class CameraSpider(scrapy.Spider):
     # Words to remove from the name of the product, e.g., "review"
     removeWords = [
         "review",
+        "Review",
         "preview",
         "best",
         "for",

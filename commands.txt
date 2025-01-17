@@ -12,6 +12,7 @@ then
 python main.py
 
 # initiate vite frontend
+cd frontend
 npm run dev
 
 # run spider for review collection
@@ -27,6 +28,10 @@ http://127.0.0.1:8080/cameras
 
 #sentiment analyzer url: 
 http://127.0.0.1:8081/sentimentanalyzer
+
+#run pytest tests
+cd backend/tests
+pytest
 
 
 # run scrapy shell "url here", then response.css("selectro here"").getall(), to see which selector works

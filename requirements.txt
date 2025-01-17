@@ -9,6 +9,6 @@ torch>=1.13.0
 tensorflow>=2.11.0 
 flax>=0.6.10
 requests>=2.31.0
-trafilatura==1.5.0
+trafilatura==2.0.0
 lxml_html_clean==0.4.1
 pytest==7.4.0
