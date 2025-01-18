@@ -17,6 +17,14 @@ client<llm> CustomGPT4oMini {
   }
 }
 
+client<llm> CustomGPT {
+  provider openai
+  options {
+    model "gpt-3.5-turbo"
+    api_key env.OPENAI_API_KEY
+  }
+}
+
 client<llm> CustomSonnet {
   provider anthropic
   options {

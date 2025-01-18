@@ -29,8 +29,8 @@ from .types import Checked, Check
 ###############################################################################
 
 
-class Resume(BaseModel):
-    name: Optional[str] = None
-    email: Optional[str] = None
-    experience: List[Optional[str]]
-    skills: List[Optional[str]]
+class ProductAnalysis(BaseModel):
+    summary: Optional[str] = None
+    score: Optional[str] = None
+    pros: List[Optional[str]]
+    cons: List[Optional[str]]

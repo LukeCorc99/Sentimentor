@@ -39,8 +39,8 @@ def all_succeeded(checks: Dict[CheckName, Check]) -> bool:
 
 
 
-class Resume(BaseModel):
-    name: str
-    email: str
-    experience: List[str]
-    skills: List[str]
+class ProductAnalysis(BaseModel):
+    summary: str
+    score: str
+    pros: List[str]
+    cons: List[str]

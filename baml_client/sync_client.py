@@ -47,11 +47,11 @@ class BamlSyncClient:
       return self.__stream_client
 
     
-    def ExtractResume(
+    def AnalyzeProductReview(
         self,
-        resume: str,
+        text: str,
         baml_options: BamlCallOptions = {},
-    ) -> types.Resume:
+    ) -> types.ProductAnalysis:
       __tb__ = baml_options.get("tb", None)
       if __tb__ is not None:
         tb = __tb__._tb # type: ignore (we know how to use this private attribute)
@@ -60,15 +60,15 @@ class BamlSyncClient:
       __cr__ = baml_options.get("client_registry", None)
 
       raw = self.__runtime.call_function_sync(
-        "ExtractResume",
+        "AnalyzeProductReview",
         {
-          "resume": resume,
+          "text": text,
         },
         self.__ctx_manager.get(),
         tb,
         __cr__,
       )
-      return cast(types.Resume, raw.cast_to(types, types))
+      return cast(types.ProductAnalysis, raw.cast_to(types, types))
     
 
 
@@ -82,11 +82,11 @@ class BamlStreamClient:
       self.__ctx_manager = ctx_manager
 
     
-    def ExtractResume(
+    def AnalyzeProductReview(
         self,
-        resume: str,
+        text: str,
         baml_options: BamlCallOptions = {},
-    ) -> baml_py.BamlSyncStream[partial_types.Resume, types.Resume]:
+    ) -> baml_py.BamlSyncStream[partial_types.ProductAnalysis, types.ProductAnalysis]:
       __tb__ = baml_options.get("tb", None)
       if __tb__ is not None:
         tb = __tb__._tb # type: ignore (we know how to use this private attribute)
@@ -95,9 +95,9 @@ class BamlStreamClient:
       __cr__ = baml_options.get("client_registry", None)
 
       raw = self.__runtime.stream_function_sync(
-        "ExtractResume",
+        "AnalyzeProductReview",
         {
-          "resume": resume,
+          "text": text,
         },
         None,
         self.__ctx_manager.get(),
@@ -105,10 +105,10 @@ class BamlStreamClient:
         __cr__,
       )
 
-      return baml_py.BamlSyncStream[partial_types.Resume, types.Resume](
+      return baml_py.BamlSyncStream[partial_types.ProductAnalysis, types.ProductAnalysis](
         raw,
-        lambda x: cast(partial_types.Resume, x.cast_to(types, partial_types)),
-        lambda x: cast(types.Resume, x.cast_to(types, types)),
+        lambda x: cast(partial_types.ProductAnalysis, x.cast_to(types, partial_types)),
+        lambda x: cast(types.ProductAnalysis, x.cast_to(types, types)),
         self.__ctx_manager.get(),
       )
     

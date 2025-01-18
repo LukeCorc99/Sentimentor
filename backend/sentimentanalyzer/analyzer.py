@@ -4,7 +4,17 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipe
 import requests
 import json
 from trafilatura import extract
+from dotenv import load_dotenv
+import os
+import sys
 
+# Load environment variables from .env file
+load_dotenv()
+
+# Add the project root directory to sys.path for BAML client access
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+from baml_client.sync_client import b
 
 # Create a new Flask application instance
 app = Flask(__name__)
@@ -21,12 +31,10 @@ model = AutoModelForSequenceClassification.from_pretrained(modelName)
 # Use a Hugging Face pipeline as it abstracts a lot of the complexity of NLP tasks.
 sentimentPipeline = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
 
-
 # Load camera reviews from the JSON file
 def loadCameraReviews():
     with open("../../frontend/public/camerareviews.json", "r") as file:
         return json.load(file)
-
 
 # Scrape all text from a webpage.
 def scrapeWebpage(link):
@@ -42,6 +50,18 @@ def scrapeWebpage(link):
         return "ERROR: No content extracted"
 
 
+def extractAnalysis(content):
+    try:
+        response = b.AnalyzeProductReview(content)
+        return {
+            "summary": response.summary,  # Product summary
+            "score": response.score,  # Overall sentiment
+            "pros": response.pros,  # Pros of the product
+            "cons": response.cons,  # Cons of the product
+        }
+    except Exception as e:
+        return {"error": "Failed to extract analysis", "message": str(e)}
+
 # Define a route for the endpoint, accepting GET requests
 @app.route("/sentimentanalyzer", methods=["GET"])
 def analyzer():
@@ -55,14 +75,19 @@ def analyzer():
             if review["name"].lower() == cameraName.lower():
                 # Scrape the webpage associated with the link
                 webpageText = scrapeWebpage(review["link"])
+                
+                # Extract analysis information using BAML
+                analysisContent = extractAnalysis(webpageText)
+                
                 # Analyze the sentiment of the scraped text. Set a limit of 512 tokens to avoid exceeding the model's input limit.
-                result = sentimentPipeline(webpageText[:512])
+                sentimentResult = sentimentPipeline(webpageText[:512])
+                
                 return jsonify(
                     {
                         "name": review["name"],
                         "link": review["link"],
-                        "sentiment": result,
-                        "webpageText": webpageText,
+                        "sentiment": sentimentResult,
+                        "analysisContent": analysisContent,
                     }
                 )
     except Exception as e:
@@ -70,7 +95,6 @@ def analyzer():
             jsonify({"error": "Failed to analyze review", "message": str(e)}),
             500,
         )
-
 
 # Check if the script is being run directly
 if __name__ == "__main__":

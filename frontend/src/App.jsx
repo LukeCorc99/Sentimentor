@@ -42,7 +42,10 @@ const App = () => {
     // Call the Sentiment Analyzer microservice with the review name as a query parameter
     fetch(`http://127.0.0.1:8081/sentimentanalyzer?name=${encodeURIComponent(cameraName)}`)
       .then((response) => response.json())
-      .then((json) => setReviewData(json)); // Update the reviewData state with the sentiment analysis data
+      .then((json) => {
+        console.log("Analyzed Product:", json); // Log the analyzed product for debugging
+        setReviewData(json); // Update the reviewData state with the sentiment analysis data
+      })
   };
 
   return (
@@ -69,12 +72,22 @@ const App = () => {
           <div>
             {/* Display the name of the product review */}
             <h3>{reviewData.name}</h3>
+
             {/* Display the sentiment analysis result */}
             <p>Sentiment: {JSON.stringify(reviewData.sentiment)}</p>
+
             {/* Provide a link to the product, opening it in a new tab */}
             <a href={reviewData.link} target="_blank" rel="noopener noreferrer">
               View Product
             </a>
+
+            {/* Display the sentiment analysis result if it exists */}
+            {reviewData.analysisContent && (
+              <div>
+                <p><strong>Summary:</strong> {reviewData.analysisContent.summary}</p>
+                <p><strong>Sentiment Score:</strong> {reviewData.analysisContent.score}</p>
+              </div>
+            )}
           </div>
         )}
       </div>
