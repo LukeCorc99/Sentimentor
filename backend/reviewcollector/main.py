@@ -1,6 +1,25 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
 import json
+import firebase_admin
+from firebase_admin import credentials, firestore
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env. This helps to keep API key hidden.
+load_dotenv()
+
+# Get Firebase credentials from environment variable
+firebaseCredentials = os.getenv("FIREBASE_CREDENTIALS")
+# Parse the JSON string into a dictionary
+credDict = json.loads(firebaseCredentials)
+
+# Initialize Firebase using the credentials
+cred = credentials.Certificate(credDict)
+firebase_admin.initialize_app(cred)
+
+# Access Firestore
+db = firestore.client()
 
 # Create a new Flask application instance
 app = Flask(__name__)
@@ -27,12 +46,21 @@ def cameras():
             500,
         )
 
-    # Load television reviews from the JSON file
-
 
 def loadTelevisionReviews():
     with open("../../frontend/public/televisionreviews.json", "r") as file:
         return json.load(file)
+    
+
+# Function to upload reviews to Firestore
+def uploadReviews(collection, reviews):
+    try:
+        for review in reviews:
+            # Add each review as a new document in the Firestore collection
+            db.collection(collection).add(review)
+        print(f"Uploaded {len(reviews)} reviews to Firestore collection '{collection}'.")
+    except Exception as e:
+        print(f"Error uploading reviews to Firestore: {str(e)}")
 
 
 # Define a route for the /api/televisions endpoint, accepting GET requests
@@ -51,5 +79,14 @@ def televisions():
 
 # Check if the script is being run directly (not imported as a module)
 if __name__ == "__main__":
-    # Run the Flask app in debug mode on port 8080
+    # Load reviews from the JSON file
+    cameraReviews = loadCameraReviews()
+    
+    # Specify the Firestore collection name (e.g., "camerareviews")
+    collectionName = "camerareviews"
+    
+    # Upload reviews to Firestore
+    uploadReviews(collectionName, cameraReviews)
+    
+    # Run the Flask app
     app.run(debug=True, port=8080)

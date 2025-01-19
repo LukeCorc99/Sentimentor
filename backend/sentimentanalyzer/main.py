@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
 import requests
 import json
 from trafilatura import extract
@@ -11,9 +10,10 @@ import sys
 # Load environment variables from .env file
 load_dotenv()
 
+
 # Add the project root directory to sys.path for BAML client access
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
-
+# Import the BAML client library
 from baml_client.sync_client import b
 
 # Create a new Flask application instance
@@ -21,15 +21,9 @@ app = Flask(__name__)
 # Enable Cross-Origin Resource Sharing (CORS) for the app, allowing all origins
 cors = CORS(app, origins="*")
 
-# This hugging face pre-trained model is used for sentiment analysis in multiple languages, tailored to product reviews. It runs on PyTorch by default.
-modelName = "nlptown/bert-base-multilingual-uncased-sentiment"
-# Load the tokenizer. This tokenizer is used to preprocess the text data before feeding it to the model.
-tokenizer = AutoTokenizer.from_pretrained(modelName)
-# Load the model. This model is used to predict the sentiment of the preprocessed text data.
-model = AutoModelForSequenceClassification.from_pretrained(modelName)
-
-# Use a Hugging Face pipeline as it abstracts a lot of the complexity of NLP tasks.
-sentimentPipeline = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
+b_api_key = os.getenv("OPEN_API_KEY")
+if not b_api_key:
+    raise ValueError("BAML API Key is not set or could not be loaded.")
 
 # Load camera reviews from the JSON file
 def loadCameraReviews():
@@ -51,16 +45,20 @@ def scrapeWebpage(link):
 
 
 def extractAnalysis(content):
+    print("Content to Analyze:", content)
     try:
         response = b.AnalyzeProductReview(content)
+        print("BAML Response:", response)  # Log the raw response for debugging
         return {
-            "summary": response.summary,  # Product summary
-            "score": response.score,  # Overall sentiment
-            "pros": response.pros,  # Pros of the product
-            "cons": response.cons,  # Cons of the product
+            "summary": response.summary,
+            "score": response.score,
+            "pros": response.pros,
+            "cons": response.cons,
         }
     except Exception as e:
+        print("Error during BAML analysis:", str(e))  # Log the error details
         return {"error": "Failed to extract analysis", "message": str(e)}
+
 
 # Define a route for the endpoint, accepting GET requests
 @app.route("/sentimentanalyzer", methods=["GET"])
@@ -79,14 +77,10 @@ def analyzer():
                 # Extract analysis information using BAML
                 analysisContent = extractAnalysis(webpageText)
                 
-                # Analyze the sentiment of the scraped text. Set a limit of 512 tokens to avoid exceeding the model's input limit.
-                sentimentResult = sentimentPipeline(webpageText[:512])
-                
                 return jsonify(
                     {
                         "name": review["name"],
                         "link": review["link"],
-                        "sentiment": sentimentResult,
                         "analysisContent": analysisContent,
                     }
                 )

@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './App.css'; // Import the CSS file for styling
+import { db } from "./firebaseConfig"; // Adjust the path to your firebaseConfig.js
+import { collection, getDocs } from "firebase/firestore"; // Firestore functions
+
+
 
 // Main component for the Review Collector App
 const App = () => {
@@ -15,17 +19,21 @@ const App = () => {
   const [reviewData, setReviewData] = useState(null);
 
 
-  // Fetch reviews when the component starts
   useEffect(() => {
-    // Fetch reviews from the JSON file or backend API
-    fetch('/camerareviews.json')
-      .then((response) => response.json()) // Parse the JSON response
-      .then((data) => {
-        setReviews(data); // Update the reviews state with fetched data
-      })
-      .catch((error) => console.error('Error fetching reviews:', error)); // Log any errors
-  }, []); // Empty dependency array ensures this runs only once when the component mounts
-
+    const fetchProducts = async () => {
+      try {
+        // Fetch reviews from Firestore
+        const querySnapshot = await getDocs(collection(db, "camerareviews"));
+        const reviewsData = querySnapshot.docs.map((doc) => doc.data());
+        setReviews(reviewsData); // Update the state with fetched reviews
+      } catch (error) {
+        console.error("Error fetching reviews from Firestore:", error);
+      }
+    };
+  
+    fetchProducts(); // Call the function to fetch data
+  }, []); // Run only once when the component mounts
+  
 
   // Function to handle the Search button click
   const handleSearch = () => {
@@ -73,9 +81,6 @@ const App = () => {
             {/* Display the name of the product review */}
             <h3>{reviewData.name}</h3>
 
-            {/* Display the sentiment analysis result */}
-            <p>Sentiment: {JSON.stringify(reviewData.sentiment)}</p>
-
             {/* Provide a link to the product, opening it in a new tab */}
             <a href={reviewData.link} target="_blank" rel="noopener noreferrer">
               View Product
@@ -86,6 +91,18 @@ const App = () => {
               <div>
                 <p><strong>Summary:</strong> {reviewData.analysisContent.summary}</p>
                 <p><strong>Sentiment Score:</strong> {reviewData.analysisContent.score}</p>
+                <p><strong>Pros:</strong></p>
+                <ul>
+                  {reviewData.analysisContent.pros.map((pro, index) => (
+                    <li key={index}>{pro}</li>
+                  ))}
+                </ul>
+                <p><strong>Cons:</strong></p>
+                <ul>
+                  {reviewData.analysisContent.cons.map((con, index) => (
+                    <li key={index}>{con}</li>
+                  ))}
+                </ul>
               </div>
             )}
           </div>
