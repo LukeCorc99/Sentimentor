@@ -30,10 +30,30 @@ const App = () => {
         console.error("Error fetching reviews from Firestore:", error);
       }
     };
-  
+
     fetchProducts(); // Call the function to fetch data
   }, []); // Run only once when the component mounts
-  
+
+  const saveProduct = async (product) => {
+    try {
+      const response = await fetch("http://127.0.0.1:8082/save_product", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(product),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Product saved successfully:", data.message);
+      } else {
+        console.error("Error saving product:", data.error);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
 
   // Function to handle the Search button click
   const handleSearch = () => {
@@ -103,8 +123,16 @@ const App = () => {
                     <li key={index}>{con}</li>
                   ))}
                 </ul>
+                {/* Add Save Button */}
+                <button
+                  onClick={() => saveProduct(reviewData)} // Pass reviewData to saveProduct
+                  className="analyzebutton"
+                >
+                  Save
+                </button>
               </div>
             )}
+
           </div>
         )}
       </div>
