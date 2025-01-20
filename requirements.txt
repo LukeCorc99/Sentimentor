@@ -17,4 +17,9 @@ baml==0.72.1
 python-dotenv==1.0.0
 firebase-admin==6.1.0
 
+# For frontend
+react==17.0.2
+react-router-dom==6.2.1
+vite==2.7.13
+
 
