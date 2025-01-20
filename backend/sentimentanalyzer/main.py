@@ -10,7 +10,6 @@ import sys
 # Load environment variables from .env file
 load_dotenv()
 
-
 # Add the project root directory to sys.path for BAML client access
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 # Import the BAML client library
@@ -20,10 +19,6 @@ from baml_client.sync_client import b
 app = Flask(__name__)
 # Enable Cross-Origin Resource Sharing (CORS) for the app, allowing all origins
 cors = CORS(app, origins="*")
-
-b_api_key = os.getenv("OPEN_API_KEY")
-if not b_api_key:
-    raise ValueError("BAML API Key is not set or could not be loaded.")
 
 # Load camera reviews from the JSON file
 def loadCameraReviews():
@@ -45,10 +40,8 @@ def scrapeWebpage(link):
 
 
 def extractAnalysis(content):
-    print("Content to Analyze:", content)
     try:
         response = b.AnalyzeProductReview(content)
-        print("BAML Response:", response)  # Log the raw response for debugging
         return {
             "summary": response.summary,
             "score": response.score,
@@ -56,7 +49,6 @@ def extractAnalysis(content):
             "cons": response.cons,
         }
     except Exception as e:
-        print("Error during BAML analysis:", str(e))  # Log the error details
         return {"error": "Failed to extract analysis", "message": str(e)}
 
 
