@@ -73,6 +73,29 @@ class BamlAsyncClient:
       )
       return cast(types.ProductAnalysis, raw.cast_to(types, types))
     
+    async def CompareAnalysis(
+        self,
+        analysis1: str,analysis2: str,
+        baml_options: BamlCallOptions = {},
+    ) -> types.ProductComparison:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb # type: ignore (we know how to use this private attribute)
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
+
+      raw = await self.__runtime.call_function(
+        "CompareAnalysis",
+        {
+          "analysis1": analysis1,"analysis2": analysis2,
+        },
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+      )
+      return cast(types.ProductComparison, raw.cast_to(types, types))
+    
 
 
 class BamlStreamClient:
@@ -111,6 +134,37 @@ class BamlStreamClient:
         raw,
         lambda x: cast(partial_types.ProductAnalysis, x.cast_to(types, partial_types)),
         lambda x: cast(types.ProductAnalysis, x.cast_to(types, types)),
+        self.__ctx_manager.get(),
+      )
+    
+    def CompareAnalysis(
+        self,
+        analysis1: str,analysis2: str,
+        baml_options: BamlCallOptions = {},
+    ) -> baml_py.BamlStream[partial_types.ProductComparison, types.ProductComparison]:
+      __tb__ = baml_options.get("tb", None)
+      if __tb__ is not None:
+        tb = __tb__._tb # type: ignore (we know how to use this private attribute)
+      else:
+        tb = None
+      __cr__ = baml_options.get("client_registry", None)
+
+      raw = self.__runtime.stream_function(
+        "CompareAnalysis",
+        {
+          "analysis1": analysis1,
+          "analysis2": analysis2,
+        },
+        None,
+        self.__ctx_manager.get(),
+        tb,
+        __cr__,
+      )
+
+      return baml_py.BamlStream[partial_types.ProductComparison, types.ProductComparison](
+        raw,
+        lambda x: cast(partial_types.ProductComparison, x.cast_to(types, partial_types)),
+        lambda x: cast(types.ProductComparison, x.cast_to(types, types)),
         self.__ctx_manager.get(),
       )
     

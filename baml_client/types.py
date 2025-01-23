@@ -44,3 +44,12 @@ class ProductAnalysis(BaseModel):
     score: str
     pros: List[str]
     cons: List[str]
+    sources: List[str]
+
+class ProductComparison(BaseModel):
+    summary: str
+    score: str
+    pros: List[str]
+    cons: List[str]
+    recommendation: str
+    sources: List[str]

@@ -1,9 +1,20 @@
 // Defining a data model for product analysis
 class ProductAnalysis {
-  summary string // Summary of the product review
-  score string // Product score out of 100
-  pros string[] // List of pros
-  cons string[] // List of cons
+  summary string  // Summary of the product review
+  score string  // Product score out of 100
+  pros string[]  // List of pros
+  cons string[]  // List of cons
+  sources string[]  // List of review sources
+}
+
+// Defining a data model for product comparison
+class ProductComparison {
+  summary string  // Summary of the product review
+  score string  // Product score out of 100
+  pros string[]  // List of pros
+  cons string[]  // List of cons
+  recommendation string  // Recommended product based on the analysis
+  sources string[]  // List of review sources
 }
 
 // Create a function to analyze the product review text
@@ -19,13 +30,80 @@ function AnalyzeProductReview(text: string) -> ProductAnalysis {
     - A product score out of 100 (In the format xx/100)
     - List of pros
     - List of cons
+    - List of review sources
 
     {{ ctx.output_format }}
   "#
 }
 
-// Test the function with a sample review text. Open the VSCode playground to run this.
-test sample_product_analysis {
+// Create a function to compare two product analysis texts and determine the recommended product
+function CompareAnalysis(analysis1: string, analysis2: string) -> ProductComparison {
+  // Specify a client as provider/model-name
+  client "openai/gpt-3.5-turbo" // Set OPENAI_API_KEY to use this client.
+  prompt #"
+    Analyze the following two product analysis texts and compare them:
+    {{ analysis1 }}
+    {{ analysis2 }}
+
+    Provide the following information:
+    - A summary comparing the two products
+    - A comparison score out of 100 (In the format xx/100)
+    - List of common pros
+    - List of common cons
+    - Which product is recommended based on the analysis
+    - List of review sources
+    
+    {{ ctx.output_format }}
+  "#
+}
+
+test compareAnalysisTest {
+  functions [CompareAnalysis]
+  args {
+    analysis1 #"
+      Sony Cyber-shot RX10
+      Summary: The Sony Cyber-shot RX10 is a high-end bridge camera with a 20.2 Megapixel '1-inch' Exmor R CMOS sensor, a 24-200mm constant f2.8 aperture lens, and a range of features that cater to both photography and videography enthusiasts. It offers impressive build quality, a versatile zoom range, excellent image quality, and a comprehensive set of manual controls and advanced options for video recording.
+
+      Sentiment Score: 92/100
+
+      Pros:
+
+      High-quality 20.2 Megapixel sensor for excellent image quality
+      Versatile 24-200mm constant f2.8 aperture lens
+      Impressive build quality and weather sealing
+      Comprehensive manual controls and advanced options for video recording
+      Built-in Wi-Fi and NFC for wireless connectivity
+      Cons:
+
+      Basic remote control and limited functions through the smartphone app
+      Limited continuous autofocus performance
+      Relatively high price compared to competitors with smaller sensors
+      "#
+    analysis2 #"
+      Fujifilm instax 99
+      Summary: The Fujifilm instax mini 99 is a highly advanced analogue instant camera that offers a wide range of features for users who want more control and creativity in their instant photography. It provides options for exposure control, double exposure, coloured LED effects, and various shooting modes, making it a versatile and fun camera to use.
+
+      Sentiment Score: 92/100
+
+      Pros:
+
+      Wide range of advanced features for an analogue instant camera
+      Control over exposure settings and colour effects
+      Innovative use of physical iris and internal LEDs for creative effects
+      Ability to handle a broad range of shooting conditions
+      Great for users looking to upgrade to a more advanced instant camera without going digital
+      Cons:
+
+      Limited composition accuracy with the optical viewfinder
+      No selfie mirror for easier selfie composition
+      Lack of lockable dials for exposure and colour effects settings
+      "#
+
+  }
+}
+
+// Test the function with a sample review text.
+test testProductAnalysis {
   functions [AnalyzeProductReview]
   args {
     text #"
@@ -33,3 +111,5 @@ test sample_product_analysis {
     "#
   }
 }
+
+

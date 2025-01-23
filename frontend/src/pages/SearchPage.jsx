@@ -36,7 +36,7 @@ const SearchPage = () => {
 
   const saveProduct = async (product) => {
     try {
-      const response = await fetch("http://127.0.0.1:8082/save_product", {
+      const response = await fetch("http://127.0.0.1:8082/saveproduct", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -121,6 +121,14 @@ const SearchPage = () => {
                 <ul>
                   {reviewData.analysisContent.cons.map((con, index) => (
                     <li key={index}>{con}</li>
+                  ))}
+                </ul>
+                <p><strong>Sources:</strong></p>
+                <ul>
+                  {reviewData.analysisContent.sources.map((source, index) => (
+                    <li key={index}>{source}: <a href={reviewData.link} target="_blank" rel="noopener noreferrer">
+                    Link
+                  </a></li>
                   ))}
                 </ul>
                 {/* Add Save Button */}

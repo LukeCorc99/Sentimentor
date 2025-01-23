@@ -12,7 +12,7 @@ const SavedProductsPage = () => {
             try {
                 // Fetch reviews from Firestore
                 const querySnapshot = await getDocs(collection(db, "savedproducts"));
-                const savedProducts = querySnapshot.docs.map((doc) => doc.data());
+                const savedProducts = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })); // Add the document ID to the product data
                 setSaved(savedProducts); // Update the state with fetched reviews
             } catch (error) {
                 console.error("Error fetching reviews from Firestore:", error);
@@ -22,6 +22,28 @@ const SavedProductsPage = () => {
         fetchSavedProducts(); // Call the function to fetch data
     }, []); // Run only once when the component mounts
 
+    const deleteProduct = async (product) => {
+        try {
+            const response = await fetch("http://127.0.0.1:8082/deleteproduct", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ id: product.id }), // Send the product ID
+            });
+    
+            const data = await response.json();
+            if (response.ok) {
+                console.log("Product deleted successfully:", data.message);
+                //Update state to rerender the list
+                setSaved(saved.filter(p => p.id !== product.id))
+            } else {
+                console.error("Error deleting product:", data.error);
+            }
+        } catch (error) {
+            console.error("Network error:", error);
+        }
+    };
 
     return (
         <div className="saved-products-container">
@@ -50,6 +72,9 @@ const SavedProductsPage = () => {
                             <a href={product.link} target="_blank" rel="noopener noreferrer">
                                 View Product
                             </a>
+                            <button onClick={() => deleteProduct(product)} className="analyzebutton">
+                                Delete
+                            </button>
                         </li>
                     ))}
                 </ul>

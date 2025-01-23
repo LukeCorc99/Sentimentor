@@ -47,6 +47,7 @@ def extractAnalysis(content):
             "score": response.score,
             "pros": response.pros,
             "cons": response.cons,
+            "sources": response.sources,
         }
     except Exception as e:
         return {"error": "Failed to extract analysis", "message": str(e)}

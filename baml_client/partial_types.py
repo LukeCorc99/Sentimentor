@@ -34,3 +34,12 @@ class ProductAnalysis(BaseModel):
     score: Optional[str] = None
     pros: List[Optional[str]]
     cons: List[Optional[str]]
+    sources: List[Optional[str]]
+
+class ProductComparison(BaseModel):
+    summary: Optional[str] = None
+    score: Optional[str] = None
+    pros: List[Optional[str]]
+    cons: List[Optional[str]]
+    recommendation: Optional[str] = None
+    sources: List[Optional[str]]

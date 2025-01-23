@@ -9,7 +9,10 @@ cd backend/reviewcollector
 python main.py
 
 cd backend/sentimentanalyzer
-python analyzer.py
+python main.py
+
+cd backend/productcomparator
+python main.py
 
 # initiate vite frontend
 cd frontend
