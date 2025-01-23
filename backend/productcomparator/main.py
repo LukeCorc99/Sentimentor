@@ -26,6 +26,26 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")
 from baml_client.sync_client import b
 
 
+def extractComparison(analysisOne, analysisTwo):
+    try:
+        analysisOneContent = json.dumps(analysisOne["analysisContent"])
+        analysisTwoContent = json.dumps(analysisTwo["analysisContent"])
+
+        response = b.CompareAnalysis(analysisOneContent, analysisTwoContent)
+
+        return {
+            "summary": response.summary,
+            "advantages1": response.advantages1,
+            "disadvantages1": response.disadvantages1,
+            "advantages2": response.advantages2,
+            "disadvantages2": response.disadvantages2,
+            "recommendation": response.recommendation,
+            "sources": response.sources,
+        }
+    except Exception as e:
+        return {"error": "Failed to extract analysis", "message": str(e)}
+
+
 @app.route("/saveproduct", methods=["POST"])
 def saveProduct():
     try:
@@ -51,6 +71,34 @@ def deleteProduct():
         doc.delete()
 
         return jsonify({"message": "Product deleted successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/compareproducts", methods=["POST"])
+def compareProducts():
+    try:
+        # Get product data from request
+        productData = request.json
+
+        # Extract the two analyses from productData
+        analysisOne = productData.get("analysisOne")
+        analysisTwo = productData.get("analysisTwo")
+
+        # Call extractComparison and get the result
+        comparisonResult = extractComparison(analysisOne, analysisTwo)
+
+        # Return the comparison result
+        return (
+            jsonify(
+                {
+                    "comparison": comparisonResult,
+                    "message": "Analyses compared successfully",
+                }
+            ),
+            200,
+        )
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500

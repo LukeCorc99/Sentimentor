@@ -96,7 +96,7 @@ const SearchPage = () => {
         </button>
       </div>
       <div>
-        {reviewData && ( // Display the sentiment analysis result if it exists
+        {reviewData && (
           <div>
             {/* Display the name of the product review */}
             <h3>{reviewData.name}</h3>
@@ -106,7 +106,7 @@ const SearchPage = () => {
               View Product
             </a>
 
-            {/* Display the sentiment analysis result if it exists */}
+            {/* Display the sentiment analysis result */}
             {reviewData.analysisContent && (
               <div>
                 <p><strong>Summary:</strong> {reviewData.analysisContent.summary}</p>

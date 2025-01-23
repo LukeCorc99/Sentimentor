@@ -10,9 +10,10 @@ class ProductAnalysis {
 // Defining a data model for product comparison
 class ProductComparison {
   summary string  // Summary of the product review
-  score string  // Product score out of 100
-  pros string[]  // List of pros
-  cons string[]  // List of cons
+  advantages1 string[]  // List of advantages of product 1 over product 2
+  disadvantages1 string[]  // List of disadvantages of product 1 over product 2
+  advantages2 string[]  // List of advantages of product 2 over product 1
+  disadvantages2 string[]  // List of disadvantages of product 2 over product 1
   recommendation string  // Recommended product based on the analysis
   sources string[]  // List of review sources
 }
@@ -47,9 +48,10 @@ function CompareAnalysis(analysis1: string, analysis2: string) -> ProductCompari
 
     Provide the following information:
     - A summary comparing the two products
-    - A comparison score out of 100 (In the format xx/100)
-    - List of common pros
-    - List of common cons
+    - List of advantages of product 1 over product 2
+    - List of disadvantages of product 1 over product 2
+    - List of advantages of product 2 over product 1
+    - List of disadvantages of product 2 over product 1
     - Which product is recommended based on the analysis
     - List of review sources
     
