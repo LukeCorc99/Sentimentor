@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import '../styles/SavedProductsPage.css'; // Import the CSS file for styling
 import { db } from "../firebaseConfig"; // Path to firebaseConfig.js
 import { collection, getDocs } from "firebase/firestore"; // Firestore functions
+import { useNavigate } from 'react-router-dom'; 
 
 const SavedProductsPage = () => {
-    // State for storing all previosuly saved analyzed products.
+    // State for storing all previously saved analyzed products.
     const [saved, setSaved] = useState([]);
+    const navigate = useNavigate(); // Use useNavigate hook to navigate to other pages 
 
     useEffect(() => {
         const fetchSavedProducts = async () => {
@@ -45,8 +47,13 @@ const SavedProductsPage = () => {
         }
     };
 
+    const compareProduct = (product) => {
+        // Navigate to the product comparator with state
+        navigate('/compare', { state: { product } });
+    };
+
     return (
-        <div className="saved-products-container">
+        <div>
             <h1>Saved Products</h1>
             {/* If there are saved products, display them in a list */}
             {saved.length > 0 ? (
@@ -74,6 +81,9 @@ const SavedProductsPage = () => {
                             </a>
                             <button onClick={() => deleteProduct(product)} className="analyzebutton">
                                 Delete
+                            </button>
+                            <button onClick={() => compareProduct(product)} className="analyzebutton">
+                                Compare
                             </button>
                         </li>
                     ))}

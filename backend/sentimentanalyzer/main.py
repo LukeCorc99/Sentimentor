@@ -11,7 +11,7 @@ import sys
 load_dotenv()
 
 # Add the project root directory to sys.path for BAML client access
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
 # Import the BAML client library
 from baml_client.sync_client import b
 
@@ -20,10 +20,12 @@ app = Flask(__name__)
 # Enable Cross-Origin Resource Sharing (CORS) for the app, allowing all origins
 cors = CORS(app, origins="*")
 
+
 # Load camera reviews from the JSON file
 def loadCameraReviews():
     with open("../../frontend/public/camerareviews.json", "r") as file:
         return json.load(file)
+
 
 # Scrape all text from a webpage.
 def scrapeWebpage(link):
@@ -66,10 +68,10 @@ def analyzer():
             if review["name"].lower() == cameraName.lower():
                 # Scrape the webpage associated with the link
                 webpageText = scrapeWebpage(review["link"])
-                
+
                 # Extract analysis information using BAML
                 analysisContent = extractAnalysis(webpageText)
-                
+
                 return jsonify(
                     {
                         "name": review["name"],
@@ -82,6 +84,7 @@ def analyzer():
             jsonify({"error": "Failed to analyze review", "message": str(e)}),
             500,
         )
+
 
 # Check if the script is being run directly
 if __name__ == "__main__":

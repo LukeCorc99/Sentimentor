@@ -30,7 +30,7 @@ function AnalyzeProductReview(text: string) -> ProductAnalysis {
     - A product score out of 100 (In the format xx/100)
     - List of pros
     - List of cons
-    - List of review sources
+    - Name of author and year of publication. If no author is mentioned, use the website's name. Write both in one line.
 
     {{ ctx.output_format }}
   "#

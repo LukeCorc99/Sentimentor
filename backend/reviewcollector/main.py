@@ -50,7 +50,7 @@ def cameras():
 def loadTelevisionReviews():
     with open("../../frontend/public/televisionreviews.json", "r") as file:
         return json.load(file)
-    
+
 
 # Function to upload reviews to Firestore
 def uploadReviews(collection, reviews):
@@ -58,7 +58,9 @@ def uploadReviews(collection, reviews):
         for review in reviews:
             # Add each review as a new document in the Firestore collection
             db.collection(collection).add(review)
-        print(f"Uploaded {len(reviews)} reviews to Firestore collection '{collection}'.")
+        print(
+            f"Uploaded {len(reviews)} reviews to Firestore collection '{collection}'."
+        )
     except Exception as e:
         print(f"Error uploading reviews to Firestore: {str(e)}")
 
@@ -81,12 +83,12 @@ def televisions():
 if __name__ == "__main__":
     # Load reviews from the JSON file
     cameraReviews = loadCameraReviews()
-    
+
     # Specify the Firestore collection name (e.g., "camerareviews")
     collectionName = "camerareviews"
-    
+
     # Upload reviews to Firestore
     uploadReviews(collectionName, cameraReviews)
-    
+
     # Run the Flask app
     app.run(debug=True, port=8080)

@@ -2,29 +2,21 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import SearchPage from './pages/SearchPage';
 import SavedProductsPage from './pages/SavedProductsPage';
+import ProductComparatorPage from './pages/ProductComparatorPage';
 
 const App = () => {
-  const saveProduct = (product) => {
-    // Function to save product
-    console.log('Save product:', product);
-  };
-
-  const analyzeReview = (reviewName) => {
-    // Function to analyze review
-    console.log('Analyze review:', reviewName);
-  };
-
   return (
     <Router>
       <nav>
-        <Link to="/">Home</Link> | <Link to="/saved">Saved Products</Link>
+        <Link to="/">Home</Link> | <Link to="/saved">Saved Products</Link> | <Link to="/compare">Compare Products</Link>
       </nav>
       <Routes>
         <Route
           path="/"
-          element={<SearchPage analyzeReview={analyzeReview} saveProduct={saveProduct} />}
+          element={<SearchPage />}
         />
         <Route path="/saved" element={<SavedProductsPage />} />
+        <Route path="/compare" element={<ProductComparatorPage />} />
       </Routes>
     </Router>
   );
