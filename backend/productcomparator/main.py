@@ -35,12 +35,13 @@ def extractComparison(analysisOne, analysisTwo):
 
         return {
             "summary": response.summary,
+            "score1": response.score1,
+            "score2": response.score2,
             "advantages1": response.advantages1,
             "disadvantages1": response.disadvantages1,
             "advantages2": response.advantages2,
             "disadvantages2": response.disadvantages2,
             "recommendation": response.recommendation,
-            "sources": response.sources,
         }
     except Exception as e:
         return {"error": "Failed to extract analysis", "message": str(e)}

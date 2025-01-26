@@ -38,9 +38,10 @@ class ProductAnalysis(BaseModel):
 
 class ProductComparison(BaseModel):
     summary: Optional[str] = None
+    score1: Optional[str] = None
+    score2: Optional[str] = None
     advantages1: List[Optional[str]]
     disadvantages1: List[Optional[str]]
     advantages2: List[Optional[str]]
     disadvantages2: List[Optional[str]]
     recommendation: Optional[str] = None
-    sources: List[Optional[str]]

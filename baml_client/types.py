@@ -48,9 +48,10 @@ class ProductAnalysis(BaseModel):
 
 class ProductComparison(BaseModel):
     summary: str
+    score1: str
+    score2: str
     advantages1: List[str]
     disadvantages1: List[str]
     advantages2: List[str]
     disadvantages2: List[str]
     recommendation: str
-    sources: List[str]

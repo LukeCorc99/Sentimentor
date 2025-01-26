@@ -124,6 +124,8 @@ const ProductComparatorPage = () => {
                 <div className="comparison-result">
                     <h2>Comparison Result</h2>
                     <p><strong>Summary:</strong> {comparisonResult.summary}</p>
+                    <p><strong>{productOne.name} Sentiment Score:</strong> {comparisonResult.score1}</p>
+                    <p><strong>{productTwo.name} Sentiment Score:</strong> {comparisonResult.score2}</p>
                     <p><strong>Advantages of {productOne.name} over {productTwo.name}:</strong></p>
                     <ul>
                         {comparisonResult.advantages1.map((adv, idx) => (
@@ -149,12 +151,6 @@ const ProductComparatorPage = () => {
                         ))}
                     </ul>
                     <p><strong>Recommendation:</strong> {comparisonResult.recommendation}</p>
-                    <p><strong>Sources:</strong></p>
-                    <ul>
-                        {comparisonResult.sources.map((source, idx) => (
-                            <li key={idx}>{source}</li>
-                        ))}
-                    </ul>
                 </div>
             )}
         </div>
