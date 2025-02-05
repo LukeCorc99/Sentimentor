@@ -27,68 +27,57 @@ app = Flask(__name__)
 cors = CORS(app, origins="*")
 
 
-# Load camera reviews from the JSON file
-def loadCameraReviews():
-    with open("../../frontend/public/camerareviews.json", "r") as file:
+def loadHeadphoneReviews():
+    with open("../../frontend/public/headphonereviews.json", "r", encoding="utf-8") as file:
         return json.load(file)
 
 
-# Define a route for the /api/cameras endpoint, accepting GET requests
-@app.route("/cameras", methods=["GET"])
-def cameras():
-    # Return the JSON content of the camera reviews file
+def filterRepeatedProductReviews(reviews):
+    productCounts = {}
+    productReviews = {}
+
+    # Count occurrences of each product by 'name'
+    for review in reviews:
+        productName = review["name"]
+        if productName not in productCounts:
+            productCounts[productName] = 0
+            productReviews[productName] = {
+                "name": productName,
+                "links": []
+            }
+        productCounts[productName] += 1
+        productReviews[productName]["links"].append(review["link"])
+
+    # Filter only products appearing two or more times
+    repeatedReviews = [
+        productReviews[name]
+        for name, count in productCounts.items()
+        if count >= 2
+    ]
+    return repeatedReviews
+
+
+@app.route("/productreviews", methods=["GET"])
+def getProductReviews():
     try:
-        reviews = loadCameraReviews()
-        return jsonify(reviews)
+        reviews = loadHeadphoneReviews()
+        repeated = filterRepeatedProductReviews(reviews)
+        return jsonify(repeated), 200
     except Exception as e:
-        return (
-            jsonify({"error": "Failed to load camera reviews", "message": str(e)}),
-            500,
-        )
+        return jsonify({"error": str(e)}), 500
 
 
-def loadTelevisionReviews():
-    with open("../../frontend/public/televisionreviews.json", "r") as file:
-        return json.load(file)
-
-
-# Function to upload reviews to Firestore
-def uploadReviews(collection, reviews):
-    try:
-        for review in reviews:
-            # Add each review as a new document in the Firestore collection
-            db.collection(collection).add(review)
-        print(
-            f"Uploaded {len(reviews)} reviews to Firestore collection '{collection}'."
-        )
-    except Exception as e:
-        print(f"Error uploading reviews to Firestore: {str(e)}")
-
-
-# Define a route for the /api/televisions endpoint, accepting GET requests
-@app.route("/televisions", methods=["GET"])
-def televisions():
-    # Return the JSON content of the television reviews file
-    try:
-        reviews = loadTelevisionReviews()
-        return jsonify(reviews)
-    except Exception as e:
-        return (
-            jsonify({"error": "Failed to load television reviews", "message": str(e)}),
-            500,
-        )
-
-
-# Check if the script is being run directly (not imported as a module)
 if __name__ == "__main__":
-    # Load reviews from the JSON file
-    cameraReviews = loadCameraReviews()
+    headphoneReviews = loadHeadphoneReviews()
 
-    # Specify the Firestore collection name (e.g., "camerareviews")
-    collectionName = "camerareviews"
+    repeatedReviews = filterRepeatedProductReviews(headphoneReviews)
 
-    # Upload reviews to Firestore
-    uploadReviews(collectionName, cameraReviews)
+    collection = "productReviews"
+    collRef = db.collection(collection)
 
-    # Run the Flask app
+    for item in repeatedReviews:
+        collRef.add(item)
+
+    print("Product reviews uploaded successfully.")
+
     app.run(debug=True, port=8080)

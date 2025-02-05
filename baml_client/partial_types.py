@@ -16,7 +16,7 @@
 import baml_py
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
-from typing import Dict, List, Optional, Union, Literal
+from typing import Dict, Generic, List, Optional, TypeVar, Union, Literal
 
 from . import types
 from .types import Checked, Check
@@ -28,13 +28,17 @@ from .types import Checked, Check
 #
 ###############################################################################
 
+T = TypeVar('T')
+class StreamState(BaseModel, Generic[T]):
+    value: T
+    state: Literal["Pending", "Incomplete", "Complete"]
+
 
 class ProductAnalysis(BaseModel):
     summary: Optional[str] = None
     score: Optional[str] = None
     pros: List[Optional[str]]
     cons: List[Optional[str]]
-    sources: List[Optional[str]]
 
 class ProductComparison(BaseModel):
     summary: Optional[str] = None

@@ -26,7 +26,7 @@ scrapy crawl cameraspider -O ../../../../frontend/public/camerareviews.json
 # televisions
 scrapy crawl televisionspider -O ../../../../frontend/public/televisionreviews.json
 
-# audio
+# headphones
 scrapy crawl headphonespider -O ../../../../frontend/public/headphonereviews.json
 
 #review collector url:

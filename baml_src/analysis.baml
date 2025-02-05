@@ -4,7 +4,6 @@ class ProductAnalysis {
   score string  // Product score out of 100
   pros string[]  // List of pros
   cons string[]  // List of cons
-  sources string[]  // List of review sources
 }
 
 // Defining a data model for product comparison
@@ -24,15 +23,14 @@ function AnalyzeProductReview(text: string) -> ProductAnalysis {
   // Specify a client as provider/model-name
   client "openai/gpt-3.5-turbo" // Set OPENAI_API_KEY to use this client.
   prompt #"
-    Analyze the following product review text:
+    Analyze multiple product review texts:
     {{ text }}
 
     Provide the following information:
     - A summary analysing the product
-    - A product score out of 100 (In the format xx/100)
+    - A product score out of 100 based on each review (In the format xx/100)
     - List of pros
     - List of cons
-    - Name of author and year of publication. If no author is mentioned, use the website's name. Write both in one line.
 
     {{ ctx.output_format }}
   "#

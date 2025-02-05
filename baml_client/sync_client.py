@@ -68,7 +68,7 @@ class BamlSyncClient:
         tb,
         __cr__,
       )
-      return cast(types.ProductAnalysis, raw.cast_to(types, types))
+      return cast(types.ProductAnalysis, raw.cast_to(types, types, partial_types, False))
     
     def CompareAnalysis(
         self,
@@ -91,7 +91,7 @@ class BamlSyncClient:
         tb,
         __cr__,
       )
-      return cast(types.ProductComparison, raw.cast_to(types, types))
+      return cast(types.ProductComparison, raw.cast_to(types, types, partial_types, False))
     
 
 
@@ -130,8 +130,8 @@ class BamlStreamClient:
 
       return baml_py.BamlSyncStream[partial_types.ProductAnalysis, types.ProductAnalysis](
         raw,
-        lambda x: cast(partial_types.ProductAnalysis, x.cast_to(types, partial_types)),
-        lambda x: cast(types.ProductAnalysis, x.cast_to(types, types)),
+        lambda x: cast(partial_types.ProductAnalysis, x.cast_to(types, types, partial_types, True)),
+        lambda x: cast(types.ProductAnalysis, x.cast_to(types, types, partial_types, False)),
         self.__ctx_manager.get(),
       )
     
@@ -161,8 +161,8 @@ class BamlStreamClient:
 
       return baml_py.BamlSyncStream[partial_types.ProductComparison, types.ProductComparison](
         raw,
-        lambda x: cast(partial_types.ProductComparison, x.cast_to(types, partial_types)),
-        lambda x: cast(types.ProductComparison, x.cast_to(types, types)),
+        lambda x: cast(partial_types.ProductComparison, x.cast_to(types, types, partial_types, True)),
+        lambda x: cast(types.ProductComparison, x.cast_to(types, types, partial_types, False)),
         self.__ctx_manager.get(),
       )
     

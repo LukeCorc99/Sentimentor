@@ -3,8 +3,6 @@ import '../styles/SearchPage.css'; // Import the CSS file for styling
 import { db } from "../firebaseConfig"; // Path to firebaseConfig.js
 import { collection, getDocs } from "firebase/firestore"; // Firestore functions
 
-
-
 // Search page component
 const SearchPage = () => {
   // State for storing all reviews fetched from a JSON file or backend
@@ -18,12 +16,11 @@ const SearchPage = () => {
   // State for storing the sentiment analysis data of a review
   const [reviewData, setReviewData] = useState(null);
 
-
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         // Fetch reviews from Firestore
-        const querySnapshot = await getDocs(collection(db, "camerareviews"));
+        const querySnapshot = await getDocs(collection(db, "productReviews"));
         const reviewsData = querySnapshot.docs.map((doc) => doc.data());
         setReviews(reviewsData); // Update the state with fetched reviews
       } catch (error) {
@@ -73,7 +70,7 @@ const SearchPage = () => {
       .then((json) => {
         console.log("Analyzed Product:", json); // Log the analyzed product for debugging
         setReviewData(json); // Update the reviewData state with the sentiment analysis data
-      })
+      });
   };
 
   return (
@@ -101,36 +98,49 @@ const SearchPage = () => {
             {/* Display the name of the product review */}
             <h3>{reviewData.name}</h3>
 
-            {/* Provide a link to the product, opening it in a new tab */}
-            <a href={reviewData.link} target="_blank" rel="noopener noreferrer">
-              View Product
-            </a>
+            {/* Provide links to the product, opening each in a new tab */}
+            {reviewData.links && reviewData.links.length > 0 && (
+              <div>
+                {reviewData.links.map((link, index) => (
+                  <a
+                    key={index}
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ marginRight: "10px" }} 
+                  >
+                    View Product Review {index + 1}
+                  </a>
+                ))}
+              </div>
+            )}
 
             {/* Display the sentiment analysis result */}
             {reviewData.analysisContent && (
               <div>
-                <p><strong>Summary:</strong> {reviewData.analysisContent.summary}</p>
-                <p><strong>Sentiment Score:</strong> {reviewData.analysisContent.score}</p>
-                <p><strong>Pros:</strong></p>
+                <p>
+                  <strong>Summary:</strong> {reviewData.analysisContent.summary}
+                </p>
+                <p>
+                  <strong>Sentiment Score:</strong> {reviewData.analysisContent.score}
+                </p>
+                <p>
+                  <strong>Pros:</strong>
+                </p>
                 <ul>
                   {reviewData.analysisContent.pros.map((pro, index) => (
                     <li key={index}>{pro}</li>
                   ))}
                 </ul>
-                <p><strong>Cons:</strong></p>
+                <p>
+                  <strong>Cons:</strong>
+                </p>
                 <ul>
                   {reviewData.analysisContent.cons.map((con, index) => (
                     <li key={index}>{con}</li>
                   ))}
                 </ul>
-                <p><strong>Sources:</strong></p>
-                <ul>
-                  {reviewData.analysisContent.sources.map((source, index) => (
-                    <li key={index}>{source}: <a href={reviewData.link} target="_blank" rel="noopener noreferrer">
-                    Link
-                  </a></li>
-                  ))}
-                </ul>
+                
                 {/* Add Save Button */}
                 <button
                   onClick={() => saveProduct(reviewData)} // Pass reviewData to saveProduct
@@ -140,23 +150,25 @@ const SearchPage = () => {
                 </button>
               </div>
             )}
-
           </div>
         )}
       </div>
+
       {/* Display filtered reviews or a message if no results are found */}
       {isSearching && (
         <div>
           {/* If there are filtered reviews, display them in a list */}
           {filteredReviews.length > 0 ? (
             <ul>
-              {filteredReviews.map((review, index) => ( // Map over the filtered reviews and display them
+              {filteredReviews.map((review, index) => (
+                // Map over the filtered reviews and display them
                 <li key={index} className="reviewlink">
                   <h3>{review.name}</h3>
                   <button
                     onClick={() => analyzeReview(review.name)} // Analyze the sentiment of the review on button click
                     className="analyzebutton"
-                  >Analyze
+                  >
+                    Analyze
                   </button>
                 </li>
               ))}

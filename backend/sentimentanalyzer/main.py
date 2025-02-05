@@ -1,14 +1,28 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import requests
-import json
 from trafilatura import extract
 from dotenv import load_dotenv
 import os
 import sys
+import json
+import firebase_admin
+from firebase_admin import credentials, firestore
 
 # Load environment variables from .env file
 load_dotenv()
+
+# Get Firebase credentials from environment variable
+firebaseCredentials = os.getenv("FIREBASE_CREDENTIALS")
+# Parse the JSON string into a dictionary
+credDict = json.loads(firebaseCredentials)
+
+# Initialize Firebase using the credentials
+cred = credentials.Certificate(credDict)
+firebase_admin.initialize_app(cred)
+
+# Access Firestore
+db = firestore.client()
 
 # Add the project root directory to sys.path for BAML client access
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
@@ -21,24 +35,22 @@ app = Flask(__name__)
 cors = CORS(app, origins="*")
 
 
-# Load camera reviews from the JSON file
-def loadCameraReviews():
-    with open("../../frontend/public/camerareviews.json", "r") as file:
-        return json.load(file)
-
-
-# Scrape all text from a webpage.
 def scrapeWebpage(link):
-    # Send a GET request to the webpage
-    response = requests.get(link)
-    response.raise_for_status()  # Return an error for bad status codes
+    try:
+        response = requests.get(link)
+        content = extract(response.content)
+        return content if content else ""
+    except Exception as e:
+        print(f"Error scraping {link}: {e}")
+        return ""
 
-    # Extract the main text content from the webpage using Trafilatura
-    extractedContent = extract(response.content)
-    if extractedContent:
-        return extractedContent
-    else:
-        return "ERROR: No content extracted"
+
+def scrapeWebpages(links):
+    combined_text = ""
+    for link in links:
+        text = scrapeWebpage(link)
+        combined_text += text + "\n"
+    return combined_text
 
 
 def extractAnalysis(content):
@@ -49,43 +61,36 @@ def extractAnalysis(content):
             "score": response.score,
             "pros": response.pros,
             "cons": response.cons,
-            "sources": response.sources,
         }
     except Exception as e:
         return {"error": "Failed to extract analysis", "message": str(e)}
 
 
-# Define a route for the endpoint, accepting GET requests
 @app.route("/sentimentanalyzer", methods=["GET"])
 def analyzer():
-    cameraName = request.args.get(
-        "name", ""
-    )  # Get the name from the request query parameters.
+    productName = request.args.get("name", "")
     try:
-        reviews = loadCameraReviews()
-        # Search for the review associated with the specified name
-        for review in reviews:
-            if review["name"].lower() == cameraName.lower():
-                # Scrape the webpage associated with the link
-                webpageText = scrapeWebpage(review["link"])
-
-                # Extract analysis information using BAML
-                analysisContent = extractAnalysis(webpageText)
-
-                return jsonify(
-                    {
-                        "name": review["name"],
-                        "link": review["link"],
-                        "analysisContent": analysisContent,
-                    }
-                )
+        # Retrieve all documents from the "productReviews" collection
+        docs = db.collection('productReviews').stream()
+        for doc in docs:
+            review = doc.to_dict()
+            # Compare names in a case-insensitive way
+            if review.get("name", "").lower() == productName.lower():
+                links = review.get("links", [])
+                # Scrape all webpages from the links array
+                combined_text = scrapeWebpages(links)
+                # Run the sentiment analysis on the combined text
+                analysisContent = extractAnalysis(combined_text)
+                return jsonify({
+                    "name": review["name"],
+                    "links": links,
+                    "analysisContent": analysisContent,
+                })
+        # If no review matches the productName
+        return jsonify({"error": "Review not found"}), 404
     except Exception as e:
-        return (
-            jsonify({"error": "Failed to analyze review", "message": str(e)}),
-            500,
-        )
+        return jsonify({"error": "Failed to analyze review", "message": str(e)}), 500
 
 
-# Check if the script is being run directly
 if __name__ == "__main__":
     app.run(debug=True, port=8081)

@@ -15,6 +15,8 @@ class HeadphoneSpider(scrapy.Spider):
         "https://www.headfonia.com/category/headphones/",
         "https://uk.pcmag.com/headphones",
         "https://www.scarbir.com/truewireless",
+        "https://www.expertreviews.com/uk/technology/audio/headphones",
+        "https://www.engadget.com/reviews/headphones/",
     ]
 
     # Words to remove from the name of the product, e.g., "review"
@@ -85,10 +87,31 @@ class HeadphoneSpider(scrapy.Spider):
                 "h2.entry-title a::attr(href)",
                 "ul.page-numbers a.next.page-numbers::attr(href)",
             )
+        # Check if the current page is from ExpertReviews
+        elif "expertreviews.com" in response.url:
+            yield from self.parseHeadphoneReviews(
+                response,
+                "div.post-content-main",
+                "h5.post-title",
+                "h5.post-title a::text",
+                "h5.post-title a::attr(href)",
+                "a[aria-label='Next page']::attr(href)",
+            )
 
         # Check if the current page is from Scarbir
         elif "scarbir.com" in response.url:
             yield from self.parseScarbir(response)
+
+        # Check if the current page is from Engadget
+        elif "engadget.com" in response.url:
+            yield from self.parseHeadphoneReviews(
+                response,
+                "ul[class='D(b) Jc(sb) Flw(w) M(0) P(0) List(n)']",
+                "li[class='Mb(24px) Bxz(bb)']",
+                "a::attr(title)",
+                "a::attr(href)",
+                "a[class='D(f) Ai(c) Jc(c) Bdrs(8px) Pstart(12px) Py(6px) Td(n) Fz(14px) Td(n) C(engadgetGray) Bgc(paginationHover):h']::attr(href)",
+            )
 
     # Method to parse the headphone reviews
     def parseHeadphoneReviews(
