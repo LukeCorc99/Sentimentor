@@ -28,7 +28,9 @@ cors = CORS(app, origins="*")
 
 
 def loadHeadphoneReviews():
-    with open("../../frontend/public/headphonereviews.json", "r", encoding="utf-8") as file:
+    with open(
+        "../../frontend/public/headphonereviews.json", "r", encoding="utf-8"
+    ) as file:
         return json.load(file)
 
 
@@ -41,18 +43,13 @@ def filterRepeatedProductReviews(reviews):
         productName = review["name"]
         if productName not in productCounts:
             productCounts[productName] = 0
-            productReviews[productName] = {
-                "name": productName,
-                "links": []
-            }
+            productReviews[productName] = {"name": productName, "links": []}
         productCounts[productName] += 1
         productReviews[productName]["links"].append(review["link"])
 
     # Filter only products appearing two or more times
     repeatedReviews = [
-        productReviews[name]
-        for name, count in productCounts.items()
-        if count >= 2
+        productReviews[name] for name, count in productCounts.items() if count >= 2
     ]
     return repeatedReviews
 

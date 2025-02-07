@@ -1,4 +1,3 @@
-# For backend
 Flask==2.3.3
 flask-cors==3.0.10
 Scrapy==2.6.2
@@ -15,10 +14,5 @@ pytest==7.4.0
 pydantic==2.0.0
 python-dotenv==1.0.0
 firebase-admin==6.1.0
-
-# For frontend
-react==17.0.2
-react-router-dom==6.2.1
-vite==2.7.13
 
 

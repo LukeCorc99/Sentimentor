@@ -71,7 +71,7 @@ def analyzer():
     productName = request.args.get("name", "")
     try:
         # Retrieve all documents from the "productReviews" collection
-        docs = db.collection('productReviews').stream()
+        docs = db.collection("productReviews").stream()
         for doc in docs:
             review = doc.to_dict()
             # Compare names in a case-insensitive way
@@ -81,11 +81,13 @@ def analyzer():
                 combined_text = scrapeWebpages(links)
                 # Run the sentiment analysis on the combined text
                 analysisContent = extractAnalysis(combined_text)
-                return jsonify({
-                    "name": review["name"],
-                    "links": links,
-                    "analysisContent": analysisContent,
-                })
+                return jsonify(
+                    {
+                        "name": review["name"],
+                        "links": links,
+                        "analysisContent": analysisContent,
+                    }
+                )
         # If no review matches the productName
         return jsonify({"error": "Review not found"}), 404
     except Exception as e:

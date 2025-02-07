@@ -88,4 +88,3 @@ ROBOTSTXT_OBEY = False
 # HTTPCACHE_STORAGE = "scrapy.extensions.httpcache.FilesystemCacheStorage"
 
 # Set settings whose default value is deprecated to a future-proof value
-
