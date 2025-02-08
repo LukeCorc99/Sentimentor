@@ -18,4 +18,5 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_PYTHON_BLACK: true
+          VALIDATE_ALL_CODEBASE: false
           LOG_LEVEL: DEBUG
