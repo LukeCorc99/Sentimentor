@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/SearchPage.css'; // Import the CSS file for styling
 import { db } from "../firebaseConfig"; // Path to firebaseConfig.js
 import { collection, getDocs } from "firebase/firestore"; // Firestore functions
@@ -75,7 +75,7 @@ const SearchPage = () => {
 
   return (
     <div className="appcontainer">
-      <h1>Review Collector</h1>
+      <h1>Sentimentor</h1>
       {/* Search Bar and Button */}
       <div>
         <input

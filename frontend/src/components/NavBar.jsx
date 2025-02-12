@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../firebaseConfig';
+import '../styles/NavBar.css';
 
 const NavBar = () => {
   const [userEmail, setUserEmail] = useState('');

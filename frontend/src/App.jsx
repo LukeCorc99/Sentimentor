@@ -5,6 +5,8 @@ import SavedProductsPage from './pages/SavedProductsPage';
 import ProductComparatorPage from './pages/ProductComparatorPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import NavBar from './components/NavBar';
+import './styles/fonts.css';
+
 
 const App = () => {
   return (

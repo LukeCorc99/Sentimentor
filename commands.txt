@@ -1,5 +1,21 @@
 # delete after project upload
 
+# Commands to run before committing (for linting)
+cd frontend
+npx eslint .
+
+black .
+
+# To remove last commit
+git reset --soft HEAD~1
+git push --force
+
+
+# Run to upgrade bamp dependency to fix vscode extension version mismatch
+pip install --upgrade baml-py
+
+
+
 # start venv
 cd backend
 source venv/Scripts/activate
@@ -39,5 +55,6 @@ http://127.0.0.1:8081/sentimentanalyzer
 cd backend/tests
 pytest
 
+#
 
 # run scrapy shell "url here", then response.css("selectro here"").getall(), to see which selector works

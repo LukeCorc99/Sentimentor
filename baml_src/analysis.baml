@@ -31,10 +31,9 @@ function AnalyzeProductReview(text: string) -> ProductAnalysis {
     - A product score out of 100 based on each review (In the format xx/100)
     - List of pros
     - List of cons
-
     {{ ctx.output_format }}
   "#
-}
+} // ^ add specs?
 
 // Create a function to compare two product analysis texts and determine the recommended product
 function CompareAnalysis(analysis1: string, analysis2: string) -> ProductComparison {

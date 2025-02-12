@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/ProductComparatorPage.css';
 import { useLocation } from 'react-router-dom';
 import { db } from "../firebaseConfig";
@@ -59,7 +59,7 @@ const ProductComparatorPage = () => {
     };
 
     return (
-        <div>
+        <div className="appcontainer">
             <h1>Product Comparator</h1>
 
             {/* Current product display */}

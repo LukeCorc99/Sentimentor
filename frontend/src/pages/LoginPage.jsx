@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Lock, Mail, Visibility, VisibilityOff } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { auth } from '../firebaseConfig';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail  } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
 import '../styles/LoginPage.css';
 
@@ -11,10 +11,12 @@ const LoginPage = () => {
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors }
   } = useForm();
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [loginFailed, setLoginFailed] = useState(false);
+  const [resetMessage, setResetMessage] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (data) => {
@@ -34,6 +36,20 @@ const LoginPage = () => {
     } catch (error) {
       console.error('Registration failed:', error);
       setLoginFailed(true);
+    }
+  };
+
+  const handleForgotPassword = async (email) => {
+    try {
+      if (!email) {
+        setResetMessage('Please enter your email to reset your password.');
+        return;
+      }
+      await sendPasswordResetEmail(auth, email);
+      setResetMessage('Password reset email sent! Check your inbox.');
+    } catch (error) {
+      console.error('Password reset error:', error);
+      setResetMessage('Error: Unable to send password reset email.');
     }
   };
 
@@ -83,6 +99,18 @@ const LoginPage = () => {
         </button>
 
         {loginFailed && <p className="error-message">Login or registration failed. Please try again.</p>}
+
+        {/* Forgot Password Section */}
+        <div className="forgot-password-section">
+          <button
+            type="button"
+            className="forgot-password-button"
+            onClick={() => handleForgotPassword(getValues('email'))}
+          >
+            Forgot Password?
+          </button>
+          {resetMessage && <p className="reset-message">{resetMessage}</p>}
+        </div>
       </form>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/SavedProductsPage.css'; // Import the CSS file for styling
 import { db } from "../firebaseConfig"; // Path to firebaseConfig.js
 import { collection, getDocs } from "firebase/firestore"; // Firestore functions
@@ -53,7 +53,7 @@ const SavedProductsPage = () => {
     };
 
     return (
-        <div>
+        <div className="appcontainer">
             <h1>Saved Products</h1>
             {/* If there are saved products, display them in a list */}
             {saved.length > 0 ? (
