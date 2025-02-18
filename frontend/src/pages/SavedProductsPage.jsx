@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import '../styles/SavedProductsPage.css'; // Import the CSS file for styling
 import { db } from "../firebaseConfig"; // Path to firebaseConfig.js
 import { collection, getDocs } from "firebase/firestore"; // Firestore functions
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 
 const SavedProductsPage = () => {
     // State for storing all previously saved analyzed products.
@@ -33,7 +33,7 @@ const SavedProductsPage = () => {
                 },
                 body: JSON.stringify({ id: product.id }), // Send the product ID
             });
-    
+
             const data = await response.json();
             if (response.ok) {
                 console.log("Product deleted successfully:", data.message);
@@ -62,6 +62,14 @@ const SavedProductsPage = () => {
                         <li key={index} className="saved-product-item">
                             {/* Display product details */}
                             <h3>{product.name}</h3>
+                            {product.image && (
+                                <img
+                                    src={product.image}
+                                    alt={product.name}
+                                    className="reviewimage"
+                                    referrerPolicy="no-referrer"
+                                />
+                            )}
                             <p><strong>Summary:</strong> {product.analysisContent.summary}</p>
                             <p><strong>Sentiment Score:</strong> {product.analysisContent.score}</p>
                             <p><strong>Pros:</strong></p>

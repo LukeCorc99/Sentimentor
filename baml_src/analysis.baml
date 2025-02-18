@@ -33,7 +33,7 @@ function AnalyzeProductReview(text: string) -> ProductAnalysis {
     - List of cons
     {{ ctx.output_format }}
   "#
-} // ^ add specs?
+} // ^ add specs + extract product name to avoid unneccesary words
 
 // Create a function to compare two product analysis texts and determine the recommended product
 function CompareAnalysis(analysis1: string, analysis2: string) -> ProductComparison {

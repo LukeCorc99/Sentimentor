@@ -77,14 +77,17 @@ def analyzer():
             # Compare names in a case-insensitive way
             if review.get("name", "").lower() == productName.lower():
                 links = review.get("links", [])
+                image = review.get("image")
+
                 # Scrape all webpages from the links array
-                combined_text = scrapeWebpages(links)
+                combinedText = scrapeWebpages(links)
                 # Run the sentiment analysis on the combined text
-                analysisContent = extractAnalysis(combined_text)
+                analysisContent = extractAnalysis(combinedText)
                 return jsonify(
                     {
                         "name": review["name"],
                         "links": links,
+                        "image": image,
                         "analysisContent": analysisContent,
                     }
                 )

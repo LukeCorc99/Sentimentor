@@ -66,6 +66,14 @@ const ProductComparatorPage = () => {
             {productOne && (
                 <div>
                     <h2>{productOne.name}</h2>
+                    {productOne.image && (
+                                <img
+                                    src={productOne.image}
+                                    alt={productOne.name}
+                                    className="reviewimage"
+                                    referrerPolicy="no-referrer"
+                                />
+                            )}
                     <p><strong>Summary:</strong> {productOne.analysisContent.summary}</p>
                     <p><strong>Sentiment Score:</strong> {productOne.analysisContent.score}</p>
                     <p><strong>Pros:</strong></p>
@@ -100,6 +108,14 @@ const ProductComparatorPage = () => {
             {productTwo && (
                 <div>
                     <h2>{productTwo.name}</h2>
+                    {productTwo.image && (
+                                <img
+                                    src={productTwo.image}
+                                    alt={productTwo.name}
+                                    className="reviewimage"
+                                    referrerPolicy="no-referrer"
+                                />
+                            )}
                     <p><strong>Summary:</strong> {productTwo.analysisContent.summary}</p>
                     <p><strong>Sentiment Score:</strong> {productTwo.analysisContent.score}</p>
                     <p><strong>Pros:</strong></p>

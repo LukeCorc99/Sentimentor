@@ -39,9 +39,11 @@ class HeadphoneSpider(scrapy.Spider):
                 response,
                 "div.listingResults ",
                 "div.listingResult",
+                "div.listingResult",
                 "a::attr(aria-label)",
                 "a::attr(href)",
-                'link[rel="next"]::attr(href)',
+                "img::attr(src)",
+                "div.flexi-pagination span.active + a::attr(href)",
             )
 
         # Check if the current page is from TechRadar
@@ -50,8 +52,10 @@ class HeadphoneSpider(scrapy.Spider):
                 response,
                 "div.listingResults ",
                 "div.listingResult",
+                "div.listingResult",
                 "a::attr(aria-label)",
                 "a::attr(href)",
+                "img::attr(src)",
                 "div.flexi-pagination span.active + a::attr(href)",
             )
 
@@ -61,19 +65,22 @@ class HeadphoneSpider(scrapy.Spider):
                 response,
                 "div.facetwp-template",
                 "article.entry.entry-test",
+                "article.entry.entry-test",
                 "h2.title a::text",
                 "h2.title a::attr(href)",
-                "",
+                "div.image a img::attr(src)",
+                "",  # Dynamically loaded
             )
 
-        # Check if the current page is from PCMag
         elif "uk.pcmag.com" in response.url:
             yield from self.parseHeadphoneReviews(
                 response,
                 "article.articlewrapper",
                 "div.articlecontainer",
+                "div.article-image",
                 "a::text",
                 "a::attr(href)",
+                "a img::attr(src)",
                 'link[rel="next"]::attr(href)',
             )
 
@@ -83,24 +90,38 @@ class HeadphoneSpider(scrapy.Spider):
                 response,
                 "div.grids.masonry-layout.entries",
                 "article",
+                "article",
                 "h2.entry-title a::text",
                 "h2.entry-title a::attr(href)",
+                "img::attr(src)",
                 "ul.page-numbers a.next.page-numbers::attr(href)",
             )
+
         # Check if the current page is from ExpertReviews
         elif "expertreviews.com" in response.url:
             yield from self.parseHeadphoneReviews(
                 response,
-                "div.post-content-main",
-                "h5.post-title",
+                "div.post-wrapper",
+                "div.post-content",
+                "div.post-thumbnail",
                 "h5.post-title a::text",
                 "h5.post-title a::attr(href)",
+                "img::attr(src)",
                 "a[aria-label='Next page']::attr(href)",
             )
 
         # Check if the current page is from Scarbir
         elif "scarbir.com" in response.url:
-            yield from self.parseScarbir(response)
+            yield from self.parseHeadphoneReviews(
+                response,
+                "div.row.sqs-row",
+                "div.col.sqs-col-4.span-4",
+                "div.col.sqs-col-4.span-4",
+                "div.image-title.sqs-dynamic-text p::text",
+                "div.intrinsic a::attr(href)",
+                "div.intrinsic img::attr(src)",
+                "a.next-page::attr(href)",
+            )
 
         # Check if the current page is from Engadget
         elif "engadget.com" in response.url:
@@ -108,35 +129,57 @@ class HeadphoneSpider(scrapy.Spider):
                 response,
                 "ul[class='D(b) Jc(sb) Flw(w) M(0) P(0) List(n)']",
                 "li[class='Mb(24px) Bxz(bb)']",
+                "li[class='Mb(24px) Bxz(bb)']",
                 "a::attr(title)",
                 "a::attr(href)",
+                "img::attr(src)",
                 "a[class='D(f) Ai(c) Jc(c) Bdrs(8px) Pstart(12px) Py(6px) Td(n) Fz(14px) Td(n) C(engadgetGray) Bgc(paginationHover):h']::attr(href)",
             )
 
     # Method to parse the headphone reviews
     def parseHeadphoneReviews(
-        self, response, htmlContainer, htmlChildren, nameTag, linkTag, nextPageTag
+        self,
+        response,
+        htmlContainer,
+        htmlChildren,
+        htmlChildrenTwo,
+        nameTag,
+        linkTag,
+        imgTag,
+        nextPageTag,
     ):
-        # Iterate through each product within the specified container by targeting its child elements using the provided CSS selectors.
-        for product in response.css(f"{htmlContainer} > {htmlChildren}"):
-            # Extract the name and link of the product
-            rawName = product.css(nameTag).get()
+        # Select both name+link and image containers
+        nameLinkProducts = response.css(f"{htmlContainer} > {htmlChildren}")
+        imageProducts = response.css(f"{htmlContainer} > {htmlChildrenTwo}")
+
+        # Iterate over both lists together
+        for nameProduct, imageProduct in zip(nameLinkProducts, imageProducts):
+            # Extract product name
+            rawName = nameProduct.css(nameTag).get()
             if rawName:
-                # Remove specified words from the product name
                 for word in self.removeWords:
                     rawName = rawName.replace(word, "")
-                # Clean up extra whitespace
                 cleanName = rawName.strip()
 
-                # Yield the cleaned data
+                # Extract product link
+                productLink = nameProduct.css(linkTag).get()
+                if productLink:
+                    productLink = urljoin(response.url, productLink)
+                else:
+                    productLink = None
+
+                # Extract image
+                imageURL = imageProduct.css(imgTag).get()
+                if imageURL:
+                    imageURL = urljoin(response.url, imageURL)
+                else:
+                    imageURL = None
+
                 yield {
                     "name": cleanName,
-                    "link": urljoin(
-                        response.url, product.css(linkTag).get()
-                    ),  # Get URL for the product link
+                    "link": productLink,
+                    "image": imageURL,
                 }
-            else:
-                self.logger.info("No next page found.")
 
         # Find the link to the next page
         nextPage = response.css(nextPageTag).get()
@@ -146,34 +189,3 @@ class HeadphoneSpider(scrapy.Spider):
             nextPageURL = urljoin(response.url, nextPage)
             # Make a request to the next page and call the same `parse` method
             yield scrapy.Request(nextPageURL, callback=self.parse)
-
-    # Method to parse the Scarbir website
-    def parseScarbir(self, response):
-        # Define the first set of CSS selectors
-        selectorsOne = {
-            "container": "div.row.sqs-row",
-            "children": "div.col.sqs-col-4.span-4",
-            "name": "div.image-title.sqs-dynamic-text p::text",
-            "link": "div.intrinsic a::attr(href)",
-            "next": "a.next-page::attr(href)",
-        }
-
-        # Define the second set of CSS selectors
-        selectorsTwo = {
-            "container": "div.row.sqs-row",
-            "children": "div.col.sqs-col-3.span-3",
-            "name": "div.image-title.sqs-dynamic-text p::text",
-            "link": "div.intrinsic a::attr(href)",
-            "next": "a.next-page::attr(href)",
-        }
-
-        # Use parseHeadphoneReviews for both sets
-        for selectors in [selectorsOne, selectorsTwo]:
-            yield from self.parseHeadphoneReviews(
-                response,
-                selectors["container"],
-                selectors["children"],
-                selectors["name"],
-                selectors["link"],
-                selectors["next"],
-            )

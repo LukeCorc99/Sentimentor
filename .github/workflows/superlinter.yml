@@ -3,6 +3,7 @@ name: SuperLinter
 on: [push, pull_request]
 
 jobs:
+  # Code linting
   super-lint:
     name: Lint Code Base
     runs-on: ubuntu-latest
@@ -18,5 +19,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_PYTHON_BLACK: true
+          VALIDATE_JAVASCRIPT_ES: true
           VALIDATE_ALL_CODEBASE: false
           LOG_LEVEL: DEBUG
+
+    # add running of backend (pytest) and frontend tests here
+    # potentially add deployment of backend and frontend here

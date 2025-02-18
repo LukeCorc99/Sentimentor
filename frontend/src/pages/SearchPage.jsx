@@ -97,6 +97,14 @@ const SearchPage = () => {
           <div>
             {/* Display the name of the product review */}
             <h3>{reviewData.name}</h3>
+            {reviewData.image && (
+              <img
+                src={reviewData.image}
+                alt={reviewData.name}
+                className="reviewimage"
+                referrerPolicy="no-referrer"
+              />
+            )}
 
             {/* Provide links to the product, opening each in a new tab */}
             {reviewData.links && reviewData.links.length > 0 && (
@@ -107,7 +115,7 @@ const SearchPage = () => {
                     href={link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ marginRight: "10px" }} 
+                    style={{ marginRight: "10px" }}
                   >
                     View Product Review {index + 1}
                   </a>
@@ -140,7 +148,7 @@ const SearchPage = () => {
                     <li key={index}>{con}</li>
                   ))}
                 </ul>
-                
+
                 {/* Add Save Button */}
                 <button
                   onClick={() => saveProduct(reviewData)} // Pass reviewData to saveProduct
@@ -163,6 +171,14 @@ const SearchPage = () => {
               {filteredReviews.map((review, index) => (
                 // Map over the filtered reviews and display them
                 <li key={index} className="reviewlink">
+                  {review.image && (
+                    <img
+                      src={review.image}
+                      alt={review.name}
+                      className="reviewimage"
+                      referrerPolicy="no-referrer"
+                    />
+                  )}
                   <h3>{review.name}</h3>
                   <button
                     onClick={() => analyzeReview(review.name)} // Analyze the sentiment of the review on button click

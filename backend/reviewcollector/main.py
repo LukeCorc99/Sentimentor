@@ -35,22 +35,43 @@ def loadHeadphoneReviews():
 
 
 def filterRepeatedProductReviews(reviews):
+    # Dictionary to keep track of the count of each product name
     productCounts = {}
+
+    # Dictionary to store product details (name and a list of links)
     productReviews = {}
 
-    # Count occurrences of each product by 'name'
+    # Iterate through the list of reviews to count occurrences of each product by 'name'
     for review in reviews:
         productName = review["name"]
-        if productName not in productCounts:
-            productCounts[productName] = 0
-            productReviews[productName] = {"name": productName, "links": []}
-        productCounts[productName] += 1
-        productReviews[productName]["links"].append(review["link"])
+        productLink = review["link"]
+        productImage = review["image"]
 
-    # Filter only products appearing two or more times
+        # If the product name is encountered for the first time, initialize its count and details
+        if productName not in productCounts:
+            productCounts[productName] = 0  # Initialize count to 0
+            productReviews[productName] = {
+                "name": productName,
+                "links": [],
+                "image": productImage,
+            }
+
+        # Increment the count for the product
+        productCounts[productName] += 1
+
+        # Append the review link to the corresponding product in productReviews
+        productReviews[productName]["links"].append(productLink)
+
+        # If the product has an image, keep the first valid image encountered
+        if productReviews[productName]["image"] is None and productImage:
+            productReviews[productName]["image"] = productImage
+
+    # Filter out products that appear less than twice
     repeatedReviews = [
         productReviews[name] for name, count in productCounts.items() if count >= 2
     ]
+
+    # Return the filtered list containing only products that appear at least twice
     return repeatedReviews
 
 
@@ -72,9 +93,18 @@ if __name__ == "__main__":
     collection = "productReviews"
     collRef = db.collection(collection)
 
+    uploadCount = 0
+
+    # Delete all documents in the collection to avoid duplicates
+    docs = collRef.stream()
+    for doc in docs:
+        doc.reference.delete()
+
+    # Upload the filtered product reviews to Firestore
     for item in repeatedReviews:
         collRef.add(item)
+        uploadCount += 1
 
-    print("Product reviews uploaded successfully.")
+    print(f"Uploaded {uploadCount} documents to Firestore")
 
     app.run(debug=True, port=8080)
