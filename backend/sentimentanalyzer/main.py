@@ -57,10 +57,21 @@ def extractAnalysis(content):
     try:
         response = b.AnalyzeProductReview(content)
         return {
+            "name": response.name,
             "summary": response.summary,
-            "score": response.score,
-            "pros": response.pros,
-            "cons": response.cons,
+            "specifications": response.specifications,
+            "priceValue": response.priceValue,
+            "soundQuality": response.soundQuality,
+            "comfortFit": response.comfortFit,
+            "batteryLife": response.batteryLife,
+            "connectivity": response.connectivity,
+            "featuresControls": response.featuresControls,
+            "callQuality": response.callQuality,
+            "brandWarranty": response.brandWarranty,
+            "userFeedback": response.userFeedback,
+            "availability": response.availability,
+            "sentimentRating": response.sentimentRating,
+            "sentiment": response.sentiment,
         }
     except Exception as e:
         return {"error": "Failed to extract analysis", "message": str(e)}

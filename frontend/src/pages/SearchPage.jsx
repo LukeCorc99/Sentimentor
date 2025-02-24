@@ -28,8 +28,8 @@ const SearchPage = () => {
       }
     };
 
-    fetchProducts(); // Call the function to fetch data
-  }, []); // Run only once when the component mounts
+    fetchProducts(); 
+  }, []); 
 
   const saveProduct = async (product) => {
     try {
@@ -52,23 +52,19 @@ const SearchPage = () => {
     }
   };
 
-  // Function to handle the Search button click
   const handleSearch = () => {
     setIsSearching(true); // Indicate that a search has been performed
-    // Filter reviews by checking if the review name contains the search query
     const filtered = reviews.filter((review) =>
       review.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-    setFilteredReviews(filtered); // Update the filtered reviews state
+    setFilteredReviews(filtered);
   };
 
-  // Function to analyze the sentiment of a review
   const analyzeReview = (cameraName) => {
-    // Call the Sentiment Analyzer microservice with the review name as a query parameter
     fetch(`http://127.0.0.1:8081/sentimentanalyzer?name=${encodeURIComponent(cameraName)}`)
       .then((response) => response.json())
       .then((json) => {
-        console.log("Analyzed Product:", json); // Log the analyzed product for debugging
+        console.log("Analyzed Product:", json); 
         setReviewData(json); // Update the reviewData state with the sentiment analysis data
       });
   };
@@ -76,27 +72,22 @@ const SearchPage = () => {
   return (
     <div className="appcontainer">
       <h1>Sentimentor</h1>
-      {/* Search Bar and Button */}
       <div>
         <input
           type="text"
-          placeholder="Search for a product..." // Placeholder text for the search bar
-          value={searchQuery} // Bind input value to searchQuery state
-          onChange={(e) => setSearchQuery(e.target.value)} // Update search query state on input change
+          placeholder="Search for a product..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="searchinput"
         />
-        <button
-          onClick={handleSearch} // Trigger search when button is clicked
-          className="searchbutton"
-        >
+        <button onClick={handleSearch} className="searchbutton">
           Search
         </button>
       </div>
       <div>
         {reviewData && (
           <div>
-            {/* Display the name of the product review */}
-            <h3>{reviewData.name}</h3>
+            <h3>{reviewData.analysisContent.name}</h3>
             {reviewData.image && (
               <img
                 src={reviewData.image}
@@ -106,7 +97,6 @@ const SearchPage = () => {
               />
             )}
 
-            {/* Provide links to the product, opening each in a new tab */}
             {reviewData.links && reviewData.links.length > 0 && (
               <div>
                 {reviewData.links.map((link, index) => (
@@ -123,37 +113,40 @@ const SearchPage = () => {
               </div>
             )}
 
-            {/* Display the sentiment analysis result */}
             {reviewData.analysisContent && (
               <div>
-                <p>
-                  <strong>Summary:</strong> {reviewData.analysisContent.summary}
-                </p>
-                <p>
-                  <strong>Sentiment Score:</strong> {reviewData.analysisContent.score}
-                </p>
-                <p>
-                  <strong>Pros:</strong>
-                </p>
+                <p><strong>Summary:</strong> {reviewData.analysisContent.summary}</p>
+
+                <h4>Specifications:</h4>
                 <ul>
-                  {reviewData.analysisContent.pros.map((pro, index) => (
-                    <li key={index}>{pro}</li>
-                  ))}
-                </ul>
-                <p>
-                  <strong>Cons:</strong>
-                </p>
-                <ul>
-                  {reviewData.analysisContent.cons.map((con, index) => (
-                    <li key={index}>{con}</li>
+                  {reviewData.analysisContent.specifications.map((spec, index) => (
+                    <li key={index}>{spec}</li>
                   ))}
                 </ul>
 
-                {/* Add Save Button */}
-                <button
-                  onClick={() => saveProduct(reviewData)} // Pass reviewData to saveProduct
-                  className="analyzebutton"
-                >
+                <div className="sentiment-breakdown">
+                  <h4>Overall Sentiment Rating:</h4>
+                  <p>
+                    <strong>{reviewData.analysisContent.sentimentRating} </strong> -
+                    {` ${reviewData.analysisContent.sentiment}`}
+                  </p>
+
+                  <h4>Sentiment Breakdown by Category:</h4>
+                  <ul>
+                    <li><strong>Price & Value for Money:</strong> {reviewData.analysisContent.priceValue}</li>
+                    <li><strong>Sound Quality:</strong> {reviewData.analysisContent.soundQuality}</li>
+                    <li><strong>Comfort & Fit:</strong> {reviewData.analysisContent.comfortFit}</li>
+                    <li><strong>Battery Life & Charging:</strong> {reviewData.analysisContent.batteryLife}</li>
+                    <li><strong>Connectivity & Compatibility:</strong> {reviewData.analysisContent.connectivity}</li>
+                    <li><strong>Features & Controls:</strong> {reviewData.analysisContent.featuresControls}</li>
+                    <li><strong>Call Quality & Microphone Performance:</strong> {reviewData.analysisContent.callQuality}</li>
+                    <li><strong>Brand & Warranty:</strong> {reviewData.analysisContent.brandWarranty}</li>
+                    <li><strong>Reviews & User Feedback:</strong> {reviewData.analysisContent.userFeedback}</li>
+                    <li><strong>Availability & Local Factors:</strong> {reviewData.analysisContent.availability}</li>
+                  </ul>
+                </div>
+
+                <button onClick={() => saveProduct(reviewData)} className="analyzebutton">
                   Save
                 </button>
               </div>
@@ -162,14 +155,11 @@ const SearchPage = () => {
         )}
       </div>
 
-      {/* Display filtered reviews or a message if no results are found */}
       {isSearching && (
         <div>
-          {/* If there are filtered reviews, display them in a list */}
           {filteredReviews.length > 0 ? (
             <ul>
               {filteredReviews.map((review, index) => (
-                // Map over the filtered reviews and display them
                 <li key={index} className="reviewlink">
                   {review.image && (
                     <img
@@ -181,8 +171,7 @@ const SearchPage = () => {
                   )}
                   <h3>{review.name}</h3>
                   <button
-                    onClick={() => analyzeReview(review.name)} // Analyze the sentiment of the review on button click
-                    className="analyzebutton"
+                    onClick={() => analyzeReview(review.name)} 
                   >
                     Analyze
                   </button>

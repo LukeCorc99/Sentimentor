@@ -16,7 +16,8 @@
 import baml_py
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
-from typing import Dict, Generic, List, Literal, Optional, TypeVar, Union, TypeAlias
+from typing_extensions import TypeAlias
+from typing import Dict, Generic, List, Literal, Optional, TypeVar, Union
 
 
 T = TypeVar('T')
@@ -40,17 +41,41 @@ def all_succeeded(checks: Dict[CheckName, Check]) -> bool:
 
 
 class ProductAnalysis(BaseModel):
+    name: str
     summary: str
-    score: str
-    pros: List[str]
-    cons: List[str]
+    specifications: List[str]
+    priceValue: str
+    soundQuality: str
+    comfortFit: str
+    batteryLife: str
+    connectivity: str
+    featuresControls: str
+    callQuality: str
+    brandWarranty: str
+    userFeedback: str
+    availability: str
+    sentimentRating: str
+    sentiment: str
 
 class ProductComparison(BaseModel):
+    name1: str
+    name2: str
     summary: str
+    specifications1: List[str]
+    specifications2: List[str]
     score1: str
     score2: str
-    advantages1: List[str]
-    disadvantages1: List[str]
-    advantages2: List[str]
-    disadvantages2: List[str]
+    sentiment1: str
+    sentiment2: str
+    priceValueComparison: str
+    soundQualityComparison: str
+    comfortFitComparison: str
+    batteryLifeComparison: str
+    connectivityComparison: str
+    featuresControlsComparison: str
+    callQualityComparison: str
+    brandWarrantyComparison: str
+    userFeedbackComparison: str
+    availabilityComparison: str
+    overallSentimentComparison: str
     recommendation: str

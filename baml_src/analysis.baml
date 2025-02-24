@@ -1,58 +1,105 @@
-// Defining a data model for product analysis
 class ProductAnalysis {
-  summary string  // Summary of the product review
-  score string  // Product score out of 100
-  pros string[]  // List of pros
-  cons string[]  // List of cons
+  name string
+  summary string
+  specifications string[]
+  priceValue string
+  soundQuality string
+  comfortFit string
+  batteryLife string
+  connectivity string
+  featuresControls string
+  callQuality string
+  brandWarranty string
+  userFeedback string
+  availability string
+  sentimentRating string 
+  sentiment string
 }
 
-// Defining a data model for product comparison
 class ProductComparison {
-  summary string  // Summary of the product review
-  score1 string  // Product 1 score out of 100
-  score2 string  // Product 2 score out of 100
-  advantages1 string[]  // List of advantages of product 1 over product 2
-  disadvantages1 string[]  // List of disadvantages of product 1 over product 2
-  advantages2 string[]  // List of advantages of product 2 over product 1
-  disadvantages2 string[]  // List of disadvantages of product 2 over product 1
-  recommendation string  // Recommended product based on the analysis
+  name1 string
+  name2 string
+  summary string
+  specifications1 string[]
+  specifications2 string[]
+  score1 string
+  score2 string
+  sentiment1 string
+  sentiment2 string
+  priceValueComparison string
+  soundQualityComparison string
+  comfortFitComparison string
+  batteryLifeComparison string
+  connectivityComparison string
+  featuresControlsComparison string
+  callQualityComparison string
+  brandWarrantyComparison string
+  userFeedbackComparison string
+  availabilityComparison string
+  overallSentimentComparison string 
+  recommendation string
 }
 
-// Create a function to analyze the product review text
 function AnalyzeProductReview(text: string) -> ProductAnalysis {
-  // Specify a client as provider/model-name
-  client "openai/gpt-3.5-turbo" // Set OPENAI_API_KEY to use this client.
+  client "openai/gpt-4o-mini"
   prompt #"
-    Analyze multiple product review texts:
+    Analyze the following product review
     {{ text }}
 
-    Provide the following information:
-    - A summary analysing the product
-    - A product score out of 100 based on each review (In the format xx/100)
-    - List of pros
-    - List of cons
+    Do not specifically mention the review, just provide the information as if you are summarizing the product.
+
+    Based on the review, extract the following data:
+    - The product name (make sure it is concise and avoids unnecessary words)
+    - A summary of the product
+    - Product specifications in a structured format
+
+    Provide very brief analysis under the following headings:
+    - Price & Value for Money
+    - Sound Quality
+    - Comfort & Fit
+    - Battery Life & Charging
+    - Connectivity & Compatibility
+    - Features & Controls
+    - Call Quality & Microphone Performance
+    - Brand & Warranty
+    - Reviews & User Feedback
+    - Availability & Local Factors
+
+    - Based on the above categories and the review, generate an overall sentiment rating in the format x.xx/5.00. Score between 0.00 and 1.00 if highly negative, 1.01 and 2.00 if negative, 2.01 and 3.00 if neutral, 3.01 and 4.00 if positive, and 4.01 and 5.00 if highly positive.
+    - Indicate if the sentiment rating is highly Positive, Positive, Neutral, Negative, or Highly Negative.
+    
     {{ ctx.output_format }}
   "#
-} // ^ add specs + extract product name to avoid unneccesary words
+}
 
-// Create a function to compare two product analysis texts and determine the recommended product
 function CompareAnalysis(analysis1: string, analysis2: string) -> ProductComparison {
-  // Specify a client as provider/model-name
-  client "openai/gpt-3.5-turbo" // Set OPENAI_API_KEY to use this client.
+  client "openai/gpt-3.5-turbo"
   prompt #"
-    Analyze the following two product analysis texts and compare them:
+    Compare the following two product analysis texts
     {{ analysis1 }}
     {{ analysis2 }}
 
-    Provide the following information:
+    Provide the following information
+    - The name of each product (make sure they are concise and avoid unnecessary words)
     - A summary comparing the two products
-    - Product 1 score out of 100 (In the format xx/100)
-    - Product 2 score out of 100 (In the format xx/100)
-    - List of advantages of product 1 over product 2
-    - List of disadvantages of product 1 over product 2
-    - List of advantages of product 2 over product 1
-    - List of disadvantages of product 2 over product 1
-    - Which product is recommended based on the analysis
+    - Specifications of each product in a structured format
+    - The sentiment rating for each product.
+    - Indicate if the sentiment for each product is highly positive, positive, neutral, negative, or highly negative.
+
+    Very briefly compare the two products under the following headings:
+    - Price & Value for Money
+    - Sound Quality
+    - Comfort & Fit
+    - Battery Life & Charging
+    - Connectivity & Compatibility
+    - Features & Controls
+    - Call Quality & Microphone Performance
+    - Brand & Warranty
+    - Reviews & User Feedback
+    - Availability & Local Factors
+
+
+    - Based on the comparison, recommend the better product
     
     {{ ctx.output_format }}
   "#
@@ -62,42 +109,10 @@ test compareAnalysisTest {
   functions [CompareAnalysis]
   args {
     analysis1 #"
-      Sony Cyber-shot RX10
-      Summary: The Sony Cyber-shot RX10 is a high-end bridge camera with a 20.2 Megapixel '1-inch' Exmor R CMOS sensor, a 24-200mm constant f2.8 aperture lens, and a range of features that cater to both photography and videography enthusiasts. It offers impressive build quality, a versatile zoom range, excellent image quality, and a comprehensive set of manual controls and advanced options for video recording.
-
-      Sentiment Score: 92/100
-
-      Pros:
-
-      High-quality 20.2 Megapixel sensor for excellent image quality
-      Versatile 24-200mm constant f2.8 aperture lens
-      Impressive build quality and weather sealing
-      Comprehensive manual controls and advanced options for video recording
-      Built-in Wi-Fi and NFC for wireless connectivity
-      Cons:
-
-      Basic remote control and limited functions through the smartphone app
-      Limited continuous autofocus performance
-      Relatively high price compared to competitors with smaller sensors
+      
       "#
     analysis2 #"
-      Fujifilm instax 99
-      Summary: The Fujifilm instax mini 99 is a highly advanced analogue instant camera that offers a wide range of features for users who want more control and creativity in their instant photography. It provides options for exposure control, double exposure, coloured LED effects, and various shooting modes, making it a versatile and fun camera to use.
-
-      Sentiment Score: 92/100
-
-      Pros:
-
-      Wide range of advanced features for an analogue instant camera
-      Control over exposure settings and colour effects
-      Innovative use of physical iris and internal LEDs for creative effects
-      Ability to handle a broad range of shooting conditions
-      Great for users looking to upgrade to a more advanced instant camera without going digital
-      Cons:
-
-      Limited composition accuracy with the optical viewfinder
-      No selfie mirror for easier selfie composition
-      Lack of lockable dials for exposure and colour effects settings
+      
       "#
 
   }
