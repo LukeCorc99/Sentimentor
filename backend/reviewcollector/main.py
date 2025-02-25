@@ -5,6 +5,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from dotenv import load_dotenv
 import os
+import urllib.parse
 
 # Load environment variables from .env. This helps to keep API key hidden.
 load_dotenv()
@@ -75,6 +76,12 @@ def filterRepeatedProductReviews(reviews):
     return repeatedReviews
 
 
+def getAmazonLink(name):
+    amazonLink = "https://www.amazon.com/s?k="
+    amazonProduct = urllib.parse.quote(name)
+    return f"{amazonLink}{amazonProduct}"
+
+
 @app.route("/productreviews", methods=["GET"])
 def getProductReviews():
     try:
@@ -102,6 +109,7 @@ if __name__ == "__main__":
 
     # Upload the filtered product reviews to Firestore
     for item in repeatedReviews:
+        item["amazonLink"] = getAmazonLink(item["name"])
         collRef.add(item)
         uploadCount += 1
 

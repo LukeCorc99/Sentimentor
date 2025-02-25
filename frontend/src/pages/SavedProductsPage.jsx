@@ -55,12 +55,10 @@ const SavedProductsPage = () => {
     return (
         <div className="appcontainer">
             <h1>Saved Products</h1>
-            {/* If there are saved products, display them in a list */}
             {saved.length > 0 ? (
-                <ul className="saved-products-list">
+                <ul>
                     {saved.map((product, index) => (
-                        <li key={index} className="saved-product-item">
-                            {/* Display product details */}
+                        <li key={index}>
                             <h3>{product.name}</h3>
                             {product.image && (
                                 <img
@@ -70,23 +68,66 @@ const SavedProductsPage = () => {
                                     referrerPolicy="no-referrer"
                                 />
                             )}
+
+                            {product.links && product.links.length > 0 && (
+                                <div>
+                                    {product.links.map((link, index) => (
+                                        <a
+                                            key={index}
+                                            href={link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ marginRight: "10px" }}
+                                        >
+                                            View Product Review {index + 1}
+                                        </a>
+                                    ))}
+                                </div>
+                            )}
+
                             <p><strong>Summary:</strong> {product.analysisContent.summary}</p>
-                            <p><strong>Sentiment Score:</strong> {product.analysisContent.score}</p>
-                            <p><strong>Pros:</strong></p>
+                            <p><strong>Price:</strong> {product.analysisContent.price} <strong>Source:</strong> {product.analysisContent.priceSource} </p>
+
+                            {product.amazonLink && (
+                                <div>
+                                    <a
+                                        href={product.amazonLink}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        Buy on Amazon
+                                    </a>
+                                </div>
+                            )}
+
+                            <h4>Specifications:</h4>
                             <ul>
-                                {product.analysisContent.pros.map((pro, idx) => (
-                                    <li key={idx}>{pro}</li>
+                                {product.analysisContent.specifications.map((spec, idx) => (
+                                    <li key={idx}>{spec}</li>
                                 ))}
                             </ul>
-                            <p><strong>Cons:</strong></p>
-                            <ul>
-                                {product.analysisContent.cons.map((con, idx) => (
-                                    <li key={idx}>{con}</li>
-                                ))}
-                            </ul>
-                            <a href={product.link} target="_blank" rel="noopener noreferrer">
-                                View Product
-                            </a>
+
+                            <div>
+                                <p><strong>Overall Sentiment Rating:  </strong>
+                                    {product.analysisContent.sentimentRating} - <strong> {product.analysisContent.sentiment} </strong>
+                                </p>
+
+
+                                <h4>Sentiment Breakdown by Category:</h4>
+                                <ul>
+                                    <li><strong>Value for Money:</strong> {product.analysisContent.priceValue}</li>
+                                    <li><strong>Sound Quality:</strong> {product.analysisContent.soundQuality}</li>
+                                    <li><strong>Comfort & Fit:</strong> {product.analysisContent.comfortFit}</li>
+                                    <li><strong>Battery Life & Charging:</strong> {product.analysisContent.batteryLife}</li>
+                                    <li><strong>Connectivity & Compatibility:</strong> {product.analysisContent.connectivity}</li>
+                                    <li><strong>Features & Controls:</strong> {product.analysisContent.featuresControls}</li>
+                                    <li><strong>Call Quality & Microphone Performance:</strong> {product.analysisContent.callQuality}</li>
+                                    <li><strong>Brand & Warranty:</strong> {product.analysisContent.brandWarranty}</li>
+                                    <li><strong>Reviews & User Feedback:</strong> {product.analysisContent.userFeedback}</li>
+                                    <li><strong>Availability & Local Factors:</strong> {product.analysisContent.availability}</li>
+                                </ul>
+                            </div>
+
                             <button onClick={() => deleteProduct(product)} className="analyzebutton">
                                 Delete
                             </button>

@@ -37,6 +37,8 @@ class StreamState(BaseModel, Generic[T]):
 class ProductAnalysis(BaseModel):
     name: Optional[str] = None
     summary: Optional[str] = None
+    price: Optional[str] = None
+    priceSource: Optional[str] = None
     specifications: List[str]
     priceValue: Optional[str] = None
     soundQuality: Optional[str] = None
@@ -55,6 +57,10 @@ class ProductComparison(BaseModel):
     name1: Optional[str] = None
     name2: Optional[str] = None
     summary: Optional[str] = None
+    price1: Optional[str] = None
+    priceSource1: Optional[str] = None
+    price2: Optional[str] = None
+    priceSource2: Optional[str] = None
     specifications1: List[str]
     specifications2: List[str]
     score1: Optional[str] = None

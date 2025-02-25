@@ -1,6 +1,8 @@
 class ProductAnalysis {
   name string
   summary string
+  price string
+  priceSource string
   specifications string[]
   priceValue string
   soundQuality string
@@ -20,6 +22,10 @@ class ProductComparison {
   name1 string
   name2 string
   summary string
+  price1 string
+  priceSource1 string
+  price2 string
+  priceSource2 string
   specifications1 string[]
   specifications2 string[]
   score1 string
@@ -51,10 +57,12 @@ function AnalyzeProductReview(text: string) -> ProductAnalysis {
     Based on the review, extract the following data:
     - The product name (make sure it is concise and avoids unnecessary words)
     - A summary of the product
+    - Price (Display in euros, in the format €x.xx)
+    - Specific source of product price (Must be from a retailer, if not, an official website. "Product listing", "announcement", etc. are not valid sources)
     - Product specifications in a structured format
 
     Provide very brief analysis under the following headings:
-    - Price & Value for Money
+    - Value for Money (not the price itself, but the value the product offers for the price)
     - Sound Quality
     - Comfort & Fit
     - Battery Life & Charging
@@ -65,7 +73,7 @@ function AnalyzeProductReview(text: string) -> ProductAnalysis {
     - Reviews & User Feedback
     - Availability & Local Factors
 
-    - Based on the above categories and the review, generate an overall sentiment rating in the format x.xx/5.00. Score between 0.00 and 1.00 if highly negative, 1.01 and 2.00 if negative, 2.01 and 3.00 if neutral, 3.01 and 4.00 if positive, and 4.01 and 5.00 if highly positive.
+    - Based on the above categories and the review, generate an overall sentiment rating, displayed in the format x.xx/5.00. Score between 0.00 and 1.00 if highly negative, 1.01 and 2.00 if negative, 2.01 and 3.00 if neutral, 3.01 and 4.00 if positive, and 4.01 and 5.00 if highly positive.
     - Indicate if the sentiment rating is highly Positive, Positive, Neutral, Negative, or Highly Negative.
     
     {{ ctx.output_format }}
@@ -82,12 +90,14 @@ function CompareAnalysis(analysis1: string, analysis2: string) -> ProductCompari
     Provide the following information
     - The name of each product (make sure they are concise and avoid unnecessary words)
     - A summary comparing the two products
+    - Price of both products (Display in euros, in the format €x.xx)
+    - Specific source of price of both products (Must be from a retailer, if not, an official website. "Product listing", "announcement", etc. are not valid sources)
     - Specifications of each product in a structured format
-    - The sentiment rating for each product.
+    - The sentiment rating for each product (in the format x.xx/5.00)
     - Indicate if the sentiment for each product is highly positive, positive, neutral, negative, or highly negative.
 
     Very briefly compare the two products under the following headings:
-    - Price & Value for Money
+    - Value for Money
     - Sound Quality
     - Comfort & Fit
     - Battery Life & Charging
@@ -99,7 +109,7 @@ function CompareAnalysis(analysis1: string, analysis2: string) -> ProductCompari
     - Availability & Local Factors
 
 
-    - Based on the comparison, recommend the better product
+    - Based on the comparison, recommend the better product. Note if a product is significantly cheaper or has a major advantage in any category.
     
     {{ ctx.output_format }}
   "#

@@ -62,39 +62,32 @@ const ProductComparatorPage = () => {
         <div className="appcontainer">
             <h1>Product Comparator</h1>
 
-            {/* Current product display */}
             {productOne && (
                 <div>
                     <h2>{productOne.name}</h2>
                     {productOne.image && (
-                                <img
-                                    src={productOne.image}
-                                    alt={productOne.name}
-                                    className="reviewimage"
-                                    referrerPolicy="no-referrer"
-                                />
-                            )}
+                        <img src={productOne.image} alt={productOne.name} className="reviewimage" referrerPolicy="no-referrer" />
+                    )}
                     <p><strong>Summary:</strong> {productOne.analysisContent.summary}</p>
-                    <p><strong>Sentiment Score:</strong> {productOne.analysisContent.score}</p>
-                    <p><strong>Pros:</strong></p>
+                    <p><strong>Price:</strong> {productOne.analysisContent.price} <strong>Source:</strong> {productOne.analysisContent.priceSource}</p>
+
+                    <h4>Specifications:</h4>
                     <ul>
-                        {productOne.analysisContent.pros.map((pro, idx) => (
-                            <li key={idx}>{pro}</li>
+                        {productOne.analysisContent.specifications.map((spec, idx) => (
+                            <li key={idx}>{spec}</li>
                         ))}
                     </ul>
-                    <p><strong>Cons:</strong></p>
-                    <ul>
-                        {productOne.analysisContent.cons.map((con, idx) => (
-                            <li key={idx}>{con}</li>
-                        ))}
-                    </ul>
+
+                    <div>
+                        <h4>Overall Sentiment Rating:</h4>
+                        <p><strong>{productOne.analysisContent.sentimentRating}</strong> - {` ${productOne.analysisContent.sentiment}`}</p>
+                    </div>
                 </div>
             )}
 
-            {/* Dropdown menu to select a product */}
             <div>
-                <label htmlFor="product-select">Compare with:</label>
-                <select id="product-select" onChange={selectProductToCompare} defaultValue="">
+                <label htmlFor="productselect">Compare with:</label>
+                <select id="productselect" onChange={selectProductToCompare} defaultValue="">
                     <option value="" disabled>Select a product</option>
                     {saved.map((savedProduct) => (
                         <option key={savedProduct.id} value={savedProduct.id}>
@@ -104,69 +97,79 @@ const ProductComparatorPage = () => {
                 </select>
             </div>
 
-            {/* Display the selected product from the dropdown */}
             {productTwo && (
                 <div>
                     <h2>{productTwo.name}</h2>
                     {productTwo.image && (
-                                <img
-                                    src={productTwo.image}
-                                    alt={productTwo.name}
-                                    className="reviewimage"
-                                    referrerPolicy="no-referrer"
-                                />
-                            )}
+                        <img src={productTwo.image} alt={productTwo.name} className="reviewimage" referrerPolicy="no-referrer" />
+                    )}
                     <p><strong>Summary:</strong> {productTwo.analysisContent.summary}</p>
-                    <p><strong>Sentiment Score:</strong> {productTwo.analysisContent.score}</p>
-                    <p><strong>Pros:</strong></p>
+                    <p><strong>Price:</strong> {productTwo.analysisContent.price} <strong>Source:</strong> {productTwo.analysisContent.priceSource}</p>
+
+                    <h4>Specifications:</h4>
                     <ul>
-                        {productTwo.analysisContent.pros.map((pro, idx) => (
-                            <li key={idx}>{pro}</li>
+                        {productTwo.analysisContent.specifications.map((spec, idx) => (
+                            <li key={idx}>{spec}</li>
                         ))}
                     </ul>
-                    <p><strong>Cons:</strong></p>
-                    <ul>
-                        {productTwo.analysisContent.cons.map((con, idx) => (
-                            <li key={idx}>{con}</li>
-                        ))}
-                    </ul>
+
+                    <div>
+                        <h4>Overall Sentiment Rating:</h4>
+                        <p><strong>{productTwo.analysisContent.sentimentRating}</strong> - {` ${productTwo.analysisContent.sentiment}`}</p>
+                    </div>
+
                     <button onClick={() => compareAnalysis(productOne, productTwo)} className="analyzebutton">
                         Compare Products
                     </button>
                 </div>
             )}
-            {/* Display the comparison result */}
+
             {comparisonResult && (
-                <div className="comparison-result">
+                <div>
                     <h2>Comparison Result</h2>
+
                     <p><strong>Summary:</strong> {comparisonResult.summary}</p>
-                    <p><strong>{productOne.name} Sentiment Score:</strong> {comparisonResult.score1}</p>
-                    <p><strong>{productTwo.name} Sentiment Score:</strong> {comparisonResult.score2}</p>
-                    <p><strong>Advantages of {productOne.name} over {productTwo.name}:</strong></p>
+
+                    <p><strong>{comparisonResult.name1} Price:</strong> {comparisonResult.price1} <strong>Source:</strong> {comparisonResult.priceSource1}</p>
+                    <p><strong>{comparisonResult.name2} Price:</strong> {comparisonResult.price2} <strong>Source:</strong> {comparisonResult.priceSource2}</p>
+
+                    <h4>Specifications:</h4>
+                    <div>
+                        <div>
+                            <h5>{comparisonResult.name1} Specifications:</h5>
+                            <ul>
+                                {comparisonResult.specifications1.map((spec, idx) => (
+                                    <li key={idx}>{spec}</li>
+                                ))}
+                            </ul>
+                        </div>
+                        <div>
+                            <h5>{comparisonResult.name2} Specifications:</h5>
+                            <ul>
+                                {comparisonResult.specifications2.map((spec, idx) => (
+                                    <li key={idx}>{spec}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <h4>Feature Comparisons:</h4>
                     <ul>
-                        {comparisonResult.advantages1.map((adv, idx) => (
-                            <li key={idx}>{adv}</li>
-                        ))}
+                        <li><strong>Price & Value:</strong> {comparisonResult.priceValueComparison}</li>
+                        <li><strong>Sound Quality:</strong> {comparisonResult.soundQualityComparison}</li>
+                        <li><strong>Comfort & Fit:</strong> {comparisonResult.comfortFitComparison}</li>
+                        <li><strong>Battery Life & Charging:</strong> {comparisonResult.batteryLifeComparison}</li>
+                        <li><strong>Connectivity & Compatibility:</strong> {comparisonResult.connectivityComparison}</li>
+                        <li><strong>Features & Controls:</strong> {comparisonResult.featuresControlsComparison}</li>
+                        <li><strong>Call Quality & Microphone Performance:</strong> {comparisonResult.callQualityComparison}</li>
+                        <li><strong>Brand & Warranty:</strong> {comparisonResult.brandWarrantyComparison}</li>
+                        <li><strong>Reviews & User Feedback:</strong> {comparisonResult.userFeedbackComparison}</li>
+                        <li><strong>Availability:</strong> {comparisonResult.availabilityComparison}</li>
+                        <li><strong>Overall Sentiment:</strong> {comparisonResult.overallSentimentComparison}</li>
                     </ul>
-                    <p><strong>Disadvantages of {productOne.name} over {productTwo.name}:</strong></p>
-                    <ul>
-                        {comparisonResult.disadvantages1.map((dis, idx) => (
-                            <li key={idx}>{dis}</li>
-                        ))}
-                    </ul>
-                    <p><strong>Advantages of {productTwo.name} over {productOne.name}:</strong></p>
-                    <ul>
-                        {comparisonResult.advantages2.map((adv, idx) => (
-                            <li key={idx}>{adv}</li>
-                        ))}
-                    </ul>
-                    <p><strong>Disadvantages of {productTwo.name} over {productOne.name}:</strong></p>
-                    <ul>
-                        {comparisonResult.disadvantages2.map((dis, idx) => (
-                            <li key={idx}>{dis}</li>
-                        ))}
-                    </ul>
-                    <p><strong>Recommendation:</strong> {comparisonResult.recommendation}</p>
+
+                    <h4>Final Recommendation:</h4>
+                    <p>{comparisonResult.recommendation}</p>
                 </div>
             )}
         </div>

@@ -43,6 +43,8 @@ def all_succeeded(checks: Dict[CheckName, Check]) -> bool:
 class ProductAnalysis(BaseModel):
     name: str
     summary: str
+    price: str
+    priceSource: str
     specifications: List[str]
     priceValue: str
     soundQuality: str
@@ -61,6 +63,10 @@ class ProductComparison(BaseModel):
     name1: str
     name2: str
     summary: str
+    price1: str
+    priceSource1: str
+    price2: str
+    priceSource2: str
     specifications1: List[str]
     specifications2: List[str]
     score1: str

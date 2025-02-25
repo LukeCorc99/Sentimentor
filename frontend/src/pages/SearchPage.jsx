@@ -28,8 +28,8 @@ const SearchPage = () => {
       }
     };
 
-    fetchProducts(); 
-  }, []); 
+    fetchProducts();
+  }, []);
 
   const saveProduct = async (product) => {
     try {
@@ -64,7 +64,7 @@ const SearchPage = () => {
     fetch(`http://127.0.0.1:8081/sentimentanalyzer?name=${encodeURIComponent(cameraName)}`)
       .then((response) => response.json())
       .then((json) => {
-        console.log("Analyzed Product:", json); 
+        console.log("Analyzed Product:", json);
         setReviewData(json); // Update the reviewData state with the sentiment analysis data
       });
   };
@@ -116,7 +116,18 @@ const SearchPage = () => {
             {reviewData.analysisContent && (
               <div>
                 <p><strong>Summary:</strong> {reviewData.analysisContent.summary}</p>
-
+                <p><strong>Price:</strong> {reviewData.analysisContent.price} <strong>Source:</strong> {reviewData.analysisContent.priceSource} </p>
+                {reviewData.amazonLink && (
+                  <div>
+                    <a
+                      href={reviewData.amazonLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Buy on Amazon
+                    </a>
+                  </div>
+                )}
                 <h4>Specifications:</h4>
                 <ul>
                   {reviewData.analysisContent.specifications.map((spec, index) => (
@@ -124,16 +135,15 @@ const SearchPage = () => {
                   ))}
                 </ul>
 
-                <div className="sentiment-breakdown">
-                  <h4>Overall Sentiment Rating:</h4>
-                  <p>
-                    <strong>{reviewData.analysisContent.sentimentRating} </strong> -
-                    {` ${reviewData.analysisContent.sentiment}`}
+                <div>
+                  <p><strong>Overall Sentiment Rating:  </strong>
+                    {reviewData.analysisContent.sentimentRating} - <strong> {reviewData.analysisContent.sentiment} </strong>
                   </p>
+
 
                   <h4>Sentiment Breakdown by Category:</h4>
                   <ul>
-                    <li><strong>Price & Value for Money:</strong> {reviewData.analysisContent.priceValue}</li>
+                    <li><strong>Value for Money:</strong> {reviewData.analysisContent.priceValue}</li>
                     <li><strong>Sound Quality:</strong> {reviewData.analysisContent.soundQuality}</li>
                     <li><strong>Comfort & Fit:</strong> {reviewData.analysisContent.comfortFit}</li>
                     <li><strong>Battery Life & Charging:</strong> {reviewData.analysisContent.batteryLife}</li>
@@ -171,7 +181,7 @@ const SearchPage = () => {
                   )}
                   <h3>{review.name}</h3>
                   <button
-                    onClick={() => analyzeReview(review.name)} 
+                    onClick={() => analyzeReview(review.name)}
                   >
                     Analyze
                   </button>
