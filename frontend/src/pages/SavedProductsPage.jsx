@@ -69,7 +69,7 @@ const SavedProductsPage = () => {
                                 />
                             )}
 
-                            {product.links && product.links.length > 0 && (
+                            {product.links && (
                                 <div>
                                     {product.links.map((link, index) => (
                                         <a

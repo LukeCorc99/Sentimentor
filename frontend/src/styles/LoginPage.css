@@ -1,5 +1,6 @@
 html, body {
   background: linear-gradient(to bottom, #0c1d2b, #1e3c57, #3b6b8f);
+  overflow-x: hidden;
 }
 
 .login-container {

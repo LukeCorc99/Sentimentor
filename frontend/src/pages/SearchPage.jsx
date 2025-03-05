@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import '../styles/SearchPage.css'; // Import the CSS file for styling
 import { db } from "../firebaseConfig"; // Path to firebaseConfig.js
 import { collection, getDocs } from "firebase/firestore"; // Firestore functions
+import { FaAmazon, FaSearch, FaStar } from "react-icons/fa";
 
 // Search page component
 const SearchPage = () => {
@@ -71,128 +72,124 @@ const SearchPage = () => {
 
   return (
     <div className="appcontainer">
-      <h1>Sentimentor</h1>
-      <div>
-        <input
-          type="text"
-          placeholder="Search for a product..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="searchinput"
-        />
-        <button onClick={handleSearch} className="searchbutton">
-          Search
-        </button>
-      </div>
-      <div>
-        {reviewData && (
-          <div>
-            <h3>{reviewData.analysisContent.name}</h3>
-            {reviewData.image && (
-              <img
-                src={reviewData.image}
-                alt={reviewData.name}
-                className="reviewimage"
-                referrerPolicy="no-referrer"
-              />
-            )}
-
-            {reviewData.links && reviewData.links.length > 0 && (
-              <div>
-                {reviewData.links.map((link, index) => (
-                  <a
-                    key={index}
-                    href={link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ marginRight: "10px" }}
-                  >
-                    View Product Review {index + 1}
-                  </a>
-                ))}
-              </div>
-            )}
-
-            {reviewData.analysisContent && (
-              <div>
-                <p><strong>Summary:</strong> {reviewData.analysisContent.summary}</p>
-                <p><strong>Price:</strong> {reviewData.analysisContent.price} <strong>Source:</strong> {reviewData.analysisContent.priceSource} </p>
-                {reviewData.amazonLink && (
-                  <div>
-                    <a
-                      href={reviewData.amazonLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Buy on Amazon
-                    </a>
-                  </div>
-                )}
-                <h4>Specifications:</h4>
+      <div className="reviewsContainer">
+        <div className="searchContainer">
+          <div className="searchBar">
+            <input
+              type="text"
+              placeholder="Search for a product..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="searchInput"
+            />
+            <button onClick={handleSearch} className="searchButton">
+              <FaSearch className="searchIcon" />
+            </button>
+          </div>
+          {isSearching && (
+            <div className="productList">
+              {filteredReviews.length > 0 ? (
                 <ul>
-                  {reviewData.analysisContent.specifications.map((spec, index) => (
-                    <li key={index}>{spec}</li>
+                  {filteredReviews.map((review, index) => (
+                    <li key={index} className="productItem">
+                      {review.image && (
+                        <img
+                          src={review.image}
+                          alt={review.name}
+                          className="reviewImage"
+                          referrerPolicy="no-referrer"
+                        />
+                      )}
+                      <div className="productInfoContainer">
+                        <h3 className="productName">{review.name}</h3>
+
+                        <div className="productActions">
+                          <button className="analyzeButton" onClick={() => analyzeReview(review.name)}>
+                            Analyze
+                          </button>
+                          <span className="reviewSources">Review Sources:</span>
+                          {review.links.map((link, linkIndex) => (
+                            <a key={linkIndex} href={link} target="_blank" rel="noopener noreferrer" className="reviewLinkButton">
+                              {linkIndex + 1}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    </li>
+
                   ))}
                 </ul>
-
-                <div>
-                  <p><strong>Overall Sentiment Rating:  </strong>
-                    {reviewData.analysisContent.sentimentRating} - <strong> {reviewData.analysisContent.sentiment} </strong>
-                  </p>
-
-
-                  <h4>Sentiment Breakdown by Category:</h4>
-                  <ul>
-                    <li><strong>Value for Money:</strong> {reviewData.analysisContent.priceValue}</li>
-                    <li><strong>Sound Quality:</strong> {reviewData.analysisContent.soundQuality}</li>
-                    <li><strong>Comfort & Fit:</strong> {reviewData.analysisContent.comfortFit}</li>
-                    <li><strong>Battery Life & Charging:</strong> {reviewData.analysisContent.batteryLife}</li>
-                    <li><strong>Connectivity & Compatibility:</strong> {reviewData.analysisContent.connectivity}</li>
-                    <li><strong>Features & Controls:</strong> {reviewData.analysisContent.featuresControls}</li>
-                    <li><strong>Call Quality & Microphone Performance:</strong> {reviewData.analysisContent.callQuality}</li>
-                    <li><strong>Brand & Warranty:</strong> {reviewData.analysisContent.brandWarranty}</li>
-                    <li><strong>Reviews & User Feedback:</strong> {reviewData.analysisContent.userFeedback}</li>
-                    <li><strong>Availability & Local Factors:</strong> {reviewData.analysisContent.availability}</li>
-                  </ul>
-                </div>
-
-                <button onClick={() => saveProduct(reviewData)} className="analyzebutton">
-                  Save
-                </button>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
-      {isSearching && (
-        <div>
-          {filteredReviews.length > 0 ? (
-            <ul>
-              {filteredReviews.map((review, index) => (
-                <li key={index} className="reviewlink">
-                  {review.image && (
-                    <img
-                      src={review.image}
-                      alt={review.name}
-                      className="reviewimage"
-                      referrerPolicy="no-referrer"
-                    />
-                  )}
-                  <h3>{review.name}</h3>
-                  <button
-                    onClick={() => analyzeReview(review.name)}
-                  >
-                    Analyze
-                  </button>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No reviews found.</p>
+              ) : (
+                <p>No reviews found.</p>
+              )}
+            </div>
           )}
         </div>
-      )}
+        <div className="analysisContainer">
+          {reviewData && (
+            <div>
+              <div className="productDetails">
+                {reviewData.image && (
+                  <div className="imageContainer">
+                    <img src={reviewData.image} alt={reviewData.name} className="reviewImageAnalysis" referrerPolicy="no-referrer" />
+                  </div>
+                )}
+
+                <div className="productInfo">
+                  <h2 className="productTitle">{reviewData.analysisContent.name}</h2>
+                  <p className="productSummary"><strong>Summary:</strong> {reviewData.analysisContent.summary}</p>
+                </div>
+
+                <div className="priceInfo">
+                  <h2 className="priceText">
+                    Price: <span className="priceNumber">{reviewData.analysisContent.price}</span>
+                  </h2>
+                  <p className="source"> (Source: {reviewData.analysisContent.priceSource})</p>
+                  {reviewData.amazonLink && (
+                    <a href={reviewData.amazonLink} target="_blank" rel="noopener noreferrer" className="amazonButton">
+                      <FaAmazon className="amazonIcon" />
+                      Buy on Amazon
+                    </a>
+                  )}
+                </div>
+              </div>
+              <div className="sentimentRating">
+                <h3 className="ratingHeader">Overall Sentiment Rating</h3>
+
+                <div className="starRating">
+                  {[...Array(5)].map((_, index) => (
+                    <FaStar key={index} className={index < Math.round(reviewData.analysisContent.sentimentRating) ? "star filledStar" : "star"} />
+                  ))}
+                </div>
+
+                <p className={`sentimentBadge ${reviewData.analysisContent.sentiment.toLowerCase()}`}>
+                  {reviewData.analysisContent.sentimentRating}/5.00 - {reviewData.analysisContent.sentiment}
+                </p>
+              </div>
+
+              <div className="sentimentBreakdown">
+                <h3 className="breakdownHeader" >Sentiment Breakdown by Category</h3>
+                <div className="sentimentGrid">
+                  <div className="sentimentItem"><strong>Value for Money:</strong> {reviewData.analysisContent.valueForMoney}</div>
+                  <div className="sentimentItem"><strong>Sound Quality:</strong> {reviewData.analysisContent.soundQuality}</div>
+                  <div className="sentimentItem"><strong>Comfort & Fit:</strong> {reviewData.analysisContent.comfortFit}</div>
+                  <div className="sentimentItem"><strong>Battery Life & Charging:</strong> {reviewData.analysisContent.batteryLife}</div>
+                  <div className="sentimentItem"><strong>Connectivity:</strong> {reviewData.analysisContent.connectivity}</div>
+                  <div className="sentimentItem"><strong>Features & Controls:</strong> {reviewData.analysisContent.featuresControls}</div>
+                  <div className="sentimentItem"><strong>Call Quality:</strong> {reviewData.analysisContent.callQuality}</div>
+                  <div className="sentimentItem"><strong>Brand & Warranty:</strong> {reviewData.analysisContent.brandWarranty}</div>
+                  <div className="sentimentItem"><strong>Reviews & User Feedback:</strong> {reviewData.analysisContent.userFeedback}</div>
+                  <div className="sentimentItem"><strong>Availability:</strong> {reviewData.analysisContent.availability}</div>
+                </div>
+              </div>
+
+              <button onClick={() => saveProduct(reviewData)} className="saveButton">
+                Save Product
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

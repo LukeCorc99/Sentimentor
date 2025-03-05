@@ -2,17 +2,11 @@ Flask==2.3.3
 flask-cors==3.0.10
 Scrapy==2.6.2
 requests==2.31.0
-pyOpenSSL==22.0.0
-transformers==4.34.0 # Requires Rust programming language to be installed for tokenizers: https://www.rust-lang.org/tools/install
-torch>=1.13.0
-tensorflow>=2.11.0 
-flax>=0.6.10
-requests>=2.31.0
 trafilatura==2.0.0
-lxml_html_clean==0.4.1
 pytest==7.4.0
-pydantic==2.0.0
-python-dotenv==1.0.0
+python-dotenv==1.0.0 # Only used to run Scrapy from the command line. Has little significance in the actual code.
 firebase-admin==6.1.0
+json==2.0.9
+
 
 

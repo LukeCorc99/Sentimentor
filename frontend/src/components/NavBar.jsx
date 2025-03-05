@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { auth } from '../firebaseConfig';
+import { FaHome, FaBookmark, FaBalanceScale, FaUserCircle, FaPowerOff } from 'react-icons/fa';
 import '../styles/NavBar.css';
 
 const NavBar = () => {
   const [userEmail, setUserEmail] = useState('');
+  const [showPopover, setShowPopover] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,14 +28,43 @@ const NavBar = () => {
 
   return (
     <nav className="navbar">
-      <div className="nav-links">
-        <Link to="/search">Home</Link> |{' '}
-        <Link to="/saved">Saved Products</Link> |{' '}
-        <Link to="/compare">Compare Products</Link>
+      <div className="nav-left">
+        <button className="signout-btn" onClick={handleSignOut}>
+          <FaPowerOff className="icon" />
+          <span>Sign Out</span>
+        </button>
       </div>
-      <div className="nav-actions">
-        <span>{userEmail || 'Guest'}</span>
-        <button onClick={handleSignOut}>Sign Out</button>
+
+      <div className="nav-center">
+        <div className="segment">
+          <Link to="/search" className="segment-btn">
+            <FaHome className="icon" />
+            <span>Home</span>
+          </Link>
+          <Link to="/saved" className="segment-btn">
+            <FaBookmark className="icon" />
+            <span>Saved Products</span>
+          </Link>
+          <Link to="/compare" className="segment-btn">
+            <FaBalanceScale className="icon" />
+            <span>Compare Products</span>
+          </Link>
+        </div>
+      </div>
+
+      <div className="nav-right">
+        <div className="popover-container">
+          {showPopover && (
+            <div className="popover">
+              <p>Currently logged in as:</p>
+              <p><strong>{userEmail || 'Guest'}</strong></p>
+            </div>
+          )}
+          <button className="account-btn" onClick={() => setShowPopover(!showPopover)}>
+            <FaUserCircle className="icon" />
+            <span>Account</span>
+          </button>
+        </div>
       </div>
     </nav>
   );

@@ -1,50 +1,326 @@
 .appcontainer {
   width: 100vw;
   min-height: 100vh; 
-  margin-top: 0;
-  padding: 20px;
+  margin-top: 70px;
   box-sizing: border-box;
+  color: white;
+  overflow-x: hidden;
+}
+
+.searchBar {
+  display: flex;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-right: 20px;
+}
+
+.searchInput {
+  width: 100%;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.reviewsContainer {
+  display: flex;
+  padding: 20px;
+  background: #1e2a38;
+  width: 100vw;
+}
+
+.searchContainer {
+  width: 40vw;
+}
+
+
+.analysisContainer {
+  background: #1e2a38;
+  padding: 20px;
+  border-radius: 10px;
+  color: #fff;
+  width: 60vw;
+  margin-right: 40px;
+}
+
+.reviewImage {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 3px solid black;
+  display: block;
+}
+
+.reviewImageAnalysis {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 3px solid black;
+  display: block;
+}
+
+.searchButton {
+  margin-left: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #ffffff;
+  color: #5a5a5a;
+  transition: background-color 0.35s ease;
+}
+
+.searchButton:hover {
+  background-color: #b5b6b8;
+}
+
+.searchIcon {
+  font-size: 25px; 
+}
+
+.productList ul {
+  padding: 0;
+  margin: 0;
+  width: 97.5%;
+}
+
+.productItem {
+  display: flex;
+  align-items: center; 
+  padding: 10px;
+  border-bottom: 1px solid #ccc; 
+}
+.productInfoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: 20px;
+}
+
+.productName {
+  font-size: 25px;
+  font-weight: bold;
+  margin-top: 0px;
+}
+
+.analyzeButton {
+  padding: 4px 12px;
+  font-size: 18px;
+  border: none;
+  border-radius: 4px;
+  background-color: #ffffff;
+  transition: background-color 0.35s ease;
+}
+
+.analyzeButton:hover {
+  background-color: #b5b6b8;
+}
+
+.productActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.reviewSources {
+  font-size: 18px;
+  color: #ccc;
+}
+
+.reviewLinkButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  background-color: #ffffff;
+  color: #000;
+  border-radius: 50%; 
+  border: none;
+  transition: background-color 0.35s ease;
+}
+
+.reviewLinkButton:hover {
+  background-color: #999999;
+  color: #000;
+}
+
+
+.productDetails {
+  font-size: 18px;
+  margin-bottom: 15px;
+  margin-top: 0px;
+  background: #2a3d4f;
+  padding: 15px;
+  padding-bottom: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.imageContainer {
+  text-align: center;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  flex: 0.4;
+}
+
+.productInfo {
+  padding: 10px;
+  margin-right: 10px;
+  flex: 1;
+}
+
+.productTitle {
+  font-size: 35px;
+  margin-top: 0px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.productSummary {
+  font-size: 20px;
+  margin-top: 0px;
+}
+
+.priceInfo {
+  flex: 0.5;
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.priceText {
+  margin-bottom: 0px;
+  font-weight: normal;
+  margin-bottom: 5px;
+}
+
+.priceNumber {
+  font-size: 45px;
+  font-weight: bold;
+  margin-bottom: 0px;
+}
+
+.source {
+  font-weight: normal;
+  margin-top: 0px;
+}
+
+.amazonButton {
+  display: flex;
+  align-items: center; 
+  background: #ff9900;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  justify-content: center;
+  transition: background-color 0.35s ease;
+}
+
+.amazonButton:hover {
+  background: #bd7202;
   color: white;
 }
 
-.searchinput {
-    width: 50%;
-    padding: 12px;
-    font-size: 18px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
+.amazonIcon {
+  font-size: 25px;
+  margin-right: 10px;
+}
 
-  .reviewimage {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 3px solid black;
-    display: block;
-  }  
-  
-  .searchbutton {
-    margin-left: 10px;
-    padding: 12px 20px;
-    font-size: 18px;
-    border: none;
-    border-radius: 4px;
-    background-color: #007BFF;
-    color: #fff;
-    cursor: pointer;
-  }
-  
-  .searchbutton:hover {
-    background-color: #0056b3;
-  }
-  
-  .reviewlink a:hover {
-    text-decoration: underline;
-  }
-  
-  .analyzebutton {
-    border-radius: 8px;
-    border: 1px solid black;
-  }
-  
+.specsReviewsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.ratingHeader {
+  text-align: center;
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+
+.sentimentRating {
+  text-align: center;
+  font-size: 20px;
+}
+
+.sentimentBadge {
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.sentimentBadge.positive {
+  background: #28a745;
+}
+
+.sentimentBadge.neutral {
+  background: #ffc107;
+}
+
+.sentimentBadge.negative {
+  background: #dc3545;
+}
+
+.sentimentBreakdown {
+  margin-top: 15px;
+  font-size: 20px;
+}
+
+.breakdownHeader {
+  text-align: center;
+  font-size: 30px;
+}
+
+.sentimentGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.sentimentItem {
+  background: #2a3d4f;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.saveButton {
+  display: block;
+  width: 100%;
+  background: #007bff;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  margin-top: 15px;
+  background-color: #28a745;
+  transition: background-color 0.35s ease;
+}
+
+.saveButton:hover {
+  background: #1d7c34;
+}
+
+.starRating {
+  justify-content: center;
+}
+
+.star {
+  font-size: 50px;
+  color: #ccc;
+  margin-right: 4px;
+}
+
+.filledStar {
+  color: #ffd900;
+}

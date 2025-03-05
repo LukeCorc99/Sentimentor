@@ -47,7 +47,7 @@ def extractComparison(analysisOne, analysisTwo):
             "score2": response.score2,
             "sentiment1": response.sentiment1,
             "sentiment2": response.sentiment2,
-            "priceValueComparison": response.priceValueComparison,
+            "valueForMoneyComparison": response.valueForMoneyComparison,
             "soundQualityComparison": response.soundQualityComparison,
             "comfortFitComparison": response.comfortFitComparison,
             "batteryLifeComparison": response.batteryLifeComparison,

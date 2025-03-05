@@ -6,6 +6,8 @@ from firebase_admin import credentials, firestore
 from dotenv import load_dotenv
 import os
 import urllib.parse
+import re
+
 
 # Load environment variables from .env. This helps to keep API key hidden.
 load_dotenv()
@@ -35,45 +37,74 @@ def loadHeadphoneReviews():
         return json.load(file)
 
 
+def extractImageResolution(imageUrl):
+    if not imageUrl:
+        return 0
+    match = re.search(r"(\d{2,4})[xX](\d{2,4})", imageUrl)
+    if match:
+        width, height = map(int, match.groups())
+        return width * height
+    return 0
+
+
+def extractName(name):
+    words = name.lower().split()
+    keywords = [
+        word
+        for word in words
+        if word
+        not in {"the", "with", "and", "a", "for", "in", "on", "at", "by", "of", "to"}
+    ]
+    return " ".join(keywords[:3])
+
+
 def filterRepeatedProductReviews(reviews):
-    # Dictionary to keep track of the count of each product name
-    productCounts = {}
+    productGroups = {}
 
-    # Dictionary to store product details (name and a list of links)
-    productReviews = {}
-
-    # Iterate through the list of reviews to count occurrences of each product by 'name'
     for review in reviews:
         productName = review["name"]
         productLink = review["link"]
-        productImage = review["image"]
+        productImage = review.get("image", "")
+        coreName = extractName(productName)
 
-        # If the product name is encountered for the first time, initialize its count and details
-        if productName not in productCounts:
-            productCounts[productName] = 0  # Initialize count to 0
-            productReviews[productName] = {
-                "name": productName,
+        if coreName not in productGroups:
+            productGroups[coreName] = {
+                "name": [productName],
+                "shortestName": productName,
                 "links": [],
-                "image": productImage,
+                "image": productImage if productImage else "",
+                "highestQualityImage": productImage if productImage else "",
+                "maxResolution": extractImageResolution(productImage),
             }
+        else:
+            productGroups[coreName]["name"].append(productName)
 
-        # Increment the count for the product
-        productCounts[productName] += 1
+            if len(productName) < len(productGroups[coreName]["shortestName"]):
+                productGroups[coreName]["shortestName"] = productName
 
-        # Append the review link to the corresponding product in productReviews
-        productReviews[productName]["links"].append(productLink)
+            currentResolution = extractImageResolution(productImage)
+            if (
+                productImage
+                and currentResolution > productGroups[coreName]["maxResolution"]
+            ):
+                productGroups[coreName]["highestQualityImage"] = productImage
+                productGroups[coreName]["maxResolution"] = currentResolution
 
-        # If the product has an image, keep the first valid image encountered
-        if productReviews[productName]["image"] is None and productImage:
-            productReviews[productName]["image"] = productImage
+        productGroups[coreName]["links"].append(productLink)
 
-    # Filter out products that appear less than twice
-    repeatedReviews = [
-        productReviews[name] for name, count in productCounts.items() if count >= 2
+    return [
+        {
+            "name": details["shortestName"],
+            "links": details["links"],
+            "image": (
+                details["highestQualityImage"]
+                if details["highestQualityImage"]
+                else None
+            ),
+        }
+        for details in productGroups.values()
+        if len(details["name"]) >= 2
     ]
-
-    # Return the filtered list containing only products that appear at least twice
-    return repeatedReviews
 
 
 def getAmazonLink(name):

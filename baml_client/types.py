@@ -2,7 +2,7 @@
 #
 #  Welcome to Baml! To use this generated code, please run the following:
 #
-#  $ pip install baml
+#  $ pip install baml-py
 #
 ###############################################################################
 
@@ -46,7 +46,7 @@ class ProductAnalysis(BaseModel):
     price: str
     priceSource: str
     specifications: List[str]
-    priceValue: str
+    valueForMoney: str
     soundQuality: str
     comfortFit: str
     batteryLife: str
@@ -56,7 +56,7 @@ class ProductAnalysis(BaseModel):
     brandWarranty: str
     userFeedback: str
     availability: str
-    sentimentRating: str
+    sentimentRating: float
     sentiment: str
 
 class ProductComparison(BaseModel):
@@ -73,7 +73,7 @@ class ProductComparison(BaseModel):
     score2: str
     sentiment1: str
     sentiment2: str
-    priceValueComparison: str
+    valueForMoneyComparison: str
     soundQualityComparison: str
     comfortFitComparison: str
     batteryLifeComparison: str

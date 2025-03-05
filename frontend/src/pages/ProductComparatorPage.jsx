@@ -130,8 +130,8 @@ const ProductComparatorPage = () => {
 
                     <p><strong>Summary:</strong> {comparisonResult.summary}</p>
 
-                    <p><strong>{comparisonResult.name1} Price:</strong> {comparisonResult.price1} <strong>Source:</strong> {comparisonResult.priceSource1}</p>
-                    <p><strong>{comparisonResult.name2} Price:</strong> {comparisonResult.price2} <strong>Source:</strong> {comparisonResult.priceSource2}</p>
+                    <p><strong>{comparisonResult.name1} Price of Product One:</strong> {comparisonResult.price1} <strong>Source:</strong> {comparisonResult.priceSource1}</p>
+                    <p><strong>{comparisonResult.name2} Price of Product Two:</strong> {comparisonResult.price2} <strong>Source:</strong> {comparisonResult.priceSource2}</p>
 
                     <h4>Specifications:</h4>
                     <div>
@@ -155,7 +155,7 @@ const ProductComparatorPage = () => {
 
                     <h4>Feature Comparisons:</h4>
                     <ul>
-                        <li><strong>Price & Value:</strong> {comparisonResult.priceValueComparison}</li>
+                        <li><strong>Price & Value:</strong> {comparisonResult.valueForMoneyComparison}</li>
                         <li><strong>Sound Quality:</strong> {comparisonResult.soundQualityComparison}</li>
                         <li><strong>Comfort & Fit:</strong> {comparisonResult.comfortFitComparison}</li>
                         <li><strong>Battery Life & Charging:</strong> {comparisonResult.batteryLifeComparison}</li>

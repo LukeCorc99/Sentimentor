@@ -1,6 +1,120 @@
 .navbar {
-    background-color: white;
+    background-color: #ffffff;
     width: 100%;
-    padding: 10px;
+    padding: 10px 20px;
     position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.nav-left {
+    flex: 1;
+}
+
+.signout-btn {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.signout-btn:hover {
+    background: #ddd;
+}
+
+.signout-btn .icon {
+    margin-right: 8px;
+    font-size: 20px;
+}
+
+.nav-center {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+}
+
+.segment {
+    display: flex;
+    background: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.segment-btn {
+    text-decoration: none;
+    padding: 12px 20px;
+    color: #333;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    transition: background 0.3s;
+}
+
+.segment-btn .icon {
+    margin-right: 8px;
+    font-size: 22px;
+}
+
+.segment-btn:hover {
+    background: #ddd;
+}
+
+.nav-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end; 
+    position: relative;
+}
+
+.popover-container {
+    position: relative;
+}
+
+.account-btn {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: #333;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin-right: 30px;
+}
+
+.account-btn:hover {
+    background: #ddd;
+}
+
+.account-btn .icon {
+    margin-right: 8px;
+    font-size: 22px;
+}
+
+.popover {
+    position: absolute;
+    top: 40px;
+    right: 110%; 
+    background: white;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    z-index: 1000;
+    width: 200px;
+}
+
+.popover p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #333;
 }

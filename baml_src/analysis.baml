@@ -4,7 +4,7 @@ class ProductAnalysis {
   price string
   priceSource string
   specifications string[]
-  priceValue string
+  valueForMoney string
   soundQuality string
   comfortFit string
   batteryLife string
@@ -14,7 +14,7 @@ class ProductAnalysis {
   brandWarranty string
   userFeedback string
   availability string
-  sentimentRating string 
+  sentimentRating float
   sentiment string
 }
 
@@ -32,7 +32,7 @@ class ProductComparison {
   score2 string
   sentiment1 string
   sentiment2 string
-  priceValueComparison string
+  valueForMoneyComparison string
   soundQualityComparison string
   comfortFitComparison string
   batteryLifeComparison string
@@ -56,7 +56,7 @@ function AnalyzeProductReview(text: string) -> ProductAnalysis {
 
     Based on the review, extract the following data:
     - The product name (make sure it is concise and avoids unnecessary words)
-    - A summary of the product
+    - A summary of the product between 30-40 words
     - Price (Display in euros, in the format €x.xx)
     - Specific source of product price (Must be from a retailer, if not, an official website. "Product listing", "announcement", etc. are not valid sources)
     - Product specifications in a structured format
@@ -73,7 +73,7 @@ function AnalyzeProductReview(text: string) -> ProductAnalysis {
     - Reviews & User Feedback
     - Availability & Local Factors
 
-    - Based on the above categories and the review, generate an overall sentiment rating, displayed in the format x.xx/5.00. Score between 0.00 and 1.00 if highly negative, 1.01 and 2.00 if negative, 2.01 and 3.00 if neutral, 3.01 and 4.00 if positive, and 4.01 and 5.00 if highly positive.
+    - Based on the above categories and the review, generate an overall sentiment rating, displayed in the format x.xx, out of 5.00. Score between 0.00 and 1.00 if highly negative, 1.01 and 2.00 if negative, 2.01 and 3.00 if neutral, 3.01 and 4.00 if positive, and 4.01 and 5.00 if highly positive.
     - Indicate if the sentiment rating is highly Positive, Positive, Neutral, Negative, or Highly Negative.
     
     {{ ctx.output_format }}

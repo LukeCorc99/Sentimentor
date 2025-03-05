@@ -62,7 +62,7 @@ def extractAnalysis(content):
             "price": response.price,
             "priceSource": response.priceSource,
             "specifications": response.specifications,
-            "priceValue": response.priceValue,
+            "valueForMoney": response.valueForMoney,
             "soundQuality": response.soundQuality,
             "comfortFit": response.comfortFit,
             "batteryLife": response.batteryLife,
