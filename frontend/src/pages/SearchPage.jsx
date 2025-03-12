@@ -107,7 +107,7 @@ const SearchPage = () => {
                           <button className="analyzeButton" onClick={() => analyzeReview(review.name)}>
                             Analyze
                           </button>
-                          <span className="reviewSources">Review Sources:</span>
+                          <span className="reviewSources">Reviews:</span>
                           {review.links.map((link, linkIndex) => (
                             <a key={linkIndex} href={link} target="_blank" rel="noopener noreferrer" className="reviewLinkButton">
                               {linkIndex + 1}
@@ -129,11 +129,9 @@ const SearchPage = () => {
           {reviewData && (
             <div>
               <div className="productDetails">
-                {reviewData.image && (
                   <div className="imageContainer">
                     <img src={reviewData.image} alt={reviewData.name} className="reviewImageAnalysis" referrerPolicy="no-referrer" />
                   </div>
-                )}
 
                 <div className="productInfo">
                   <h2 className="productTitle">{reviewData.analysisContent.name}</h2>
@@ -162,9 +160,22 @@ const SearchPage = () => {
                   ))}
                 </div>
 
-                <p className={`sentimentBadge ${reviewData.analysisContent.sentiment.toLowerCase()}`}>
-                  {reviewData.analysisContent.sentimentRating}/5.00 - {reviewData.analysisContent.sentiment}
-                </p>
+                <div className="sentimentBadgeContainer">
+                  <p className={`sentimentBadge ${reviewData.analysisContent.sentiment.toLowerCase()}`}>
+                    {reviewData.analysisContent.sentimentRating}/5.00 - {reviewData.analysisContent.sentiment}
+                  </p>
+                  <div className="tooltip">
+                    <span className="tooltipTrigger">What do these scores mean?</span>
+                    <span className="tooltipText">
+                      <strong>Sentiment Score Meaning:</strong><br />
+                      <strong>0.00 - 1.00:</strong> Highly Negative 😡<br />
+                      <strong>1.00 - 2.00:</strong> Negative 🙁<br />
+                      <strong>2.00 - 3.00:</strong> Neutral 😐<br />
+                      <strong>3.00 - 4.00:</strong> Positive 🙂<br />
+                      <strong>4.00 - 5.00:</strong> Highly Positive 😍
+                    </span>
+                  </div>
+                </div>
               </div>
 
               <div className="sentimentBreakdown">

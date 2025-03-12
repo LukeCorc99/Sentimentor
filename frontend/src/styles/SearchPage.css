@@ -1,16 +1,24 @@
 .appcontainer {
   width: 100vw;
   min-height: 100vh; 
-  margin-top: 70px;
   box-sizing: border-box;
   color: white;
   overflow-x: hidden;
+  overflow-y: scroll; 
+}
+
+.reviewsContainer {
+  display: flex;
+  padding: 20px;
+  background: #1e2a38;
+  width: 80%;
+  margin: 0 auto;
+  border-radius: 8px;
 }
 
 .searchBar {
   display: flex;
   margin-bottom: 20px;
-  margin-top: 20px;
   margin-right: 20px;
 }
 
@@ -21,13 +29,6 @@
   border-radius: 4px;
 }
 
-.reviewsContainer {
-  display: flex;
-  padding: 20px;
-  background: #1e2a38;
-  width: 100vw;
-}
-
 .searchContainer {
   width: 40vw;
 }
@@ -35,11 +36,8 @@
 
 .analysisContainer {
   background: #1e2a38;
-  padding: 20px;
-  border-radius: 10px;
   color: #fff;
   width: 60vw;
-  margin-right: 40px;
 }
 
 .reviewImage {
@@ -52,12 +50,15 @@
 }
 
 .reviewImageAnalysis {
-  width: 250px;
-  height: 250px;
+  width: 100px; 
+  height: 100px;
   object-fit: cover;
   border-radius: 8px;
-  border: 3px solid black;
-  display: block;
+}
+
+.productTitle {
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .searchButton {
@@ -162,11 +163,14 @@
   border-radius: 8px;
 }
 
+.productHeader {
+  display: flex;
+  align-items: center; 
+  gap: 15px; 
+}
+
 .imageContainer {
-  text-align: center;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  flex: 0.4;
+  flex-shrink: 0; 
 }
 
 .productInfo {
@@ -323,4 +327,45 @@
 
 .filledStar {
   color: #ffd900;
+}
+
+.sentimentBadgeContainer {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltip {
+  display: inline-block;
+  margin-left: 8px;
+  position: relative;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.tooltipTrigger {
+  color: #007bff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.tooltipText {
+  visibility: hidden;
+  width: 250px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  text-align: left;
+  padding: 8px;
+  border-radius: 5px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 130%;
+  transition: opacity 0.3s;
+  font-size: 14px;
+}
+
+.tooltip:hover .tooltipText {
+  visibility: visible;
+  opacity: 1;
 }

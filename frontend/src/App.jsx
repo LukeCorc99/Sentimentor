@@ -19,7 +19,6 @@ const App = () => {
           element={
             <ProtectedRoute>
               <>
-                <NavBar />
                 <SearchPage />
               </>
             </ProtectedRoute>
@@ -31,7 +30,6 @@ const App = () => {
           element={
             <ProtectedRoute>
               <>
-                <NavBar />
                 <SavedProductsPage />
               </>
             </ProtectedRoute>
@@ -43,7 +41,6 @@ const App = () => {
           element={
             <ProtectedRoute>
               <>
-                <NavBar />
                 <ProductComparatorPage />
               </>
             </ProtectedRoute>
