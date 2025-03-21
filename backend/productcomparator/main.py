@@ -20,9 +20,7 @@ db = firestore.client()
 app = Flask(__name__)
 cors = CORS(app, origins="*")
 
-# Add the project root directory to sys.path for BAML client access
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-# Import the BAML client library
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from baml_client.sync_client import b
 
 
@@ -123,4 +121,6 @@ def compareProducts():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8082)
+    # app.run(debug=True, port=8082)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=False, host="0.0.0.0", port=port)

@@ -14,6 +14,7 @@ load_dotenv()
 
 # Get Firebase credentials from environment variable
 firebaseCredentials = os.getenv("FIREBASE_CREDENTIALS")
+
 # Parse the JSON string into a dictionary
 credDict = json.loads(firebaseCredentials)
 
@@ -146,4 +147,5 @@ if __name__ == "__main__":
 
     print(f"Uploaded {uploadCount} documents to Firestore")
 
-    app.run(debug=True, port=8080)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=False, host="0.0.0.0", port=port)

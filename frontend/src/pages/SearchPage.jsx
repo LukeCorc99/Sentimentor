@@ -62,7 +62,7 @@ const SearchPage = () => {
   };
 
   const analyzeReview = (cameraName) => {
-    fetch(`http://127.0.0.1:8081/sentimentanalyzer?name=${encodeURIComponent(cameraName)}`)
+    fetch(`https://sentimentor-sentimentanalyzer-f8043a0ff5c9.herokuapp.com/sentimentanalyzer?name=${encodeURIComponent(cameraName)}`)
       .then((response) => response.json())
       .then((json) => {
         console.log("Analyzed Product:", json);

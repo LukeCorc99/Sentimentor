@@ -35,7 +35,7 @@ const ProductComparatorPage = () => {
 
     const compareAnalysis = async (analysisOne, analysisTwo) => {
         try {
-            const response = await fetch("http://127.0.0.1:8082/compareproducts", {
+            const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com//compareproducts", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
