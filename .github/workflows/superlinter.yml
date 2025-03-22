@@ -3,11 +3,9 @@ name: SuperLinter
 on: [push, pull_request]
 
 jobs:
-  # Code linting
   super-lint:
     name: Lint Code Base
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -23,5 +21,82 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           LOG_LEVEL: DEBUG
 
-    # add running of backend (pytest) and frontend tests here
-    # potentially add deployment of backend and frontend here
+  deploy-product-comparator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Heroku CLI
+        run: curl https://cli-assets.heroku.com/install.sh | sh
+
+      - name: Login to Heroku
+        run: echo "$HEROKU_API_KEY" | heroku auth:token
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+
+      - name: Deploy Product Comparator Service
+        run: |
+          git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/sentimentor-productcomparator.git
+          git fetch heroku
+          git reset --hard heroku/main
+          git push heroku main --force
+
+  deploy-sentiment-analyzer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Heroku CLI
+        run: curl https://cli-assets.heroku.com/install.sh | sh
+
+      - name: Login to Heroku
+        run: echo "$HEROKU_API_KEY" | heroku auth:token
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+
+      - name: Deploy Sentiment Analyzer Service
+        run: |
+          git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/sentimentor-sentimentanalyzer.git
+          git fetch heroku
+          git reset --hard heroku/main
+          git push heroku main --force
+
+  deploy-review-collector:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Heroku CLI
+        run: curl https://cli-assets.heroku.com/install.sh | sh
+
+      - name: Login to Heroku
+        run: echo "$HEROKU_API_KEY" | heroku auth:token
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+
+      - name: Deploy Review Collector Service
+        run: |
+          git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/sentimentor-reviewcollector.git
+          git fetch heroku
+          git reset --hard heroku/main
+          git push heroku main --force
+
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Heroku CLI
+        run: curl https://cli-assets.heroku.com/install.sh | sh
+
+      - name: Login to Heroku
+        run: echo "$HEROKU_API_KEY" | heroku auth:token
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+
+      - name: Deploy Frontend to Heroku
+        run: |
+          git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/sentimentor-frontend.git
+          git fetch heroku
+          git reset --hard heroku/master
+          git push heroku HEAD:master --force

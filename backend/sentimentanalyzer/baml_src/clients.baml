@@ -17,6 +17,14 @@ client<llm> CustomGPT4oMini {
   }
 }
 
+client<llm> CustomGPT {
+  provider openai
+  options {
+    model "gpt-3.5-turbo"
+    api_key env.OPENAI_API_KEY
+  }
+}
+
 client<llm> CustomSonnet {
   provider anthropic
   options {
@@ -69,7 +77,7 @@ retry_policy Exponential {
   strategy {
     type exponential_backoff
     delay_ms 300
-    multiplier 1.5
+    mutliplier 1.5
     max_delay_ms 10000
   }
 }
