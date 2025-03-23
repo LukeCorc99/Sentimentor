@@ -1,2 +1,5 @@
 .env
-frontend/src/firebaseConfig.js
+start_apps.sh
+stop_apps.sh
+start_locally.sh
+commands.txt

@@ -21,6 +21,28 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           LOG_LEVEL: DEBUG
 
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.12
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/reviewcollector/requirements.txt
+          pip install pytest
+
+      - name: Run tests
+        run: |
+          cd backend
+          pytest tests/test_reviewcollector.py
+
+
   deploy-product-comparator:
     runs-on: ubuntu-latest
     steps:
@@ -29,17 +51,16 @@ jobs:
       - name: Install Heroku CLI
         run: curl https://cli-assets.heroku.com/install.sh | sh
 
-      - name: Login to Heroku
-        run: echo "$HEROKU_API_KEY" | heroku auth:token
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-
       - name: Deploy Product Comparator Service
         run: |
+          cd backend/productcomparator
+          git init
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/sentimentor-productcomparator.git
-          git fetch heroku
-          git reset --hard heroku/main
-          git push heroku main --force
+          git add .
+          git commit -m "Deploy product comparator from CI"
+          git push heroku master --force
 
   deploy-sentiment-analyzer:
     runs-on: ubuntu-latest
@@ -49,17 +70,16 @@ jobs:
       - name: Install Heroku CLI
         run: curl https://cli-assets.heroku.com/install.sh | sh
 
-      - name: Login to Heroku
-        run: echo "$HEROKU_API_KEY" | heroku auth:token
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-
       - name: Deploy Sentiment Analyzer Service
         run: |
+          cd backend/sentimentanalyzer
+          git init
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/sentimentor-sentimentanalyzer.git
-          git fetch heroku
-          git reset --hard heroku/main
-          git push heroku main --force
+          git add .
+          git commit -m "Deploy sentiment analyzer from CI"
+          git push heroku master --force
 
   deploy-review-collector:
     runs-on: ubuntu-latest
@@ -69,17 +89,16 @@ jobs:
       - name: Install Heroku CLI
         run: curl https://cli-assets.heroku.com/install.sh | sh
 
-      - name: Login to Heroku
-        run: echo "$HEROKU_API_KEY" | heroku auth:token
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-
       - name: Deploy Review Collector Service
         run: |
+          cd backend/reviewcollector
+          git init
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/sentimentor-reviewcollector.git
-          git fetch heroku
-          git reset --hard heroku/main
-          git push heroku main --force
+          git add .
+          git commit -m "Deploy review collector from CI"
+          git push heroku master --force
 
   deploy-frontend:
     runs-on: ubuntu-latest
@@ -89,14 +108,13 @@ jobs:
       - name: Install Heroku CLI
         run: curl https://cli-assets.heroku.com/install.sh | sh
 
-      - name: Login to Heroku
-        run: echo "$HEROKU_API_KEY" | heroku auth:token
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-
       - name: Deploy Frontend to Heroku
         run: |
+          cd frontend
+          git init
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
           git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/sentimentor-frontend.git
-          git fetch heroku
-          git reset --hard heroku/master
-          git push heroku HEAD:master --force
+          git add .
+          git commit -m "Deploy frontend from CI"
+          git push heroku master --force

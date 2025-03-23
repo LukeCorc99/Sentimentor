@@ -9,27 +9,20 @@ import json
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-# Load environment variables from .env file
 load_dotenv()
 
-# Get Firebase credentials from environment variable
 firebaseCredentials = os.getenv("FIREBASE_CREDENTIALS")
-# Parse the JSON string into a dictionary
 credDict = json.loads(firebaseCredentials)
 
-# Initialize Firebase using the credentials
 cred = credentials.Certificate(credDict)
 firebase_admin.initialize_app(cred)
 
-# Access Firestore
 db = firestore.client()
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 from baml_client.sync_client import b
 
-# Create a new Flask application instance
 app = Flask(__name__)
-# Enable Cross-Origin Resource Sharing (CORS) for the app, allowing all origins
 cors = CORS(app, origins="*")
 
 

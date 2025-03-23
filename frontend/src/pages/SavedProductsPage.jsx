@@ -24,6 +24,8 @@ const SavedProductsPage = () => {
         fetchSavedProducts(); // Call the function to fetch data
     }, []); // Run only once when the component mounts
 
+    // const response = await fetch("http://127.0.0.1:8082/deleteproduct", {
+    // const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/deleteproduct", {
     const deleteProduct = async (product) => {
         try {
             const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/deleteproduct", {

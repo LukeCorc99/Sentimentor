@@ -15,6 +15,9 @@ git push --force
 pip install --upgrade baml-py
 
 
+TO START EVERYTHING LOCALLY:
+./start_locally.sh
+
 
 # start venv
 cd backend
@@ -58,3 +61,18 @@ pytest
 #
 
 # run scrapy shell "url here", then response.css("selectro here"").getall(), to see which selector works
+
+
+To stop heroku apps costing money in background:
+./stop_apps.sh
+
+To start heroku apps:
+./start_apps.sh
+
+frontend:
+https://sentimentor-frontend-ec403ab9fbe6.herokuapp.com/
+
+
+
+
+

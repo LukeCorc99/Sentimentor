@@ -32,9 +32,11 @@ const SearchPage = () => {
     fetchProducts();
   }, []);
 
+  // const response = await fetch("http://127.0.0.1:8082/saveproduct", {
+  // const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/saveproduct", {
   const saveProduct = async (product) => {
     try {
-      const response = await fetch("http://127.0.0.1:8082/saveproduct", {
+      const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/saveproduct", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,8 +63,10 @@ const SearchPage = () => {
     setFilteredReviews(filtered);
   };
 
-  const analyzeReview = (cameraName) => {
-    fetch(`https://sentimentor-sentimentanalyzer-f8043a0ff5c9.herokuapp.com/sentimentanalyzer?name=${encodeURIComponent(cameraName)}`)
+  // fetch(`http://127.0.0.1:8081/sentimentanalyzer?name=${encodeURIComponent(productName)}`)
+  // fetch(`https://sentimentor-sentimentanalyzer-f8043a0ff5c9.herokuapp.com/sentimentanalyzer?name=${encodeURIComponent(productName)}`)
+  const analyzeReview = (productName) => {
+    fetch(`https://sentimentor-sentimentanalyzer-f8043a0ff5c9.herokuapp.com/sentimentanalyzer?name=${encodeURIComponent(productName)}`)
       .then((response) => response.json())
       .then((json) => {
         console.log("Analyzed Product:", json);
@@ -77,7 +81,7 @@ const SearchPage = () => {
           <div className="searchBar">
             <input
               type="text"
-              placeholder="Search for a product..."
+              placeholder="Search for a product... "
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="searchInput"
