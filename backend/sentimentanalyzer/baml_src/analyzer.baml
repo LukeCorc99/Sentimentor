@@ -49,7 +49,7 @@ class ProductComparison {
 function AnalyzeProductReview(text: string) -> ProductAnalysis {
   client "openai/gpt-4o-mini"
   prompt #"
-    Analyze the following product review
+    Analyze the following product reviews
     {{ text }}
 
     Do not specifically mention the review, just provide the information as if you are summarizing the product.

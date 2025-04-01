@@ -100,7 +100,7 @@ jobs:
           git commit -m "Deploy review collector from CI"
           git push heroku master --force
 
-  deploy-frontend:
+  deploy-app:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -108,13 +108,13 @@ jobs:
       - name: Install Heroku CLI
         run: curl https://cli-assets.heroku.com/install.sh | sh
 
-      - name: Deploy Frontend to Heroku
+      - name: Deploy Full App to Heroku
         run: |
           cd frontend
           git init
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/sentimentor-frontend.git
+          git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/sentimentor.git
           git add .
           git commit -m "Deploy frontend from CI"
           git push heroku master --force

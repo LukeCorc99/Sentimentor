@@ -65,10 +65,8 @@ def extractComparison(analysisOne, analysisTwo):
 @app.route("/saveproduct", methods=["POST"])
 def saveProduct():
     try:
-        # Get product data from request
         productData = request.json
 
-        # Save product to Firestore
         db.collection("savedproducts").add(productData)
         return jsonify({"message": "Product saved successfully"}), 201
 
@@ -82,7 +80,6 @@ def deleteProduct():
         productData = request.get_json()
         productID = productData["id"]
 
-        # Delete the document from Firestore
         doc = db.collection("savedproducts").document(productID)
         doc.delete()
 
@@ -95,17 +92,13 @@ def deleteProduct():
 @app.route("/compareproducts", methods=["POST"])
 def compareProducts():
     try:
-        # Get product data from request
         productData = request.json
 
-        # Extract the two analyses from productData
         analysisOne = productData.get("analysisOne")
         analysisTwo = productData.get("analysisTwo")
 
-        # Call extractComparison and get the result
         comparisonResult = extractComparison(analysisOne, analysisTwo)
 
-        # Return the comparison result
         return (
             jsonify(
                 {

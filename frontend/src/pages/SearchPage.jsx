@@ -1,26 +1,25 @@
 import { useState, useEffect } from 'react';
-import '../styles/SearchPage.css'; // Import the CSS file for styling
-import { db } from "../firebaseConfig"; // Path to firebaseConfig.js
-import { collection, getDocs } from "firebase/firestore"; // Firestore functions
-import { FaAmazon, FaSearch, FaStar } from "react-icons/fa";
+import '../styles/SearchPage.css';
+import { db } from "../firebaseConfig";
+import { collection, getDocs } from "firebase/firestore";
+import { FaAmazon, FaSearch, FaStar, FaBookmark, FaRedo, FaBalanceScale } from "react-icons/fa";
 
-// Search page component
 const SearchPage = () => {
-  // State for storing all reviews fetched from a JSON file or backend
   const [reviews, setReviews] = useState([]);
-  // State for storing the current search query entered by the user
   const [searchQuery, setSearchQuery] = useState('');
-  // State for storing the filtered reviews based on the search query
   const [filteredReviews, setFilteredReviews] = useState([]);
-  // State to indicate if a search has been performed
   const [isSearching, setIsSearching] = useState(false);
-  // State for storing the sentiment analysis data of a review
   const [reviewData, setReviewData] = useState(null);
+  const [analyzedProducts, setAnalyzedProducts] = useState([]);
+  const [productRatings, setProductRatings] = useState({});
+  const [savedProducts, setSavedProducts] = useState([]);
+
+
+
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        // Fetch reviews from Firestore
         const querySnapshot = await getDocs(collection(db, "productReviews"));
         const reviewsData = querySnapshot.docs.map((doc) => doc.data());
         setReviews(reviewsData); // Update the state with fetched reviews
@@ -36,14 +35,13 @@ const SearchPage = () => {
   // const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/saveproduct", {
   const saveProduct = async (product) => {
     try {
-      const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/saveproduct", {
+        const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/saveproduct", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(product),
       });
-
       const data = await response.json();
       if (response.ok) {
         console.log("Product saved successfully:", data.message);
@@ -56,7 +54,7 @@ const SearchPage = () => {
   };
 
   const handleSearch = () => {
-    setIsSearching(true); // Indicate that a search has been performed
+    setIsSearching(true);
     const filtered = reviews.filter((review) =>
       review.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
@@ -70,9 +68,15 @@ const SearchPage = () => {
       .then((response) => response.json())
       .then((json) => {
         console.log("Analyzed Product:", json);
-        setReviewData(json); // Update the reviewData state with the sentiment analysis data
+        setReviewData(json);
+        setAnalyzedProducts((prev) => [...prev, productName]);
+        setProductRatings((prev) => ({
+          ...prev,
+          [productName]: json.analysisContent.sentimentRating,
+        }));
       });
   };
+
 
   return (
     <div className="appcontainer">
@@ -105,18 +109,66 @@ const SearchPage = () => {
                         />
                       )}
                       <div className="productInfoContainer">
-                        <h3 className="productName">{review.name}</h3>
-
+                        <div className="productNameWithBookmark">
+                          <h3 className="productName">{review.name}</h3>
+                          <FaBookmark
+                            className={`bookmarkIcon ${savedProducts.includes(review.name) ? "saved" : ""}`}
+                            onClick={() => saveProduct(review)}
+                            title="Save Product"
+                          />
+                          <FaRedo
+                            className="actionIcon"
+                            onClick={() => analyzeReview(review.name)}
+                            title="Reanalyze Product"
+                          />
+                          <FaBalanceScale
+                            className="actionIcon"
+                            onClick={() => console.log("Compare", review.name)}
+                            title="Compare Product"
+                          />
+                        </div>
                         <div className="productActions">
-                          <button className="analyzeButton" onClick={() => analyzeReview(review.name)}>
-                            Analyze
+                          <button
+                            className="analyzeButton"
+                            onClick={() => analyzeReview(review.name)}
+                            disabled={analyzedProducts.includes(review.name)}
+                          >
+                            {analyzedProducts.includes(review.name) ? "Analyzed" : "Analyze"}
                           </button>
-                          <span className="reviewSources">Reviews:</span>
-                          {review.links.map((link, linkIndex) => (
-                            <a key={linkIndex} href={link} target="_blank" rel="noopener noreferrer" className="reviewLinkButton">
-                              {linkIndex + 1}
-                            </a>
-                          ))}
+                          {analyzedProducts.includes(review.name) ? (
+                            <div className="inlineRating">
+                              <span className="reviewSources">Rating ➝</span>
+                              <div className="starRating">
+                                <div className="analyzedStars">
+                                  {[...Array(5)].map((_, i) => (
+                                    <FaStar
+                                      key={i}
+                                      className={`star ${i < Math.round(productRatings[review.name] || 0) ? "filledStar" : ""}`}
+                                      style={{ fontSize: "18px", marginRight: "2px" }}
+                                    />
+                                  ))}
+                                  <div className="analyzedRating">
+                                    {productRatings[review.name]}/5.00
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ) : (
+                            <>
+                              <span className="reviewSources">Reviews ➝</span>
+                              {review.links.map((link, linkIndex) => (
+                                <a
+                                  key={linkIndex}
+                                  href={link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="reviewLinkButton"
+                                >
+                                  {linkIndex + 1}
+                                </a>
+                              ))}
+                            </>
+                          )}
                         </div>
                       </div>
                     </li>
@@ -133,9 +185,9 @@ const SearchPage = () => {
           {reviewData && (
             <div>
               <div className="productDetails">
-                  <div className="imageContainer">
-                    <img src={reviewData.image} alt={reviewData.name} className="reviewImageAnalysis" referrerPolicy="no-referrer" />
-                  </div>
+                <div className="imageContainer">
+                  <img src={reviewData.image} alt={reviewData.name} className="reviewImageAnalysis" referrerPolicy="no-referrer" />
+                </div>
 
                 <div className="productInfo">
                   <h2 className="productTitle">{reviewData.analysisContent.name}</h2>

@@ -38,7 +38,7 @@ cd frontend
 npm run dev
 
 # run spider for review collection
-cd reviewcollector/reviewcollector/spiders
+cd reviewcollector/scrapers/spiders
 # camera
 scrapy crawl cameraspider -O ../../../../frontend/public/camerareviews.json
 
@@ -70,7 +70,7 @@ To start heroku apps:
 ./start_apps.sh
 
 frontend:
-https://sentimentor-frontend-ec403ab9fbe6.herokuapp.com/
+https://sentimentor-b99323d2c946.herokuapp.com/
 
 
 

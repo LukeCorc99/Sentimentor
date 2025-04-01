@@ -7,28 +7,39 @@ from dotenv import load_dotenv
 import os
 import urllib.parse
 import re
+import sys
+from rapidfuzz import fuzz, process
 
 
-# Load environment variables from .env. This helps to keep API key hidden.
 load_dotenv()
-
-# Get Firebase credentials from environment variable
 firebaseCredentials = os.getenv("FIREBASE_CREDENTIALS")
-
-# Parse the JSON string into a dictionary
 credDict = json.loads(firebaseCredentials)
 
-# Initialize Firebase using the credentials
 cred = credentials.Certificate(credDict)
 firebase_admin.initialize_app(cred)
-
-# Access Firestore
 db = firestore.client()
 
-# Create a new Flask application instance
 app = Flask(__name__)
-# Enable Cross-Origin Resource Sharing (CORS) for the app, allowing all origins
-cors = CORS(app, origins="*")
+CORS(app, origins="*")
+
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+from baml_client.sync_client import b
+
+
+def extractProductName(titles):
+    try:
+        response = b.ExtractProductName(titles)
+        return {"names": response.productNames}
+    except Exception as e:
+        return {"error": "Failed to extract name", "message": str(e)}
+
+
+def extractProductReviewLinks(name, links):
+    try:
+        response = b.ExtractProductReviewLinks(name, links)
+        return {"links": response.productReviewURLs}
+    except Exception as e:
+        return {"error": "Failed to extract links", "message": str(e)}
 
 
 def loadHeadphoneReviews():
@@ -38,87 +49,53 @@ def loadHeadphoneReviews():
         return json.load(file)
 
 
-def extractImageResolution(imageUrl):
-    if not imageUrl:
-        return 0
-    match = re.search(r"(\d{2,4})[xX](\d{2,4})", imageUrl)
-    if match:
-        width, height = map(int, match.groups())
-        return width * height
-    return 0
+def getImageForLink(review_link):
+    reviews = loadHeadphoneReviews()
+    for review in reviews:
+        if review.get("link") == review_link:
+            return review.get("image", None)
+    return None
 
 
-def extractName(name):
-    words = name.lower().split()
-    keywords = [
-        word
-        for word in words
-        if word
-        not in {"the", "with", "and", "a", "for", "in", "on", "at", "by", "of", "to"}
-    ]
-    return " ".join(keywords[:3])
-
-
-def filterRepeatedProductReviews(reviews):
-    productGroups = {}
+def groupReviews(reviews, threshold=52):
+    groups = []
+    group_names = []
 
     for review in reviews:
-        productName = review["name"]
-        productLink = review["link"]
-        productImage = review.get("image", "")
-        coreName = extractName(productName)
+        title = review["name"]
+        link = review["link"]
 
-        if coreName not in productGroups:
-            productGroups[coreName] = {
-                "name": [productName],
-                "shortestName": productName,
-                "links": [],
-                "image": productImage if productImage else "",
-                "highestQualityImage": productImage if productImage else "",
-                "maxResolution": extractImageResolution(productImage),
-            }
+        match = process.extractOne(
+            title, group_names, scorer=fuzz.token_set_ratio, score_cutoff=threshold
+        )
+
+        if match:
+            match_name = match[0]
+            for group in groups:
+                if group["group_name"] == match_name:
+                    group["titles"].append(title)
+                    group["links"].append(link)
+                    break
         else:
-            productGroups[coreName]["name"].append(productName)
-
-            if len(productName) < len(productGroups[coreName]["shortestName"]):
-                productGroups[coreName]["shortestName"] = productName
-
-            currentResolution = extractImageResolution(productImage)
-            if (
-                productImage
-                and currentResolution > productGroups[coreName]["maxResolution"]
-            ):
-                productGroups[coreName]["highestQualityImage"] = productImage
-                productGroups[coreName]["maxResolution"] = currentResolution
-
-        productGroups[coreName]["links"].append(productLink)
+            groups.append({"group_name": title, "titles": [title], "links": [link]})
+            group_names.append(title)
 
     return [
-        {
-            "name": details["shortestName"],
-            "links": details["links"],
-            "image": (
-                details["highestQualityImage"]
-                if details["highestQualityImage"]
-                else None
-            ),
-        }
-        for details in productGroups.values()
-        if len(details["name"]) >= 2
+        {"names": group["titles"], "links": group["links"]}
+        for group in groups
+        if len(group["titles"]) >= 2
     ]
 
 
 def getAmazonLink(name):
-    amazonLink = "https://www.amazon.com/s?k="
-    amazonProduct = urllib.parse.quote(name)
-    return f"{amazonLink}{amazonProduct}"
+    return f"https://www.amazon.com/s?k={urllib.parse.quote(name)}"
 
 
 @app.route("/productreviews", methods=["GET"])
 def getProductReviews():
     try:
         reviews = loadHeadphoneReviews()
-        repeated = filterRepeatedProductReviews(reviews)
+        repeated = groupReviews(reviews)
         return jsonify(repeated), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -126,26 +103,62 @@ def getProductReviews():
 
 if __name__ == "__main__":
     headphoneReviews = loadHeadphoneReviews()
-
-    repeatedReviews = filterRepeatedProductReviews(headphoneReviews)
+    repeatedReviews = groupReviews(headphoneReviews)
 
     collection = "productReviews"
     collRef = db.collection(collection)
 
+    # for doc in collRef.stream():
+    # doc.reference.delete()
+
     uploadCount = 0
 
-    # Delete all documents in the collection to avoid duplicates
-    docs = collRef.stream()
-    for doc in docs:
-        doc.reference.delete()
-
-    # Upload the filtered product reviews to Firestore
     for item in repeatedReviews:
-        item["amazonLink"] = getAmazonLink(item["name"])
-        collRef.add(item)
-        uploadCount += 1
+        print(f"\nExtracting product name from titles: {item['names']}")
+        extractedNames = extractProductName(item["names"])
+        productNames = extractedNames.get("names", [])
+        print(f"Extracted names: {productNames}")
 
-    print(f"Uploaded {uploadCount} documents to Firestore")
+        if not productNames:
+            print(f"name extraction failed: {item['names']}")
+            continue
+
+        print(f"Filtering links:")
+        for link in item["links"]:
+            print(f"   - {link}")
+
+        for name in productNames:
+            singleResult = extractProductReviewLinks(name, item["links"])
+            links = singleResult.get("links", [])
+
+            print(f"\nBAML returned {len(links)} filtered review links for '{name}':")
+            for link in links:
+                print(f"- link: {link}")
+
+            if len(links) < 2:
+                print(f"Skipped '{name}' (less than 2 valid review links)")
+                continue
+
+            image = None
+            for link in links:
+                print(f"🔍 Checking image for link: {link}")
+                image = getImageForLink(link)
+                if image:
+                    print(f"Found image: {image}")
+                    break
+
+            doc = {
+                "name": name,
+                "links": links,
+                "amazonLink": getAmazonLink(name),
+                "image": image,
+            }
+
+            # collRef.add(doc)
+            uploadCount += 1
+            print(f"Uploaded '{name}' with {len(links)} reviews.")
+
+    print(f"\nUploaded {uploadCount} product(s) to Firestore.")
 
     port = int(os.environ.get("PORT", 5000))
     app.run(debug=False, host="0.0.0.0", port=port)

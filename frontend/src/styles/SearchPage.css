@@ -369,3 +369,60 @@
   visibility: visible;
   opacity: 1;
 }
+
+.analyzeButton:disabled {
+  background-color: #999;
+  color: #eee;
+  cursor: not-allowed;
+}
+
+.inlineRating {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.analyzedRating {
+  font-size: 16px;
+  color: #d4d3d3;
+}
+
+.starRating {
+  text-align: center;
+  margin-left: 10px;
+}
+
+.productNameWithBookmark {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.bookmarkIcon {
+  font-size: 25px;
+  cursor: pointer;
+  color: #ccc;
+  transition: color 0.3s;
+}
+
+.bookmarkIcon:hover {
+  color: #f7c948;
+}
+
+.bookmarkIcon.saved {
+  color: #f7c948;
+}
+
+.actionIcon {
+  font-size: 25px;
+  cursor: pointer;
+  color: #ccc;
+  transition: color 0.3s;
+}
+
+.actionIcon:hover {
+  color: #00d1b2; 
+}
+
+
+

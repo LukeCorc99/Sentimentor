@@ -3,10 +3,8 @@ from urllib.parse import urljoin
 
 
 class HeadphoneSpider(scrapy.Spider):
-    # Name of the spider
     name = "headphonespider"
 
-    # URLs for the spider
     start_urls = [
         "https://www.whathifi.com/products/headphones",
         "https://www.techradar.com/audio/headphones/reviews",
@@ -19,7 +17,6 @@ class HeadphoneSpider(scrapy.Spider):
         "https://www.engadget.com/reviews/headphones/",
     ]
 
-    # Words to remove from the name of the product, e.g., "review"
     removeWords = [
         "review",
         "Review",
@@ -31,9 +28,7 @@ class HeadphoneSpider(scrapy.Spider):
         "vs",
     ]
 
-    # Method to parse the response
     def parse(self, response):
-        # Check if the current page is from WhatHiFi
         if "whathifi.com" in response.url:
             yield from self.parseHeadphoneReviews(
                 response,
@@ -46,7 +41,6 @@ class HeadphoneSpider(scrapy.Spider):
                 "div.flexi-pagination span.active + a::attr(href)",
             )
 
-        # Check if the current page is from TechRadar
         elif "techradar.com" in response.url:
             yield from self.parseHeadphoneReviews(
                 response,
@@ -59,7 +53,6 @@ class HeadphoneSpider(scrapy.Spider):
                 "div.flexi-pagination span.active + a::attr(href)",
             )
 
-        # Check if the current page is from HeadphoneCheck
         elif "headphonecheck.com" in response.url:
             yield from self.parseHeadphoneReviews(
                 response,
@@ -84,7 +77,6 @@ class HeadphoneSpider(scrapy.Spider):
                 'link[rel="next"]::attr(href)',
             )
 
-        # Check if the current page is from Headfonia
         elif "headfonia.com" in response.url:
             yield from self.parseHeadphoneReviews(
                 response,
@@ -97,7 +89,6 @@ class HeadphoneSpider(scrapy.Spider):
                 "ul.page-numbers a.next.page-numbers::attr(href)",
             )
 
-        # Check if the current page is from ExpertReviews
         elif "expertreviews.com" in response.url:
             yield from self.parseHeadphoneReviews(
                 response,
@@ -110,7 +101,6 @@ class HeadphoneSpider(scrapy.Spider):
                 "a[aria-label='Next page']::attr(href)",
             )
 
-        # Check if the current page is from Scarbir
         elif "scarbir.com" in response.url:
             yield from self.parseHeadphoneReviews(
                 response,
@@ -123,7 +113,6 @@ class HeadphoneSpider(scrapy.Spider):
                 "a.next-page::attr(href)",
             )
 
-        # Check if the current page is from Engadget
         elif "engadget.com" in response.url:
             yield from self.parseHeadphoneReviews(
                 response,
@@ -136,7 +125,6 @@ class HeadphoneSpider(scrapy.Spider):
                 "a[class='D(f) Ai(c) Jc(c) Bdrs(8px) Pstart(12px) Py(6px) Td(n) Fz(14px) Td(n) C(engadgetGray) Bgc(paginationHover):h']::attr(href)",
             )
 
-    # Method to parse the headphone reviews
     def parseHeadphoneReviews(
         self,
         response,
@@ -148,27 +136,22 @@ class HeadphoneSpider(scrapy.Spider):
         imgTag,
         nextPageTag,
     ):
-        # Select both name+link and image containers
         nameLinkProducts = response.css(f"{htmlContainer} > {htmlChildren}")
         imageProducts = response.css(f"{htmlContainer} > {htmlChildrenTwo}")
 
-        # Iterate over both lists together
         for nameProduct, imageProduct in zip(nameLinkProducts, imageProducts):
-            # Extract product name
             rawName = nameProduct.css(nameTag).get()
             if rawName:
                 for word in self.removeWords:
                     rawName = rawName.replace(word, "")
                 cleanName = rawName.strip()
 
-                # Extract product link
                 productLink = nameProduct.css(linkTag).get()
                 if productLink:
                     productLink = urljoin(response.url, productLink)
                 else:
                     productLink = None
 
-                # Extract image
                 imageURL = imageProduct.css(imgTag).get()
                 if imageURL:
                     imageURL = urljoin(response.url, imageURL)
@@ -181,11 +164,7 @@ class HeadphoneSpider(scrapy.Spider):
                     "image": imageURL,
                 }
 
-        # Find the link to the next page
         nextPage = response.css(nextPageTag).get()
-        # Check if the next page exists
         if nextPage:
-            # Construct the full URL for the next page
             nextPageURL = urljoin(response.url, nextPage)
-            # Make a request to the next page and call the same `parse` method
             yield scrapy.Request(nextPageURL, callback=self.parse)

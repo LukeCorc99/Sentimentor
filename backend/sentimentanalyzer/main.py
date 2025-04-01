@@ -72,23 +72,18 @@ def extractAnalysis(content):
 
 @app.route("/sentimentanalyzer", methods=["GET"])
 def analyzer():
-    # Get the product name from the query string
     productName = request.args.get("name", "")
     try:
-        # Retrieve all documents from the "productReviews" collection
         docs = db.collection("productReviews").stream()
         for doc in docs:
             review = doc.to_dict()
             name = review.get("name", "")
-            # Compare names in a case-insensitive way
             if name.lower() == productName.lower():
                 links = review.get("links", [])
                 image = review.get("image")
                 amazonLink = review.get("amazonLink")
 
-                # Scrape all webpages from the links array
                 combinedText = scrapeWebpages(links)
-                # Run the sentiment analysis on the combined text
                 analysisContent = extractAnalysis(combinedText)
                 return jsonify(
                     {
@@ -99,7 +94,6 @@ def analyzer():
                         "analysisContent": analysisContent,
                     }
                 )
-        # If no review matches the productName
         return jsonify({"error": "Review not found"}), 404
     except Exception as e:
         return jsonify({"error": "Failed to analyze review", "message": str(e)}), 500
