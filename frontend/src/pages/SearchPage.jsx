@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import '../styles/SearchPage.css';
 import { db } from "../firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
-import { FaAmazon, FaSearch, FaStar, FaBookmark, FaRedo, FaBalanceScale } from "react-icons/fa";
+import { FaAmazon, FaSearch, FaStar, FaBookmark, FaBalanceScale } from "react-icons/fa";
 
 const SearchPage = () => {
   const [reviews, setReviews] = useState([]);
@@ -13,29 +13,51 @@ const SearchPage = () => {
   const [analyzedProducts, setAnalyzedProducts] = useState([]);
   const [productRatings, setProductRatings] = useState({});
   const [savedProducts, setSavedProducts] = useState([]);
-
+  const [hoveredButton, setHoveredButton] = useState(null);
+  const [analyzingProduct, setAnalyzingProduct] = useState(null);
+  const [analyzingDots, setAnalyzingDots] = useState("");
+  const [expandedCategories, setExpandedCategories] = useState({});
+  const [compareDropdownVisible, setCompareDropdownVisible] = useState(null)
 
 
 
   useEffect(() => {
     const fetchProducts = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "productReviews"));
-        const reviewsData = querySnapshot.docs.map((doc) => doc.data());
-        setReviews(reviewsData); // Update the state with fetched reviews
-      } catch (error) {
-        console.error("Error fetching reviews from Firestore:", error);
-      }
-    };
+      const querySnapshot = await getDocs(collection(db, "productReviews"))
+      const reviewsData = querySnapshot.docs.map((doc) => doc.data())
+      setReviews(reviewsData)
+    }
 
-    fetchProducts();
-  }, []);
+    const fetchSavedProducts = async () => {
+      const querySnapshot = await getDocs(collection(db, "savedproducts"))
+      const saved = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data()
+      }))
+      setSavedProducts(saved)
+    }
+
+    fetchProducts()
+    fetchSavedProducts()
+  }, [])
+
+  useEffect(() => {
+    if (analyzingProduct !== null) {
+      const intervalId = setInterval(() => {
+        setAnalyzingDots((prev) => (prev.length < 3 ? prev + "." : ""));
+      }, 500);
+      return () => clearInterval(intervalId);
+    } else {
+      setAnalyzingDots("");
+    }
+  }, [analyzingProduct]);
+
 
   // const response = await fetch("http://127.0.0.1:8082/saveproduct", {
   // const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/saveproduct", {
   const saveProduct = async (product) => {
     try {
-        const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/saveproduct", {
+      const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/saveproduct", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -74,8 +96,32 @@ const SearchPage = () => {
           ...prev,
           [productName]: json.analysisContent.sentimentRating,
         }));
+        setAnalyzingProduct(null);
       });
   };
+
+
+  const revertAnalyze = (productName) => {
+    setAnalyzedProducts((prev) => prev.filter((name) => name !== productName));
+
+    setProductRatings((prev) => {
+      const updated = { ...prev };
+      delete updated[productName];
+      return updated;
+    });
+
+    if (reviewData && reviewData.analysisContent.name === productName) {
+      setReviewData(null);
+    }
+  };
+
+  const toggleCategory = (category) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
+  };
+
 
 
   return (
@@ -108,33 +154,94 @@ const SearchPage = () => {
                           referrerPolicy="no-referrer"
                         />
                       )}
-                      <div className="productInfoContainer">
-                        <div className="productNameWithBookmark">
-                          <h3 className="productName">{review.name}</h3>
+                      <div className="productActionsIcons">
+                        <div className="tooltip">
                           <FaBookmark
                             className={`bookmarkIcon ${savedProducts.includes(review.name) ? "saved" : ""}`}
-                            onClick={() => saveProduct(review)}
-                            title="Save Product"
+                            onClick={() => {
+                              if (analyzedProducts.includes(review.name) && !savedProducts.includes(review.name)) {
+                                saveProduct(review);
+                                setSavedProducts((prev) => [...prev, review.name]);
+                              }
+                            }}
+                            style={{
+                              cursor: analyzedProducts.includes(review.name) ? "pointer" : "not-allowed",
+                              opacity: analyzedProducts.includes(review.name) ? 1 : 0.5
+                            }}
                           />
-                          <FaRedo
-                            className="actionIcon"
-                            onClick={() => analyzeReview(review.name)}
-                            title="Reanalyze Product"
-                          />
+                          <span className="tooltipTextButton">
+                            {savedProducts.includes(review.name)
+                              ? "Saved!"
+                              : analyzedProducts.includes(review.name)
+                                ? "Save Product"
+                                : "Analyze first!"}
+                          </span>
+                        </div>
+
+                        <div className="tooltip compareWrapper">
                           <FaBalanceScale
                             className="actionIcon"
-                            onClick={() => console.log("Compare", review.name)}
-                            title="Compare Product"
+                            onClick={() => {
+                              if (analyzedProducts.includes(review.name)) {
+                                setCompareDropdownVisible(prev =>
+                                  prev === review.name ? null : review.name
+                                );
+                              }
+                            }}
+                            style={{
+                              cursor: analyzedProducts.includes(review.name) ? "pointer" : "not-allowed",
+                              opacity: analyzedProducts.includes(review.name) ? 1 : 0.5
+                            }}
                           />
+                          <span className="tooltipTextButton">
+                            {analyzedProducts.includes(review.name)
+                              ? "Compare Product"
+                              : "Analyze first!"}
+                          </span>
+
+                          {analyzedProducts.includes(review.name) &&
+                            compareDropdownVisible === review.name &&
+                            savedProducts.length > 1 && (
+                              <div className="compareDropdown">
+                                <p className="compareHeader">Compare with:</p>
+                                <ul className="compareList">
+                                  {savedProducts
+                                    .filter(p => p.name !== review.name)
+                                    .map((product, i) => (
+                                      <li key={i} className="compareItem">
+                                        {product.name}
+                                      </li>
+                                    ))}
+                                </ul>
+                              </div>
+                            )}
                         </div>
+
+                      </div>
+
+                      <div className="productInfoContainer">
+                        <h3 className="productName">{review.name}</h3>
                         <div className="productActions">
                           <button
-                            className="analyzeButton"
-                            onClick={() => analyzeReview(review.name)}
-                            disabled={analyzedProducts.includes(review.name)}
+                            className={`analyzeButton ${analyzedProducts.includes(review.name) ? "analyzedState" : ""}`}
+                            onMouseEnter={() => setHoveredButton(review.name)}
+                            onMouseLeave={() => setHoveredButton(null)}
+                            onClick={() => {
+                              if (analyzedProducts.includes(review.name)) {
+                                revertAnalyze(review.name);
+                              } else {
+                                setAnalyzingProduct(review.name);
+                                analyzeReview(review.name);
+                              }
+                            }}
                           >
-                            {analyzedProducts.includes(review.name) ? "Analyzed" : "Analyze"}
+                            {analyzingProduct === review.name
+                              ? `Analyzing${analyzingDots}`
+                              : analyzedProducts.includes(review.name)
+                                ? (hoveredButton === review.name ? "Re-analyze?" : "Analyzed")
+                                : "Analyze"}
                           </button>
+
                           {analyzedProducts.includes(review.name) ? (
                             <div className="inlineRating">
                               <span className="reviewSources">Rating ➝</span>
@@ -144,7 +251,7 @@ const SearchPage = () => {
                                     <FaStar
                                       key={i}
                                       className={`star ${i < Math.round(productRatings[review.name] || 0) ? "filledStar" : ""}`}
-                                      style={{ fontSize: "18px", marginRight: "2px" }}
+                                      style={{ fontSize: "25px", marginRight: "2px" }}
                                     />
                                   ))}
                                   <div className="analyzedRating">
@@ -188,21 +295,19 @@ const SearchPage = () => {
                 <div className="imageContainer">
                   <img src={reviewData.image} alt={reviewData.name} className="reviewImageAnalysis" referrerPolicy="no-referrer" />
                 </div>
-
                 <div className="productInfo">
-                  <h2 className="productTitle">{reviewData.analysisContent.name}</h2>
+                  <p className="productTitle">{reviewData.analysisContent.name}</p>
                   <p className="productSummary"><strong>Summary:</strong> {reviewData.analysisContent.summary}</p>
                 </div>
-
                 <div className="priceInfo">
                   <h2 className="priceText">
-                    Price: <span className="priceNumber">{reviewData.analysisContent.price}</span>
+                    <span className="priceNumber">{reviewData.analysisContent.price}</span>
                   </h2>
                   <p className="source"> (Source: {reviewData.analysisContent.priceSource})</p>
                   {reviewData.amazonLink && (
                     <a href={reviewData.amazonLink} target="_blank" rel="noopener noreferrer" className="amazonButton">
                       <FaAmazon className="amazonIcon" />
-                      Buy on Amazon
+                      Amazon
                     </a>
                   )}
                 </div>
@@ -235,30 +340,84 @@ const SearchPage = () => {
               </div>
 
               <div className="sentimentBreakdown">
-                <h3 className="breakdownHeader" >Sentiment Breakdown by Category</h3>
-                <div className="sentimentGrid">
-                  <div className="sentimentItem"><strong>Value for Money:</strong> {reviewData.analysisContent.valueForMoney}</div>
-                  <div className="sentimentItem"><strong>Sound Quality:</strong> {reviewData.analysisContent.soundQuality}</div>
-                  <div className="sentimentItem"><strong>Comfort & Fit:</strong> {reviewData.analysisContent.comfortFit}</div>
-                  <div className="sentimentItem"><strong>Battery Life & Charging:</strong> {reviewData.analysisContent.batteryLife}</div>
-                  <div className="sentimentItem"><strong>Connectivity:</strong> {reviewData.analysisContent.connectivity}</div>
-                  <div className="sentimentItem"><strong>Features & Controls:</strong> {reviewData.analysisContent.featuresControls}</div>
-                  <div className="sentimentItem"><strong>Call Quality:</strong> {reviewData.analysisContent.callQuality}</div>
-                  <div className="sentimentItem"><strong>Brand & Warranty:</strong> {reviewData.analysisContent.brandWarranty}</div>
-                  <div className="sentimentItem"><strong>Reviews & User Feedback:</strong> {reviewData.analysisContent.userFeedback}</div>
-                  <div className="sentimentItem"><strong>Availability:</strong> {reviewData.analysisContent.availability}</div>
+                <h3 className="breakdownHeader">Sentiment Breakdown by Category</h3>
+                <div className="sentimentList">
+                  {Object.entries({
+                    "Value for Money": {
+                      text: reviewData.analysisContent.valueForMoney,
+                      rating: reviewData.analysisContent.valueForMoneyRating
+                    },
+                    "Sound Quality": {
+                      text: reviewData.analysisContent.soundQuality,
+                      rating: reviewData.analysisContent.soundQualityRating
+                    },
+                    "Comfort & Fit": {
+                      text: reviewData.analysisContent.comfortFit,
+                      rating: reviewData.analysisContent.comfortFitRating
+                    },
+                    "Battery Life & Charging": {
+                      text: reviewData.analysisContent.batteryLife,
+                      rating: reviewData.analysisContent.batteryLifeRating
+                    },
+                    "Connectivity": {
+                      text: reviewData.analysisContent.connectivity,
+                      rating: reviewData.analysisContent.connectivityRating
+                    },
+                    "Features & Controls": {
+                      text: reviewData.analysisContent.featuresControls,
+                      rating: reviewData.analysisContent.featuresControlsRating
+                    },
+                    "Call Quality": {
+                      text: reviewData.analysisContent.callQuality,
+                      rating: reviewData.analysisContent.callQualityRating
+                    },
+                    "Brand & Warranty": {
+                      text: reviewData.analysisContent.brandWarranty,
+                      rating: reviewData.analysisContent.brandWarrantyRating
+                    },
+                    "Reviews & User Feedback": {
+                      text: reviewData.analysisContent.userFeedback,
+                      rating: reviewData.analysisContent.userFeedbackRating
+                    },
+                    "Availability": {
+                      text: reviewData.analysisContent.availability,
+                      rating: reviewData.analysisContent.availabilityRating
+                    }
+                  }).map(([category, { text, rating }]) => {
+                    const numericRating = parseFloat(rating)
+
+                    return (
+                      <div key={category} className="sentimentItemVertical">
+                        <div className="dropdownHeader" onClick={() => toggleCategory(category)}>
+                          <span>{expandedCategories[category] ? '▲' : '▼'}</span>
+                          <span>{category}</span>
+                          <div className="ratingStars">
+                            {[...Array(5)].map((_, index) => (
+                              <FaStar
+                                key={index}
+                                className={index < Math.round(numericRating) ? "star filledStarSmall" : "star emptyStarSmall"}
+                              />
+                            ))}
+                          </div>
+                        </div>
+
+                        {expandedCategories[category] && (
+                          <div className="dropdownDetailsVertical">
+                            {text}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
-
-              <button onClick={() => saveProduct(reviewData)} className="saveButton">
-                Save Product
-              </button>
             </div>
           )}
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
+
 
 export default SearchPage;

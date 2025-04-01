@@ -54,15 +54,25 @@ def extractAnalysis(content):
             "priceSource": response.priceSource,
             "specifications": response.specifications,
             "valueForMoney": response.valueForMoney,
+            "valueForMoneyRating": response.valueForMoneyRating,
             "soundQuality": response.soundQuality,
+            "soundQualityRating": response.soundQualityRating,
             "comfortFit": response.comfortFit,
+            "comfortFitRating": response.comfortFitRating,
             "batteryLife": response.batteryLife,
+            "batteryLifeRating": response.batteryLifeRating,
             "connectivity": response.connectivity,
+            "connectivityRating": response.connectivityRating,
             "featuresControls": response.featuresControls,
+            "featuresControlsRating": response.featuresControlsRating,
             "callQuality": response.callQuality,
+            "callQualityRating": response.callQualityRating,
             "brandWarranty": response.brandWarranty,
+            "brandWarrantyRating": response.brandWarrantyRating,
             "userFeedback": response.userFeedback,
+            "userFeedbackRating": response.userFeedbackRating,
             "availability": response.availability,
+            "availabilityRating": response.availabilityRating,
             "sentimentRating": response.sentimentRating,
             "sentiment": response.sentiment,
         }
@@ -100,6 +110,6 @@ def analyzer():
 
 
 if __name__ == "__main__":
-    # app.run(debug=True, port=8081)
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=False, host="0.0.0.0", port=port)
+    app.run(debug=True, port=8081)
+    # port = int(os.environ.get("PORT", 5000))
+    # app.run(debug=False, host="0.0.0.0", port=port)

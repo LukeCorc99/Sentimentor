@@ -47,15 +47,25 @@ class ProductAnalysis(BaseModel):
     priceSource: str
     specifications: List[str]
     valueForMoney: str
+    valueForMoneyRating: int
     soundQuality: str
+    soundQualityRating: int
     comfortFit: str
+    comfortFitRating: int
     batteryLife: str
+    batteryLifeRating: int
     connectivity: str
+    connectivityRating: int
     featuresControls: str
+    featuresControlsRating: int
     callQuality: str
+    callQualityRating: int
     brandWarranty: str
+    brandWarrantyRating: int
     userFeedback: str
+    userFeedbackRating: int
     availability: str
+    availabilityRating: int
     sentimentRating: float
     sentiment: str
 

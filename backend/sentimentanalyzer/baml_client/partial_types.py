@@ -42,15 +42,25 @@ class ProductAnalysis(BaseModel):
     priceSource: Optional[str] = None
     specifications: List[str]
     valueForMoney: Optional[str] = None
+    valueForMoneyRating: Optional[int] = None
     soundQuality: Optional[str] = None
+    soundQualityRating: Optional[int] = None
     comfortFit: Optional[str] = None
+    comfortFitRating: Optional[int] = None
     batteryLife: Optional[str] = None
+    batteryLifeRating: Optional[int] = None
     connectivity: Optional[str] = None
+    connectivityRating: Optional[int] = None
     featuresControls: Optional[str] = None
+    featuresControlsRating: Optional[int] = None
     callQuality: Optional[str] = None
+    callQualityRating: Optional[int] = None
     brandWarranty: Optional[str] = None
+    brandWarrantyRating: Optional[int] = None
     userFeedback: Optional[str] = None
+    userFeedbackRating: Optional[int] = None
     availability: Optional[str] = None
+    availabilityRating: Optional[int] = None
     sentimentRating: Optional[float] = None
     sentiment: Optional[str] = None
 

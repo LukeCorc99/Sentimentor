@@ -4,19 +4,41 @@ class ProductAnalysis {
   price string
   priceSource string
   specifications string[]
+
   valueForMoney string
+  valueForMoneyRating int
+
   soundQuality string
+  soundQualityRating int
+
   comfortFit string
+  comfortFitRating int
+
   batteryLife string
+  batteryLifeRating int
+
   connectivity string
+  connectivityRating int
+
   featuresControls string
+  featuresControlsRating int
+
   callQuality string
+  callQualityRating int
+
   brandWarranty string
+  brandWarrantyRating int
+
   userFeedback string
+  userFeedbackRating int
+
   availability string
+  availabilityRating int
+
   sentimentRating float
   sentiment string
 }
+
 
 class ProductComparison {
   name1 string
@@ -61,7 +83,7 @@ function AnalyzeProductReview(text: string) -> ProductAnalysis {
     - Specific source of product price (Must be from a retailer, if not, an official website. "Product listing", "announcement", etc. are not valid sources)
     - Product specifications in a structured format
 
-    Provide very brief analysis under the following headings:
+    Provide very brief analysis, along with a rating out of 5, under the following headings:
     - Value for Money (not the price itself, but the value the product offers for the price)
     - Sound Quality
     - Comfort & Fit
