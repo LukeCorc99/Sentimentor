@@ -56,7 +56,7 @@ const LoginPage = () => {
   return (
     <div className="login-container">
       <form onSubmit={handleSubmit(handleLogin)} className="login-form">
-        <div className="icon" style={{ marginBottom: '20px' }}>
+        <div className="lockIcon" style={{ marginBottom: '20px' }}>
           <Lock style={{ fontSize: 30 }} />
         </div>
         <h2>Login</h2>

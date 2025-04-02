@@ -82,10 +82,9 @@
   font-size: 25px; 
 }
 
-.productList ul {
-  padding: 0;
-  margin: 0;
-  width: 97.5%;
+.productList {
+  width: 100%; 
+  min-width: 700px;
 }
 
 .productItem {
@@ -94,7 +93,7 @@
   align-items: center; 
   padding: 10px;
   border-bottom: 1px solid #ccc; 
-  padding: 15px 80px 15px 10px;
+  padding: 15px 100px 15px 10px;
 }
 .productInfoContainer {
   display: flex;
@@ -105,8 +104,7 @@
 
 .productName {
   font-size: 30px;
-  font-weight: bold;
-  margin-top: 0px;
+  margin-bottom: 1rem;
 }
 
 .analyzeButton {
@@ -169,8 +167,6 @@
   justify-content: center;
   border-radius: 8px;
 }
-
-
 
 .productInfo {
   margin-right: 10px;
@@ -322,17 +318,18 @@
   background: #1d7c34;
 }
 
-.starRating {
-  justify-content: center;
+.analyzedStars {
+  text-align: center;
+  margin-left: 0.5rem;
 }
 
-.star {
+.starPrevious {
   font-size: 50px;
   color: #ccc;
   margin-right: 4px;
 }
 
-.filledStar {
+.filledStarPrevious {
   color: #ffd900;
 }
 
@@ -350,31 +347,10 @@
   cursor: pointer;
 }
 
-.tooltipTrigger {
-  color: #007bff;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.tooltipText {
-  visibility: hidden;
-  width: 250px;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  text-align: left;
-  padding: 8px;
-  border-radius: 5px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  top: 130%;
-  transition: opacity 0.3s;
-  font-size: 14px;
-}
 
 .tooltipTextButton {
   visibility: hidden;
-  width: 130px;
+  width: 150px;
   background-color: rgba(0, 0, 0, 0.8);
   color: #fff;
   text-align: center;
@@ -599,3 +575,5 @@
 .compareItem:hover {
   background-color: #3c526a;
 }
+
+

@@ -1,0 +1,154 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcomeCard {
+  max-width: 42rem;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 1rem;
+  padding: 2rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  transform: translateZ(0);
+  transition: transform 0.3s ease;
+}
+
+.welcomeContent {
+  color: white;
+}
+
+.welcomeHeader {
+  text-align: center;
+  margin-bottom: 2rem;
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.welcomeSubtitle {
+  font-size: 1.4rem;
+  color: #93c5fd;
+  font-weight: 300;
+  letter-spacing: 0.05em;
+}
+
+.welcomeTitle {
+  font-size: 4rem;
+  font-weight: bold;
+  background: linear-gradient(to right, #60a5fa, #a855f7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 200% 200%;
+  animation: gradient 6s ease infinite;
+}
+
+.welcomeAuthor {
+  font-size: 1.2rem;
+  color: rgba(147, 197, 253, 0.8);
+}
+
+.instructionsSection {
+  margin-top: 2rem;
+}
+
+.instructionsTitle {
+  font-size: 1.25rem;
+  text-align: center;
+  color: #bfdbfe;
+  margin-bottom: 1.5rem;
+  animation: fadeIn 0.6s ease-out forwards;
+}
+
+.instructionsGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.instructionItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  transition: background-color 0.3s ease;
+  animation: slideUp 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.instructionItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.instructionIcon {
+  padding: 0.5rem;
+  border-radius: 9999px;
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+}
+
+.icon {
+  width: 1.8rem;
+  height: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.instructionText {
+  color: #e0f2fe;
+}
+
+.enjoyText {
+  text-align: center;
+  font-size: 1.25rem;
+  color: #93c5fd;
+  margin-top: 2rem;
+  animation: bounce 1s infinite;
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}

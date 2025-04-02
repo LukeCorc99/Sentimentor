@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import '../styles/SearchPage.css';
 import { db } from "../firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
-import { FaAmazon, FaSearch, FaStar, FaBookmark, FaBalanceScale } from "react-icons/fa";
+import { FaSearch, FaStar, FaBookmark, FaBalanceScale } from "react-icons/fa";
+import WelcomeMessage from '../components/WelcomeMessage';
+import AnalysisSection from '../components/AnalysisSection';
+
 
 const SearchPage = () => {
   const [reviews, setReviews] = useState([]);
@@ -40,6 +43,13 @@ const SearchPage = () => {
     fetchProducts()
     fetchSavedProducts()
   }, [])
+
+  useEffect(() => {
+    if (reviews.length > 0) {
+      setIsSearching(true);
+      setFilteredReviews(reviews);
+    }
+  }, [reviews]);
 
   useEffect(() => {
     if (analyzingProduct !== null) {
@@ -131,7 +141,7 @@ const SearchPage = () => {
           <div className="searchBar">
             <input
               type="text"
-              placeholder="Search for a product... "
+              placeholder=" Search for a product... "
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="searchInput"
@@ -245,12 +255,11 @@ const SearchPage = () => {
                           {analyzedProducts.includes(review.name) ? (
                             <div className="inlineRating">
                               <span className="reviewSources">Rating ➝</span>
-                              <div className="starRating">
                                 <div className="analyzedStars">
                                   {[...Array(5)].map((_, i) => (
                                     <FaStar
                                       key={i}
-                                      className={`star ${i < Math.round(productRatings[review.name] || 0) ? "filledStar" : ""}`}
+                                      className={`starPrevious ${i < Math.round(productRatings[review.name] || 0) ? "filledStarPrevious" : ""}`}
                                       style={{ fontSize: "25px", marginRight: "2px" }}
                                     />
                                   ))}
@@ -258,7 +267,6 @@ const SearchPage = () => {
                                     {productRatings[review.name]}/5.00
                                   </div>
                                 </div>
-                              </div>
                             </div>
                           ) : (
                             <>
@@ -289,129 +297,14 @@ const SearchPage = () => {
           )}
         </div>
         <div className="analysisContainer">
-          {reviewData && (
-            <div>
-              <div className="productDetails">
-                <div className="imageContainer">
-                  <img src={reviewData.image} alt={reviewData.name} className="reviewImageAnalysis" referrerPolicy="no-referrer" />
-                </div>
-                <div className="productInfo">
-                  <p className="productTitle">{reviewData.analysisContent.name}</p>
-                  <p className="productSummary"><strong>Summary:</strong> {reviewData.analysisContent.summary}</p>
-                </div>
-                <div className="priceInfo">
-                  <h2 className="priceText">
-                    <span className="priceNumber">{reviewData.analysisContent.price}</span>
-                  </h2>
-                  <p className="source"> (Source: {reviewData.analysisContent.priceSource})</p>
-                  {reviewData.amazonLink && (
-                    <a href={reviewData.amazonLink} target="_blank" rel="noopener noreferrer" className="amazonButton">
-                      <FaAmazon className="amazonIcon" />
-                      Amazon
-                    </a>
-                  )}
-                </div>
-              </div>
-              <div className="sentimentRating">
-                <h3 className="ratingHeader">Overall Sentiment Rating</h3>
-
-                <div className="starRating">
-                  {[...Array(5)].map((_, index) => (
-                    <FaStar key={index} className={index < Math.round(reviewData.analysisContent.sentimentRating) ? "star filledStar" : "star"} />
-                  ))}
-                </div>
-
-                <div className="sentimentBadgeContainer">
-                  <p className={`sentimentBadge ${reviewData.analysisContent.sentiment.toLowerCase()}`}>
-                    {reviewData.analysisContent.sentimentRating}/5.00 - {reviewData.analysisContent.sentiment}
-                  </p>
-                  <div className="tooltip">
-                    <span className="tooltipTrigger">What do these scores mean?</span>
-                    <span className="tooltipText">
-                      <strong>Sentiment Score Meaning:</strong><br />
-                      <strong>0.00 - 1.00:</strong> Highly Negative 😡<br />
-                      <strong>1.00 - 2.00:</strong> Negative 🙁<br />
-                      <strong>2.00 - 3.00:</strong> Neutral 😐<br />
-                      <strong>3.00 - 4.00:</strong> Positive 🙂<br />
-                      <strong>4.00 - 5.00:</strong> Highly Positive 😍
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="sentimentBreakdown">
-                <h3 className="breakdownHeader">Sentiment Breakdown by Category</h3>
-                <div className="sentimentList">
-                  {Object.entries({
-                    "Value for Money": {
-                      text: reviewData.analysisContent.valueForMoney,
-                      rating: reviewData.analysisContent.valueForMoneyRating
-                    },
-                    "Sound Quality": {
-                      text: reviewData.analysisContent.soundQuality,
-                      rating: reviewData.analysisContent.soundQualityRating
-                    },
-                    "Comfort & Fit": {
-                      text: reviewData.analysisContent.comfortFit,
-                      rating: reviewData.analysisContent.comfortFitRating
-                    },
-                    "Battery Life & Charging": {
-                      text: reviewData.analysisContent.batteryLife,
-                      rating: reviewData.analysisContent.batteryLifeRating
-                    },
-                    "Connectivity": {
-                      text: reviewData.analysisContent.connectivity,
-                      rating: reviewData.analysisContent.connectivityRating
-                    },
-                    "Features & Controls": {
-                      text: reviewData.analysisContent.featuresControls,
-                      rating: reviewData.analysisContent.featuresControlsRating
-                    },
-                    "Call Quality": {
-                      text: reviewData.analysisContent.callQuality,
-                      rating: reviewData.analysisContent.callQualityRating
-                    },
-                    "Brand & Warranty": {
-                      text: reviewData.analysisContent.brandWarranty,
-                      rating: reviewData.analysisContent.brandWarrantyRating
-                    },
-                    "Reviews & User Feedback": {
-                      text: reviewData.analysisContent.userFeedback,
-                      rating: reviewData.analysisContent.userFeedbackRating
-                    },
-                    "Availability": {
-                      text: reviewData.analysisContent.availability,
-                      rating: reviewData.analysisContent.availabilityRating
-                    }
-                  }).map(([category, { text, rating }]) => {
-                    const numericRating = parseFloat(rating)
-
-                    return (
-                      <div key={category} className="sentimentItemVertical">
-                        <div className="dropdownHeader" onClick={() => toggleCategory(category)}>
-                          <span>{expandedCategories[category] ? '▲' : '▼'}</span>
-                          <span>{category}</span>
-                          <div className="ratingStars">
-                            {[...Array(5)].map((_, index) => (
-                              <FaStar
-                                key={index}
-                                className={index < Math.round(numericRating) ? "star filledStarSmall" : "star emptyStarSmall"}
-                              />
-                            ))}
-                          </div>
-                        </div>
-
-                        {expandedCategories[category] && (
-                          <div className="dropdownDetailsVertical">
-                            {text}
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            </div>
+          {reviewData ? (
+            <AnalysisSection
+              reviewData={reviewData}
+              expandedCategories={expandedCategories}
+              toggleCategory={toggleCategory}
+            />
+          ) : (
+            <WelcomeMessage />
           )}
         </div>
       </div>
