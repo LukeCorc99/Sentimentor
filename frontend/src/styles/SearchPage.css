@@ -27,10 +27,12 @@
   font-size: 18px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  padding: 5px;
 }
 
 .searchContainer {
   width: 40vw;
+  animation: fadeIn 0.6s ease-out forwards;
 }
 
 
@@ -38,6 +40,7 @@
   background: #1e2a38;
   color: #fff;
   width: 60vw;
+  position: relative;
 }
 
 .reviewImage {
@@ -85,16 +88,19 @@
 .productList {
   width: 100%; 
   min-width: 700px;
+  animation: fadeIn 0.4s ease-out forwards;
 }
 
 .productItem {
   position: relative; 
+  overflow: visible; 
   display: flex;
   align-items: center; 
   padding: 10px;
   border-bottom: 1px solid #ccc; 
-  padding: 15px 100px 15px 10px;
+  padding: 15px 50px 15px 10px;
 }
+
 .productInfoContainer {
   display: flex;
   flex-direction: column;
@@ -115,6 +121,7 @@
   border-radius: 4px;
   background-color: #ffffff;
   transition: background-color 0.35s ease;
+  color:#000;
 }
 
 .analyzeButton:hover {
@@ -182,66 +189,6 @@
   justify-content: center;
 }
 
-.productTitle {
-  font-size: 35px;
-}
-
-.productSummary {
-  font-size: 17px;
-  margin-top: 10px;
-  margin-left: 10px;
-}
-
-.priceInfo {
-  flex: 0.5;
-  margin-bottom: 15px;
-  font-size: 18px;
-  font-weight: bold;
-  text-align: center;
-}
-
-.priceText {
-  font-weight: normal;
-  margin-bottom: 5px;
-  margin-top: 5px;
-}
-
-.priceNumber {
-  font-size: 45px;
-  font-weight: bold;
-  margin-bottom: 0px;
-}
-
-.source {
-  font-weight: normal;
-  margin-top: 0px;
-  margin-bottom: 10px;
-}
-
-.amazonButton {
-  display: flex;
-  align-items: center; 
-  background: #ff9900;
-  color: white;
-  padding: 5px 5px 5px 0px;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: bold;
-  justify-content: center;
-  transition: background-color 0.35s ease;
-  font-size: 22px;
-}
-
-.amazonButton:hover {
-  background: #bd7202;
-  color: white;
-}
-
-.amazonIcon {
-  font-size: 30px;
-  margin-right: 10px; 
-}
-
 .specsReviewsGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr); 
@@ -249,74 +196,7 @@
   margin-top: 20px;
 }
 
-.ratingHeader {
-  text-align: center;
-  font-size: 30px;
-  margin-bottom: 10px;
-}
 
-.sentimentRating {
-  text-align: center;
-  font-size: 20px;
-}
-
-.sentimentBadge {
-  padding: 8px 12px;
-  border-radius: 5px;
-  font-weight: bold;
-}
-
-.sentimentBadge.positive {
-  background: #28a745;
-}
-
-.sentimentBadge.neutral {
-  background: #ffc107;
-}
-
-.sentimentBadge.negative {
-  background: #dc3545;
-}
-
-.sentimentBreakdown {
-  margin-top: 15px;
-  font-size: 20px;
-}
-
-.breakdownHeader {
-  text-align: center;
-  font-size: 30px;
-}
-
-.sentimentGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-
-.sentimentItem {
-  background: #2a3d4f;
-  padding: 10px;
-  border-radius: 8px;
-}
-
-.saveButton {
-  display: block;
-  width: 100%;
-  background: #007bff;
-  color: white;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  font-size: 18px;
-  margin-top: 15px;
-  background-color: #28a745;
-  transition: background-color 0.35s ease;
-}
-
-.saveButton:hover {
-  background: #1d7c34;
-}
 
 .analyzedStars {
   text-align: center;
@@ -349,8 +229,9 @@
 
 
 .tooltipTextButton {
+  z-index: 9999; 
   visibility: hidden;
-  width: 150px;
+  width: 6rem;
   background-color: rgba(0, 0, 0, 0.8);
   color: #fff;
   text-align: center;
@@ -533,47 +414,37 @@
   }
 }
 
-
-.compareWrapper {
-  position: relative;
+.signoutBtn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+  color: #000000;
+  background: #ffffff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  z-index: 9999;
+  animation: fadeIn 0.6s ease-out forwards;
+  transition: background-color 0.35s ease;
 }
 
-.compareDropdown {
+.signoutBtn:hover {
+  background-color: #b5b6b8;
+}
+
+.backButton {
   position: absolute;
-  top: 40px;
-  right: 0;
-  background-color: #2a3d4f;
-  border: 1px solid #444;
-  border-radius: 6px;
-  padding: 10px;
-  min-width: 160px;
-  max-height: 200px;             
-  overflow-y: auto;               
-  z-index: 1000;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-
-.compareHeader {
-  font-weight: bold;
-  margin-bottom: 8px;
+  bottom: 1rem;  /* Adjust the offset as needed */
+  left: 1rem;    /* Adjust the offset as needed */
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(to right, #007bff, #0056b3);
   color: #fff;
-}
-
-.compareList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.compareItem {
-  padding: 5px 0;
-  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
   cursor: pointer;
 }
-
-.compareItem:hover {
-  background-color: #3c526a;
-}
-
 

@@ -66,9 +66,25 @@ def extractComparison(analysisOne, analysisTwo):
 def saveProduct():
     try:
         productData = request.json
+        userId = productData.get("userId")
+        if not userId:
+            return jsonify({"error": "Missing userId"}), 400
 
-        db.collection("savedproducts").add(productData)
-        return jsonify({"message": "Product saved successfully"}), 201
+        userRef = db.collection("users").document(userId)
+        savedProductsRef = userRef.collection("savedProducts")
+
+        new_doc = savedProductsRef.add(productData)
+        doc_id = new_doc[1].id
+
+        return (
+            jsonify(
+                {
+                    "message": "Product saved in /users/{uid}/savedProducts",
+                    "docId": doc_id,
+                }
+            ),
+            201,
+        )
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -79,9 +95,11 @@ def deleteProduct():
     try:
         productData = request.get_json()
         productID = productData["id"]
+        userId = productData["userId"]
 
-        doc = db.collection("savedproducts").document(productID)
-        doc.delete()
+        user_ref = db.collection("users").document(userId)
+        saved_ref = user_ref.collection("savedProducts").document(productID)
+        saved_ref.delete()
 
         return jsonify({"message": "Product deleted successfully"}), 200
 

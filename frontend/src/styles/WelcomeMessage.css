@@ -6,7 +6,7 @@
 }
 
 .welcomeCard {
-  max-width: 42rem;
+  max-width: 35vw;
   width: 100%;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
@@ -15,6 +15,7 @@
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
   transform: translateZ(0);
   transition: transform 0.3s ease;
+  position: fixed;
 }
 
 .welcomeContent {
