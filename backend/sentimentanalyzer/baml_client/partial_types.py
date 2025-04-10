@@ -42,51 +42,24 @@ class ProductAnalysis(BaseModel):
     priceSource: Optional[str] = None
     specifications: List[str]
     valueForMoney: Optional[str] = None
-    valueForMoneyRating: Optional[int] = None
+    valueForMoneyRating: Optional[float] = None
     soundQuality: Optional[str] = None
-    soundQualityRating: Optional[int] = None
+    soundQualityRating: Optional[float] = None
     comfortFit: Optional[str] = None
-    comfortFitRating: Optional[int] = None
+    comfortFitRating: Optional[float] = None
     batteryLife: Optional[str] = None
-    batteryLifeRating: Optional[int] = None
+    batteryLifeRating: Optional[float] = None
     connectivity: Optional[str] = None
-    connectivityRating: Optional[int] = None
+    connectivityRating: Optional[float] = None
     featuresControls: Optional[str] = None
-    featuresControlsRating: Optional[int] = None
+    featuresControlsRating: Optional[float] = None
     callQuality: Optional[str] = None
-    callQualityRating: Optional[int] = None
+    callQualityRating: Optional[float] = None
     brandWarranty: Optional[str] = None
-    brandWarrantyRating: Optional[int] = None
+    brandWarrantyRating: Optional[float] = None
     userFeedback: Optional[str] = None
-    userFeedbackRating: Optional[int] = None
+    userFeedbackRating: Optional[float] = None
     availability: Optional[str] = None
-    availabilityRating: Optional[int] = None
+    availabilityRating: Optional[float] = None
     sentimentRating: Optional[float] = None
     sentiment: Optional[str] = None
-
-class ProductComparison(BaseModel):
-    name1: Optional[str] = None
-    name2: Optional[str] = None
-    summary: Optional[str] = None
-    price1: Optional[str] = None
-    priceSource1: Optional[str] = None
-    price2: Optional[str] = None
-    priceSource2: Optional[str] = None
-    specifications1: List[str]
-    specifications2: List[str]
-    score1: Optional[str] = None
-    score2: Optional[str] = None
-    sentiment1: Optional[str] = None
-    sentiment2: Optional[str] = None
-    valueForMoneyComparison: Optional[str] = None
-    soundQualityComparison: Optional[str] = None
-    comfortFitComparison: Optional[str] = None
-    batteryLifeComparison: Optional[str] = None
-    connectivityComparison: Optional[str] = None
-    featuresControlsComparison: Optional[str] = None
-    callQualityComparison: Optional[str] = None
-    brandWarrantyComparison: Optional[str] = None
-    userFeedbackComparison: Optional[str] = None
-    availabilityComparison: Optional[str] = None
-    overallSentimentComparison: Optional[str] = None
-    recommendation: Optional[str] = None

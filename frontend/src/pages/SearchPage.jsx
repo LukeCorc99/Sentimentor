@@ -168,10 +168,11 @@ const SearchPage = () => {
   // fetch(`http://127.0.0.1:8081/sentimentanalyzer?name=${encodeURIComponent(productName)}`)
   // fetch(`https://sentimentor-sentimentanalyzer-f8043a0ff5c9.herokuapp.com/sentimentanalyzer?name=${encodeURIComponent(productName)}`)
   const analyzeReview = (productName) => {
+    setAnalyzingProduct(productName);
+    
     fetch(`http://127.0.0.1:8081/sentimentanalyzer?name=${encodeURIComponent(productName)}`)
       .then((response) => response.json())
       .then((json) => {
-        console.log("Analyzed Product:", json);
         setReviewData(json);
         setAnalyzedProducts((prev) => [...prev, productName]);
         setProductRatings((prev) => ({
@@ -179,8 +180,10 @@ const SearchPage = () => {
           [productName]: json.analysisContent.sentimentRating,
         }));
         setAnalyzingProduct(null);
+        setShowComparison(false);
       });
   };
+  
 
 
   const revertAnalyze = (productName) => {

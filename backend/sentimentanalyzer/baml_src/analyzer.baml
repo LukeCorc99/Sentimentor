@@ -6,67 +6,41 @@ class ProductAnalysis {
   specifications string[]
 
   valueForMoney string
-  valueForMoneyRating int
+  valueForMoneyRating float
 
   soundQuality string
-  soundQualityRating int
+  soundQualityRating float
 
   comfortFit string
-  comfortFitRating int
+  comfortFitRating float
 
   batteryLife string
-  batteryLifeRating int
+  batteryLifeRating float
 
   connectivity string
-  connectivityRating int
+  connectivityRating float
 
   featuresControls string
-  featuresControlsRating int
+  featuresControlsRating float
 
   callQuality string
-  callQualityRating int
+  callQualityRating float
 
   brandWarranty string
-  brandWarrantyRating int
+  brandWarrantyRating float
 
   userFeedback string
-  userFeedbackRating int
+  userFeedbackRating float
 
   availability string
-  availabilityRating int
+  availabilityRating float
 
   sentimentRating float
   sentiment string
 }
 
 
-class ProductComparison {
-  name1 string
-  name2 string
-  summary string
-  price1 string
-  priceSource1 string
-  price2 string
-  priceSource2 string
-  specifications1 string[]
-  specifications2 string[]
-  score1 string
-  score2 string
-  sentiment1 string
-  sentiment2 string
-  valueForMoneyComparison string
-  soundQualityComparison string
-  comfortFitComparison string
-  batteryLifeComparison string
-  connectivityComparison string
-  featuresControlsComparison string
-  callQualityComparison string
-  brandWarrantyComparison string
-  userFeedbackComparison string
-  availabilityComparison string
-  overallSentimentComparison string 
-  recommendation string
-}
+
 
 function AnalyzeProductReview(text: string) -> ProductAnalysis {
   client "openai/gpt-4o-mini"
@@ -83,7 +57,7 @@ function AnalyzeProductReview(text: string) -> ProductAnalysis {
     - Specific source of product price (Must be from a retailer, if not, an official website. "Product listing", "announcement", etc. are not valid sources)
     - Product specifications in a structured format
 
-    Provide very brief analysis, along with a rating out of 5, under the following headings:
+    Provide very brief analysis, along with a rating, displayed in the format x.xx out of 5.0, under the following headings:
     - Value for Money (not the price itself, but the value the product offers for the price)
     - Sound Quality
     - Comfort & Fit
@@ -102,55 +76,7 @@ function AnalyzeProductReview(text: string) -> ProductAnalysis {
   "#
 }
 
-function CompareAnalysis(analysis1: string, analysis2: string) -> ProductComparison {
-  client "openai/gpt-3.5-turbo"
-  prompt #"
-    Compare the following two product analysis texts
-    {{ analysis1 }}
-    {{ analysis2 }}
 
-    Provide the following information
-    - The name of each product (make sure they are concise and avoid unnecessary words)
-    - A summary comparing the two products
-    - Price of both products (Display in euros, in the format €x.xx)
-    - Specific source of price of both products (Must be from a retailer, if not, an official website. "Product listing", "announcement", etc. are not valid sources)
-    - Specifications of each product in a structured format
-    - The sentiment rating for each product (in the format x.xx/5.00)
-    - Indicate if the sentiment for each product is highly positive, positive, neutral, negative, or highly negative.
-
-    Very briefly compare the two products under the following headings:
-    - Value for Money
-    - Sound Quality
-    - Comfort & Fit
-    - Battery Life & Charging
-    - Connectivity & Compatibility
-    - Features & Controls
-    - Call Quality & Microphone Performance
-    - Brand & Warranty
-    - Reviews & User Feedback
-    - Availability & Local Factors
-
-
-    - Based on the comparison, recommend the better product. Note if a product is significantly cheaper or has a major advantage in any category.
-    
-    {{ ctx.output_format }}
-  "#
-}
-
-test compareAnalysisTest {
-  functions [CompareAnalysis]
-  args {
-    analysis1 #"
-      
-      "#
-    analysis2 #"
-      
-      "#
-
-  }
-}
-
-// Test the function with a sample review text.
 test testProductAnalysis {
   functions [AnalyzeProductReview]
   args {

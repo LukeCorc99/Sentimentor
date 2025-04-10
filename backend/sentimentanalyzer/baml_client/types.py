@@ -47,51 +47,24 @@ class ProductAnalysis(BaseModel):
     priceSource: str
     specifications: List[str]
     valueForMoney: str
-    valueForMoneyRating: int
+    valueForMoneyRating: float
     soundQuality: str
-    soundQualityRating: int
+    soundQualityRating: float
     comfortFit: str
-    comfortFitRating: int
+    comfortFitRating: float
     batteryLife: str
-    batteryLifeRating: int
+    batteryLifeRating: float
     connectivity: str
-    connectivityRating: int
+    connectivityRating: float
     featuresControls: str
-    featuresControlsRating: int
+    featuresControlsRating: float
     callQuality: str
-    callQualityRating: int
+    callQualityRating: float
     brandWarranty: str
-    brandWarrantyRating: int
+    brandWarrantyRating: float
     userFeedback: str
-    userFeedbackRating: int
+    userFeedbackRating: float
     availability: str
-    availabilityRating: int
+    availabilityRating: float
     sentimentRating: float
     sentiment: str
-
-class ProductComparison(BaseModel):
-    name1: str
-    name2: str
-    summary: str
-    price1: str
-    priceSource1: str
-    price2: str
-    priceSource2: str
-    specifications1: List[str]
-    specifications2: List[str]
-    score1: str
-    score2: str
-    sentiment1: str
-    sentiment2: str
-    valueForMoneyComparison: str
-    soundQualityComparison: str
-    comfortFitComparison: str
-    batteryLifeComparison: str
-    connectivityComparison: str
-    featuresControlsComparison: str
-    callQualityComparison: str
-    brandWarrantyComparison: str
-    userFeedbackComparison: str
-    availabilityComparison: str
-    overallSentimentComparison: str
-    recommendation: str

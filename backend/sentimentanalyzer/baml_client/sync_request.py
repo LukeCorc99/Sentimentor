@@ -60,29 +60,6 @@ class HttpRequest:
         False,
       )
     
-    def CompareAnalysis(
-        self,
-        analysis1: str,analysis2: str,
-        baml_options: BamlCallOptions = {},
-    ) -> baml_py.HTTPRequest:
-      __tb__ = baml_options.get("tb", None)
-      if __tb__ is not None:
-        tb = __tb__._tb # type: ignore (we know how to use this private attribute)
-      else:
-        tb = None
-      __cr__ = baml_options.get("client_registry", None)
-
-      return self.__runtime.build_request_sync(
-        "CompareAnalysis",
-        {
-          "analysis1": analysis1,"analysis2": analysis2,
-        },
-        self.__ctx_manager.get(),
-        tb,
-        __cr__,
-        False,
-      )
-    
 
 
 class HttpStreamRequest:
@@ -110,29 +87,6 @@ class HttpStreamRequest:
         "AnalyzeProductReview",
         {
           "text": text,
-        },
-        self.__ctx_manager.get(),
-        tb,
-        __cr__,
-        True,
-      )
-    
-    def CompareAnalysis(
-        self,
-        analysis1: str,analysis2: str,
-        baml_options: BamlCallOptions = {},
-    ) -> baml_py.HTTPRequest:
-      __tb__ = baml_options.get("tb", None)
-      if __tb__ is not None:
-        tb = __tb__._tb # type: ignore (we know how to use this private attribute)
-      else:
-        tb = None
-      __cr__ = baml_options.get("client_registry", None)
-
-      return self.__runtime.build_request_sync(
-        "CompareAnalysis",
-        {
-          "analysis1": analysis1,"analysis2": analysis2,
         },
         self.__ctx_manager.get(),
         tb,

@@ -127,33 +127,6 @@ class BamlAsyncClient:
       )
       return cast(types.ProductAnalysis, raw.cast_to(types, types, partial_types, False))
     
-    async def CompareAnalysis(
-        self,
-        analysis1: str,analysis2: str,
-        baml_options: BamlCallOptions = {},
-    ) -> types.ProductComparison:
-      options: BamlCallOptions = {**self.__baml_options, **(baml_options or {})}
-
-      __tb__ = options.get("tb", None)
-      if __tb__ is not None:
-        tb = __tb__._tb # type: ignore (we know how to use this private attribute)
-      else:
-        tb = None
-      __cr__ = options.get("client_registry", None)
-      collector = options.get("collector", None)
-      collectors = collector if isinstance(collector, list) else [collector] if collector is not None else []
-      raw = await self.__runtime.call_function(
-        "CompareAnalysis",
-        {
-          "analysis1": analysis1,"analysis2": analysis2,
-        },
-        self.__ctx_manager.get(),
-        tb,
-        __cr__,
-        collectors,
-      )
-      return cast(types.ProductComparison, raw.cast_to(types, types, partial_types, False))
-    
 
 
 class BamlStreamClient:
@@ -196,40 +169,6 @@ class BamlStreamClient:
         raw,
         lambda x: cast(partial_types.ProductAnalysis, x.cast_to(types, types, partial_types, True)),
         lambda x: cast(types.ProductAnalysis, x.cast_to(types, types, partial_types, False)),
-        self.__ctx_manager.get(),
-      )
-    
-    def CompareAnalysis(
-        self,
-        analysis1: str,analysis2: str,
-        baml_options: BamlCallOptions = {},
-    ) -> baml_py.BamlStream[partial_types.ProductComparison, types.ProductComparison]:
-      options: BamlCallOptions = {**self.__baml_options, **(baml_options or {})}
-      __tb__ = options.get("tb", None)
-      if __tb__ is not None:
-        tb = __tb__._tb # type: ignore (we know how to use this private attribute)
-      else:
-        tb = None
-      __cr__ = options.get("client_registry", None)
-      collector = options.get("collector", None)
-      collectors = collector if isinstance(collector, list) else [collector] if collector is not None else []
-      raw = self.__runtime.stream_function(
-        "CompareAnalysis",
-        {
-          "analysis1": analysis1,
-          "analysis2": analysis2,
-        },
-        None,
-        self.__ctx_manager.get(),
-        tb,
-        __cr__,
-        collectors,
-      )
-
-      return baml_py.BamlStream[partial_types.ProductComparison, types.ProductComparison](
-        raw,
-        lambda x: cast(partial_types.ProductComparison, x.cast_to(types, types, partial_types, True)),
-        lambda x: cast(types.ProductComparison, x.cast_to(types, types, partial_types, False)),
         self.__ctx_manager.get(),
       )
     

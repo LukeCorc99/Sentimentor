@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import { FaAmazon, FaStar, FaExchangeAlt } from "react-icons/fa";
+import { FaAmazon, FaStar, FaStarHalfAlt, FaRegStar, FaExchangeAlt, FaTimes } from "react-icons/fa";
 import '../styles/AnalysisSection.css';
 import PropTypes from 'prop-types';
-import { FaTimes } from 'react-icons/fa';
 import { getAuth } from 'firebase/auth'
 
 
@@ -16,12 +15,19 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
   };
 
   const handleCheckboxChange = (productId) => {
-    setSelectedForCompare((prev) =>
-      prev.includes(productId)
-        ? prev.filter((id) => id !== productId)
-        : [...prev, productId]
-    );
+    setSelectedForCompare((prev) => {
+      if (prev.includes(productId)) {
+        return prev.filter((id) => id !== productId);
+      } else {
+        if (prev.length < 4) {
+          return [...prev, productId];
+        } else {
+          return prev;
+        }
+      }
+    });
   };
+
 
   const handleCompareNow = () => {
     if (onCompare) {
@@ -105,7 +111,7 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
 
                   {showCompareTooltip && (
                     <div className="compareTooltip">
-                      <h4>Select Saved Products to Compare With</h4>
+                      <h3>Select up to 4 Previously Saved Products to Compare With:</h3>
                       <div className="compareProductsContainer">
                         <ul>
                           {savedProducts.map((prod) => {
@@ -117,11 +123,11 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
                                 onClick={() => handleCheckboxChange(prod.id)}
                               >
                                 {prod.image && (
-                                    <img
-                                      src={prod.image}
-                                      alt={prod.name}
-                                      className="compareProductImage"
-                                    />
+                                  <img
+                                    src={prod.image}
+                                    alt={prod.name}
+                                    className="compareProductImage"
+                                  />
                                 )}
                                 <span>{prod.name}</span>
                                 <FaTimes
@@ -144,7 +150,6 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
                     </div>
                   )}
                 </div>
-
               </div>
             </div>
           </div>
@@ -164,13 +169,18 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
                   </div>
                 </div>
                 <div className="stars">
-                  {[...Array(5)].map((_, index) => (
-                    <FaStar
-                      key={index}
-                      className={index < Math.round(reviewData.analysisContent.sentimentRating) ? "star filled" : "star"}
-                    />
-                  ))}
+                  {[...Array(5)].map((_, index) => {
+                    const starNumber = index + 1;
+                    if (reviewData.analysisContent.sentimentRating >= starNumber) {
+                      return <FaStar key={index} className="star filled" />;
+                    } else if (reviewData.analysisContent.sentimentRating >= starNumber - 0.5) {
+                      return <FaStarHalfAlt key={index} className="star half" />;
+                    } else {
+                      return <FaRegStar key={index} className="star empty" />;
+                    }
+                  })}
                 </div>
+
               </div>
               <div className="tooltipContainer">
                 <div className="tooltip">
@@ -244,13 +254,20 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
                       <span className="categoryName">{category}</span>
                     </div>
                     <div className="categoryStars">
-                      {[...Array(5)].map((_, idx) => (
-                        <FaStar
-                          key={idx}
-                          className={idx < Math.round(parseFloat(rating)) ? "star filled-small" : "star empty-small"}
-                        />
-                      ))}
+                    <span className="categoryScore">{rating}/5</span>
+                      {[...Array(5)].map((_, idx) => {
+                        const starNumber = idx + 1;
+                        const numericRating = parseFloat(rating);
+                        if (numericRating >= starNumber) {
+                          return <FaStar key={idx} className="star filled-small" />;
+                        } else if (numericRating >= starNumber - 0.5) {
+                          return <FaStarHalfAlt key={idx} className="star half-small" />;
+                        } else {
+                          return <FaRegStar key={idx} className="star empty-small" />;
+                        }
+                      })}
                     </div>
+
                   </div>
                   <div className="categoryDetails">
                     <p>{text}</p>
