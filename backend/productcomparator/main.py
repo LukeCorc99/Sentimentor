@@ -1,3 +1,4 @@
+from baml_client.sync_client import b
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import firebase_admin
@@ -21,45 +22,81 @@ app = Flask(__name__)
 cors = CORS(app, origins="*")
 
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-from baml_client.sync_client import b
+
+
+def productToReviewText(product):
+    lines = []
+    lines.append(f"Name: {product.get('name', '')}")
+    lines.append(f"Price: {product.get('price', '')}")
+    lines.append(f"Rating: {product.get('rating', '')}")
+
+    categories = product.get("categories", {})
+    for cat, val in categories.items():
+        lines.append(f"{cat}: {val}")
+
+    return "\n".join(lines)
 
 
 def extractComparison(analysisOne, analysisTwo):
     try:
-        analysisOneContent = json.dumps(analysisOne["analysisContent"])
-        analysisTwoContent = json.dumps(analysisTwo["analysisContent"])
+        textOne = productToReviewText(analysisOne)
+        textTwo = productToReviewText(analysisTwo)
 
-        response = b.CompareAnalysis(analysisOneContent, analysisTwoContent)
+        response = b.CompareAnalysis(textOne, textTwo)
 
         return {
-            "name1": response.name1,
-            "name2": response.name2,
-            "summary": response.summary,
-            "price1": response.price1,
-            "price2": response.price2,
-            "priceSource1": response.priceSource1,
-            "priceSource2": response.priceSource2,
-            "specifications1": response.specifications1,
-            "specifications2": response.specifications2,
-            "score1": response.score1,
-            "score2": response.score2,
-            "sentiment1": response.sentiment1,
-            "sentiment2": response.sentiment2,
-            "valueForMoneyComparison": response.valueForMoneyComparison,
-            "soundQualityComparison": response.soundQualityComparison,
-            "comfortFitComparison": response.comfortFitComparison,
-            "batteryLifeComparison": response.batteryLifeComparison,
-            "connectivityComparison": response.connectivityComparison,
-            "featuresControlsComparison": response.featuresControlsComparison,
-            "callQualityComparison": response.callQualityComparison,
-            "brandWarrantyComparison": response.brandWarrantyComparison,
-            "userFeedbackComparison": response.userFeedbackComparison,
-            "availabilityComparison": response.availabilityComparison,
-            "overallSentimentComparison": response.overallSentimentComparison,
-            "recommendation": response.recommendation,
+            "bestProductName": response.bestProduct,
+            "bestProductReason": response.bestProductReason,
         }
     except Exception as e:
-        return {"error": "Failed to extract analysis", "message": str(e)}
+        return {"error": "Failed to extract comparison", "message": str(e)}
+
+
+def multiProductComparison(analyses):
+    try:
+        snippet_list = [productToReviewText(prod) for prod in analyses]
+
+        combined_text = "\n\n---\n\n".join(snippet_list)
+
+        response = b.CompareAnalysis(combined_text)
+
+        return {
+            "bestProductName": response.bestProduct,
+            "bestProductReason": response.bestProductReason,
+        }
+    except Exception as e:
+        return {
+            "error": "Failed to extract multi-product comparison",
+            "message": str(e),
+        }
+
+
+@app.route("/compareproducts", methods=["POST"])
+def compareProducts():
+    try:
+        productData = request.json
+        analyses = productData.get("analyses")
+
+        if not isinstance(analyses, list) or not (2 <= len(analyses) <= 4):
+            return (
+                jsonify({"error": "Please provide between 2 and 4 product analyses"}),
+                400,
+            )
+
+        comparisonResult = multiProductComparison(analyses)
+
+        return (
+            jsonify(
+                {
+                    "comparison": comparisonResult,
+                    "message": "Analyses compared successfully",
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/saveproduct", methods=["POST"])
@@ -107,31 +144,8 @@ def deleteProduct():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/compareproducts", methods=["POST"])
-def compareProducts():
-    try:
-        productData = request.json
-
-        analysisOne = productData.get("analysisOne")
-        analysisTwo = productData.get("analysisTwo")
-
-        comparisonResult = extractComparison(analysisOne, analysisTwo)
-
-        return (
-            jsonify(
-                {
-                    "comparison": comparisonResult,
-                    "message": "Analyses compared successfully",
-                }
-            ),
-            200,
-        )
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
 if __name__ == "__main__":
     app.run(debug=True, port=8082)
+
     #  port = int(os.environ.get("PORT", 5000))
     #  app.run(debug=False, host="0.0.0.0", port=port)

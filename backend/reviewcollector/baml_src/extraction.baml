@@ -48,11 +48,6 @@ return an empty list.
 
 
 
-
-
-
-
-
 test extractProductNamesTest {
   functions [ExtractProductName]
   args {

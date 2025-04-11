@@ -64,10 +64,10 @@ pytest
 
 
 To stop heroku apps costing money in background:
-./stop_apps.sh
+./stop.sh
 
 To start heroku apps:
-./start_apps.sh
+./start.sh
 
 frontend:
 https://sentimentor-b99323d2c946.herokuapp.com/

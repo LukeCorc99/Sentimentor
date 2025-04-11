@@ -5,6 +5,7 @@
   color: white;
   overflow-x: hidden;
   overflow-y: scroll; 
+  margin-top: -20px;
 }
 
 .reviewsContainer {
@@ -20,6 +21,7 @@
   display: flex;
   margin-bottom: 20px;
   margin-right: 20px;
+  margin-top: 20px;
 }
 
 .searchInput {
@@ -35,7 +37,6 @@
   animation: fadeIn 0.6s ease-out forwards;
 }
 
-
 .analysisContainer {
   background: #1e2a38;
   color: #fff;
@@ -44,12 +45,26 @@
 }
 
 .reviewImage {
-  width: 10rem;
-  height: 10rem;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
   border-radius: 8px;
   border: 3px solid black;
   display: block;
+}
+
+@media (max-width: 1650px) {
+  .reviewImage {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+@media (max-width: 1400px) {
+  .reviewImage {
+    width: 130px;
+    height: 130px;
+  }
 }
 
 .productTitle {
@@ -78,7 +93,14 @@
 
 .productList {
   width: 100%; 
+  min-width: 44rem;
   animation: fadeIn 0.4s ease-out forwards;
+}
+
+@media (max-width: 1750px) {
+  .productList {
+    min-width: 0;
+  }
 }
 
 .productItem {
@@ -98,9 +120,21 @@
   margin-left: 20px;
 }
 
+@media (max-width: 1550px) {
+  .productInfoContainer {
+    width: 65%;
+  }
+}
+
 .productName {
   font-size: 30px;
   margin-bottom: 1rem;
+}
+
+@media (max-width: 1500px) {
+  .productName {
+    font-size: 25px;
+  }
 }
 
 .analyzeButton {
@@ -112,6 +146,21 @@
   background-color: #ffffff;
   transition: background-color 0.35s ease;
   color:#000;
+}
+
+@media (max-width: 1340px) {
+  .analyzeButton {
+    min-width: 120px;
+    font-size: 15px;
+  }
+}
+
+
+@media (max-width: 1220px) {
+  .analyzeButton {
+    min-width: 100px;
+    font-size: 12px;
+  }
 }
 
 .analyzeButton:hover {
@@ -126,9 +175,37 @@
 }
 
 .reviewSources {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+@media (max-width: 1460px) {
+  .reviewSources {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+  }
+}
+
+@media (max-width: 1360px) {
+  .reviewSources {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+  }
+}
+
+
+.reviewSourceText {
   font-size: 18px;
   color: #ccc;
   white-space: nowrap;
+}
+
+@media (max-width: 1340px) {
+  .reviewSourceText {
+    font-size: 16px;
+  }
 }
 
 .reviewLinkButton {
@@ -153,25 +230,22 @@
 }
 
 
-.productDetails {
-  font-size: 18px;
-  margin-bottom: 15px;
-  margin-top: 0px;
-  background: #2a3d4f;
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
+@media (max-width: 1280px) {
+  .reviewLinkButton {
+    width: 25px;
+    height: 25px;
+    font-size: 14px;
+  }
 }
 
-.productInfo {
-  margin-right: 10px;
-  margin-left: 10px;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
+@media (max-width: 1240px) {
+  .reviewLinkButton {
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+  }
 }
+
 
 .imageContainer {
   display: flex;
@@ -186,21 +260,39 @@
   margin-top: 20px;
 }
 
-
-
 .analyzedStars {
   text-align: center;
   margin-left: 0.5rem;
+  white-space: nowrap;
 }
 
-.starPrevious {
-  font-size: 50px;
-  color: #ccc;
-  margin-right: 4px;
+.starAnalyzed {
+  font-size: 25px;
+  margin-right: 2px;
 }
 
-.filledStarPrevious {
-  color: #ffd900;
+@media (max-width: 1340px) {
+  .starAnalyzed {
+    font-size: 23px;
+  }
+}
+
+@media (max-width: 1300px) {
+  .starAnalyzed {
+    font-size: 21px;
+  }
+}
+
+.filledStarAnalyzed {
+  color: #ffd900;  
+}
+
+.halfStarAnalyzed {
+  color: #ffd900; 
+}
+
+.emptyStarAnalyzed {
+  color: #ccc; 
 }
 
 .sentimentBadgeContainer {
@@ -242,7 +334,6 @@
   top: 50%;
   right: -6px;
   transform: translateY(-50%);
-  
   width: 0;
   height: 0;
   border-top: 6px solid transparent;
@@ -278,9 +369,10 @@
   color: #d4d3d3;
 }
 
-.starRating {
-  text-align: center;
-  margin-left: 10px;
+@media (max-width: 1340px) {
+  .analyzedRating {
+    font-size: 14px;
+  }
 }
 
 .productActionsContainer {
@@ -385,30 +477,6 @@
 }
 
 
-.ratingStars {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  gap: 3px;
-}
-
-.filledStarSmall {
-  color: #ffd700;
-  font-size: 30px;
-}
-
-.emptyStarSmall {
-  color: #cccccc;
-  font-size: 27px;
-}
-
-.ratingNumber {
-  color: #fff;
-  margin-left: 5px;
-  font-size: 18px;
-}
-
-
 @keyframes dropdownAnimation {
   from {
     opacity: 0;
@@ -452,27 +520,4 @@
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;
-}
-
-@media (max-width: 992px) {
-  .reviewsContainer {
-    flex-direction: column; 
-    width: 95%;
-    margin: 0 auto;
-  }
-
-  .searchContainer,
-  .analysisContainer {
-    width: 70%;
-    margin-bottom: 20px;
-  }
-
-  .searchInput {
-    font-size: 16px;
-  }
-
-  .analyzeButton {
-    min-width: 120px;
-    font-size: 16px;
-  }
 }

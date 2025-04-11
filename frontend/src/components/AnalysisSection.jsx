@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FaAmazon, FaStar, FaStarHalfAlt, FaRegStar, FaExchangeAlt, FaTimes } from "react-icons/fa";
+import { FaAmazon, FaStar, FaStarHalfAlt, FaRegStar, FaExchangeAlt, FaTimes, FaBookmark } from "react-icons/fa";
 import '../styles/AnalysisSection.css';
 import PropTypes from 'prop-types';
 import { getAuth } from 'firebase/auth'
@@ -9,17 +9,65 @@ import { getAuth } from 'firebase/auth'
 function AnalysisSection({ reviewData, expandedCategories, toggleCategory, savedProducts = [], setSavedProducts, onCompare }) {
   const [showCompareTooltip, setShowCompareTooltip] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
+  const isSaved = savedProducts.some(p => p.name === reviewData.analysisContent.name);
+  const [hoveredSaveButton, setHoveredSaveButton] = useState(false);
 
   const handleCompareToggle = () => {
     setShowCompareTooltip((prev) => !prev);
   };
 
+  const handleSave = async () => {
+    try {
+      const user = getAuth().currentUser;
+      if (!user) {
+        console.error("No user is signed in, cannot save.");
+        return;
+      }
+      const dataToSend = { ...reviewData, userId: user.uid };
+
+      // const response = await fetch("http://127.0.0.1:8082/saveproduct", {
+      // const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/saveproduct", {
+      const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/saveproduct", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataToSend)
+      });
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Product saved successfully:", data.message, "Doc ID:", data.docId);
+        const newSavedProduct = { ...reviewData, id: data.docId };
+        setSavedProducts(prev => [...prev, newSavedProduct]);
+      } else {
+        console.error("Error saving product:", data.error);
+      }
+    } catch (error) {
+      console.error("Network error:", error);
+    }
+  };
+
+  const handleSaveToggle = () => {
+    if (isSaved) {
+      const savedProduct = savedProducts.find(p => p.name === reviewData.analysisContent.name);
+      handleDeleteProduct(savedProduct.id);
+    } else {
+      handleSave();
+    }
+  };
+
   const handleCheckboxChange = (productId) => {
+    const selectedProduct = savedProducts.find(prod => prod.id === productId);
+
+    if (selectedProduct && selectedProduct.analysisContent &&
+      reviewData.analysisContent &&
+      selectedProduct.analysisContent.name === reviewData.analysisContent.name) {
+      return;
+    }
+
     setSelectedForCompare((prev) => {
       if (prev.includes(productId)) {
         return prev.filter((id) => id !== productId);
       } else {
-        if (prev.length < 4) {
+        if (prev.length < 3) {
           return [...prev, productId];
         } else {
           return prev;
@@ -31,10 +79,15 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
 
   const handleCompareNow = () => {
     if (onCompare) {
-      onCompare(selectedForCompare);
+      const selectedSavedProducts = savedProducts.filter(prod =>
+        selectedForCompare.includes(prod.id)
+      );
+      onCompare(selectedSavedProducts, reviewData);
       setShowCompareTooltip(false);
     }
   };
+
+
   const handleDeleteProduct = async (productId) => {
     try {
       const user = getAuth().currentUser
@@ -42,8 +95,9 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
         console.error("No user is signed in.")
         return
       }
-
-      const response = await fetch("http://127.0.0.1:8082/deleteproduct", {
+      // const response = await fetch("http://127.0.0.1:8082/deleteproduct", {
+      // const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/deleteproduct", {
+      const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/deleteproduct", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -65,7 +119,7 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
     }
   }
 
-
+  const isCompareButtonDisabled = selectedForCompare.length === 0;
 
   return (
     <div className="analysis-container">
@@ -100,39 +154,41 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
                       rel="noopener noreferrer"
                       className="amazonBtn"
                     >
-                      <FaAmazon />Search Amazon
+                      <FaAmazon />Search it on Amazon
                     </a>
                   </>
                 )}
                 <div className="compareBtnWrapper">
                   <button className="compareBtn" type="button" onClick={handleCompareToggle}>
-                    <FaExchangeAlt /> Compare Product
+                    <FaExchangeAlt /> Compare this Product
                   </button>
 
                   {showCompareTooltip && (
                     <div className="compareTooltip">
-                      <h3>Select up to 4 Previously Saved Products to Compare With:</h3>
+                      <h3>Select up to 3 Previously Saved Products to Compare With:</h3>
                       <div className="compareProductsContainer">
                         <ul>
                           {savedProducts.map((prod) => {
                             const isSelected = selectedForCompare.includes(prod.id);
+                            const isSameProduct = prod.analysisContent && reviewData.analysisContent &&
+                              prod.analysisContent.name === reviewData.analysisContent.name;
+
                             return (
                               <li
                                 key={prod.id}
-                                className={`compareProductItem ${isSelected ? 'selected' : ''}`}
-                                onClick={() => handleCheckboxChange(prod.id)}
+                                className={`compareProductItem ${isSelected ? 'selected' : ''} ${isSameProduct ? 'disabled' : ''}`}
+                                onClick={() => !isSameProduct && handleCheckboxChange(prod.id)}
                               >
                                 {prod.image && (
                                   <img
                                     src={prod.image}
-                                    alt={prod.name}
+                                    alt={prod.name || 'Product image'}
                                     className="compareProductImage"
                                   />
                                 )}
-                                <span>{prod.name}</span>
+                                <span>{prod.analysisContent?.name || 'Unknown product'}</span>
                                 <FaTimes
                                   className="deleteIcon"
-                                  style={{ cursor: 'pointer', marginLeft: 'auto' }}
                                   onClick={(event) => {
                                     event.stopPropagation();
                                     handleDeleteProduct(prod.id);
@@ -145,11 +201,33 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
 
                       </div>
                       <div className="compareNowContainer">
-                        <button className="compareNowBtn" onClick={handleCompareNow}> <FaExchangeAlt /> Compare</button>
+                        <button
+                          className={`compareNowBtn ${isCompareButtonDisabled ? 'disabled' : ''}`}
+                          onClick={handleCompareNow}
+                          disabled={isCompareButtonDisabled}
+                          style={{
+                            opacity: isCompareButtonDisabled ? 0.5 : 1,
+                            cursor: isCompareButtonDisabled ? 'not-allowed' : 'pointer'
+                          }}
+                        >
+                          <FaExchangeAlt /> Compare
+                        </button>
                       </div>
                     </div>
                   )}
                 </div>
+                <button
+                  className={`saveBtn ${isSaved ? "saved" : ""}`}
+                  type="button"
+                  onClick={handleSaveToggle}
+                  onMouseEnter={() => setHoveredSaveButton(true)}
+                  onMouseLeave={() => setHoveredSaveButton(false)}
+                >
+                  <FaBookmark /> 
+                  {isSaved
+                    ? (hoveredSaveButton ? "Unsave Product?" : "Product Saved!")
+                    : "Save For Comparison"}
+                </button>
               </div>
             </div>
           </div>
@@ -254,7 +332,7 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
                       <span className="categoryName">{category}</span>
                     </div>
                     <div className="categoryStars">
-                    <span className="categoryScore">{rating}/5</span>
+                      <span className="categoryScore">{rating}/5</span>
                       {[...Array(5)].map((_, idx) => {
                         const starNumber = idx + 1;
                         const numericRating = parseFloat(rating);
@@ -267,7 +345,6 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
                         }
                       })}
                     </div>
-
                   </div>
                   <div className="categoryDetails">
                     <p>{text}</p>

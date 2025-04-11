@@ -1,4 +1,5 @@
 # Sentimentor 
+Senti
 ## Overview 
 A Python and React.js microservice-based project designed to simplify product research by analyzing reviews from multiple sources. Using Natural Language Processing (NLP), it evaluates sentiment and provides an aggregated score, enabling users to make faster, informed decisions. It uses various frameworks to scrape multiple review web pages, analyze the content of these sources and compare the analysis.
   

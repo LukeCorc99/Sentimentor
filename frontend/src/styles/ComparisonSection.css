@@ -6,7 +6,7 @@
 }
 
 .comparisonCard {
-  max-width: 38vw;
+  max-width: 40vw;
   width: 100%;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(12px);
@@ -29,8 +29,14 @@
   background-clip: text;
   color: transparent;
   background-size: 200% 200%;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   animation: gradient 6s ease infinite;
+}
+
+@media (max-width: 1650px) {
+  .comparisonTitle {
+    font-size: 40px;
+  }
 }
 
 .productGrid {
@@ -48,10 +54,19 @@
   align-items: stretch;
 }
 
+
+@media (max-width: 1650px) {
+  .productGridInner {
+    gap: 1.3rem;
+  }
+}
+
 .productCard {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  min-height: 21.5rem;
   height: 100%;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(8px);
@@ -60,49 +75,66 @@
   transition: all 0.2s ease;
 }
 
+@media (max-width: 1650px) {
+  .productCard {
+    min-height: 20.5rem;
+  }
+}
+
 .productCard.selected {
   outline: 2px solid #3b82f6;
   outline-offset: -2px;
 }
 
+.productCard.winner {
+  border: 3px solid #22c55e !important;
+}
+
 .productComparisonInfo {
   text-align: center;
-  margin-bottom: 0.5rem;
+  height: 5rem;
+  max-height: 5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .productComparisonName {
-  font-size: 20px;
+  font-size: 25px;
   font-weight: 600;
   color: white;
-  margin-bottom: 0.25rem;
+  line-height: 1.3;
+  max-height: 4.5rem;
+}
+
+@media (max-width: 1650px) {
+  .productComparisonName {
+    font-size: 21px;
+  }
 }
 
 .imageContainerWrapper {
   position: relative;
 }
 
-.ratingContainerOverlay {
+
+.productRatingContainer {
   position: absolute;
-  bottom: 0.4rem;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.5);  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  top: -2.5rem;
   padding: 5px;
-  border-radius: 0.5rem;
-      
 }
 
-.ratingContainerOverlay .starsComparison {
-  display: inline-flex;
-  vertical-align: middle;
+@media (max-width: 1650px) {
+  .productRatingContainer {
+    padding: 2px;
+  }
 }
 
-.ratingContainerOverlay .ratingNumber {
-  vertical-align: middle;
-  margin-left: 5px;
-  font-size: 1.2rem;
-  color: #fff;
-}
 
 .ratingContainer {
   display: flex;
@@ -146,6 +178,18 @@
   margin-top: auto;
 }
 
+@media (max-width: 1650px) {
+  .productImage {
+    height: 11rem;
+  }
+}
+
+@media (max-width: 1450px) {
+  .productImage {
+    height: 10.5rem;
+  }
+}
+
 .vs {
   position: absolute;
   top: 50%;
@@ -160,6 +204,12 @@
   background-clip: text;
   background-size: 200% 200%;
   animation: gradient 6s ease infinite;
+}
+
+@media (max-width: 1650px) {
+  .vs {
+    font-size: 1.8rem;
+  }
 }
 
 .chartContainer {
@@ -206,27 +256,33 @@
   box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
 }
 
-.productCard {
-  position: relative;
-}
-
-.productCard.winner {
-  border: 3px solid #22c55e !important;
-}
-
 .winnerLabel {
   position: absolute;
-  top: 5.1rem;
-  right: 1rem;
+  left: 0px;
+  bottom: 6px;
   padding: 0.3rem 0.6rem;
-  background-color: #22c55e00;
+  background-color: #ffffff;
   color: #22c55e;
   font-weight: bold;
   border-radius: 0.3rem;
   border: 2px solid #22c55e;
   font-size: 1.2rem;
-  z-index: 2;
+  z-index: 10;
 }
+
+
+@media (max-width: 1650px) {
+  .winnerLabel {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 1580px) {
+  .winnerLabel {
+    font-size: 1rem;
+  }
+}
+
 
 .winnerSection {
   margin-bottom: 2rem;
@@ -240,11 +296,38 @@
   color: #ffffff;
 }
 
+@media (max-width: 1650px) {
+  .winnerTitle {
+    font-size: 1.7rem;
+  }
+}
+
+
+@media (max-width: 1400px) {
+  .winnerTitle {
+    font-size: 1.6rem;
+  }
+}
+
+
 .winnerDescription {
   font-size: 1rem;
   line-height: 1.6;
   color: #ffffff;
   padding: 0 1rem;
+}
+
+@media (max-width: 1650px) {
+  .winnerDescription {
+    font-size: 0.95rem;
+  }
+}
+
+
+@media (max-width: 1400px) {
+  .winnerDescription {
+    font-size: 0.9rem;
+  }
 }
 
 
@@ -258,8 +341,26 @@
   font-weight: 600;
   border-radius: 0.3rem;
   border: 2px solid;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   z-index: 999;
+}
+
+@media (max-width: 1650px) {
+  .productPrice {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 1580px) {
+  .productPrice {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 1300px) {
+  .productPrice {
+    font-size: 0.9rem;
+  }
 }
 
 .amazonBtnOverlay {
@@ -274,4 +375,116 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
+}
+
+@media (max-width: 1650px) {
+  .amazonBtnOverlay {
+    font-size: 0.85rem;
+  }
+}
+
+
+@media (max-width: 1350px) {
+  .amazonBtnOverlay {
+    font-size: 0.8rem;
+  }
+}
+
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  padding: 2rem;
+  text-align: center;
+}
+
+.loadingTitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  background: linear-gradient(to right, #60a5fa, #a855f7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  background-size: 200% 200%;
+  margin-bottom: 1.5rem;
+  animation: gradient 6s ease infinite;
+  padding-bottom: 2rem;
+}
+
+.loadingText {
+  margin-top: 1.5rem;
+  margin-bottom: 5rem;
+  color: #ffffff;
+  font-size: 1.1rem;
+  max-width: 80%;
+  animation: pulse 2s infinite;
+}
+
+@media (max-width: 1620px) {
+  .loadingText {
+    font-size: 1rem;
+  }
+}
+
+
+.loadingSpinner {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #60a5fa;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}
+
+.twoProductLayout {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 3rem; 
+}
+
+
+@media (max-width: 1650px) {
+  .twoProductLayout {
+    gap: 2.5rem; 
+  }
+}
+
+@media (max-width: 1450px) {
+  .twoProductLayout {
+    gap: 2.2rem;
+  }
+}
+
+.threeProductLayout {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: auto auto;
+}
+
+.threeProductLayout > div:nth-child(3) {
+  grid-column: 1 / span 2;
+  justify-self: center;
+  margin-top: 1rem;
+  width: calc(50%);
+  height: calc(50%);
 }

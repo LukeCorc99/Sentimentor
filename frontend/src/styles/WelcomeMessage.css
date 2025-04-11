@@ -6,6 +6,7 @@
 }
 
 .welcomeCard {
+  max-height: 95vh;
   max-width: 35vw;
   width: 100%;
   background: rgba(255, 255, 255, 0.1);
@@ -13,9 +14,14 @@
   border-radius: 1rem;
   padding: 2rem;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  transform: translateZ(0);
   transition: transform 0.3s ease;
   position: fixed;
+}
+
+@media (max-height: 620px) {
+  .welcomeCard {
+    padding: 1rem;
+  }
 }
 
 .welcomeContent {
@@ -35,6 +41,13 @@
   letter-spacing: 0.05em;
 }
 
+
+@media (max-height: 750px) {
+  .welcomeSubtitle {
+    display: none;
+  }
+}
+
 .welcomeTitle {
   font-size: 4rem;
   font-weight: bold;
@@ -46,9 +59,34 @@
   animation: gradient 6s ease infinite;
 }
 
+@media (max-width: 1380px) {
+  .welcomeTitle {
+    font-size: 3.5rem;
+  }
+}
+
+@media (max-width: 1220px) {
+  .welcomeTitle {
+    font-size: 3.2rem;
+  }
+}
+
+@media (max-height: 550px) {
+  .welcomeTitle {
+    font-size: 2.8rem;
+  }
+}
+
+
 .welcomeAuthor {
   font-size: 1.2rem;
   color: rgba(147, 197, 253, 0.8);
+}
+
+@media (max-height: 550px) {
+  .welcomeAuthor {
+    font-size: 1rem;
+  }
 }
 
 .instructionsSection {
@@ -63,9 +101,21 @@
   animation: fadeIn 0.6s ease-out forwards;
 }
 
+@media (max-height: 800px) {
+  .instructionsTitle {
+    display: none;
+  }
+}
+
 .instructionsGrid {
   display: grid;
   gap: 1rem;
+}
+
+@media (max-height: 700px) {
+  .instructionsGrid {
+    gap: 0.5rem;
+  }
 }
 
 .instructionItem {
@@ -103,12 +153,33 @@
   color: #e0f2fe;
 }
 
+
+@media (max-height: 750px) {
+  .instructionText {
+    font-size: 0.9rem;
+  }
+}
+
 .enjoyText {
   text-align: center;
   font-size: 1.25rem;
   color: #93c5fd;
   margin-top: 2rem;
   animation: bounce 1s infinite;
+}
+
+@media (max-height: 710px) {
+  .enjoyText {
+    margin-top: 1rem;
+  }
+}
+
+@media (max-height: 590px) {
+  .enjoyText {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    animation: bounce2 1s infinite;
+  }
 }
 
 @keyframes gradient {
@@ -145,6 +216,16 @@
   }
   50% {
     transform: translateY(-10px);
+  }
+}
+
+
+@keyframes bounce2 {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
   }
 }
 

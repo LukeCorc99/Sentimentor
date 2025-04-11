@@ -6,10 +6,11 @@ import {
   doc,
   getDocs
 } from 'firebase/firestore'
-import { FaSearch, FaStar, FaBookmark, FaPowerOff } from "react-icons/fa";
+import { FaSearch, FaStar, FaStarHalfAlt, FaRegStar, FaPowerOff } from "react-icons/fa";
 import WelcomeMessage from '../components/WelcomeMessage';
 import AnalysisSection from '../components/AnalysisSection';
 import ComparisonSection from '../components/ComparisonSection';
+import LoadingScreen from '../components/LoadingScreen';
 import { getAuth } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 
@@ -35,6 +36,12 @@ const SearchPage = () => {
   const auth = getAuth();
   const navigate = useNavigate();
 
+  const colorPalette = [
+    "rgba(255, 99, 132, 0.8)",
+    "rgba(0, 153, 255, 0.8)",
+    "rgba(255, 206, 86, 0.8)",
+    "rgba(153, 102, 255, 0.8)"
+  ];
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -80,79 +87,12 @@ const SearchPage = () => {
     }
   }, [analyzingProduct]);
 
+
   useEffect(() => {
     if (reviewData) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [reviewData]);
-
-
-
-  // const response = await fetch("http://127.0.0.1:8082/saveproduct", {
-  // const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/saveproduct", {
-  const saveProduct = async (product) => {
-    try {
-      const user = getAuth().currentUser
-      if (!user) {
-        console.error("No user is signed in, cannot save.")
-        return
-      }
-
-      const dataToSend = { ...product, userId: user.uid }
-      const response = await fetch("http://127.0.0.1:8082/saveproduct", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dataToSend),
-      })
-
-      const data = await response.json()
-      if (response.ok) {
-        console.log("Product saved successfully:", data.message, "Doc ID:", data.docId)
-
-        const newSavedProduct = {
-          ...product,
-          id: data.docId
-        }
-
-        setSavedProducts((prev) => [...prev, newSavedProduct])
-      } else {
-        console.error("Error saving product:", data.error)
-      }
-    } catch (error) {
-      console.error("Network error:", error)
-    }
-  }
-
-  const deleteProduct = async (docId) => {
-    try {
-      const user = getAuth().currentUser;
-      if (!user) {
-        console.error("No user is signed in, cannot delete.");
-        return;
-      }
-
-      const response = await fetch("http://127.0.0.1:8082/deleteproduct", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: docId,
-          userId: user.uid
-        }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Product deleted successfully:", data.message);
-        // Remove from local state
-        setSavedProducts((prev) => prev.filter((p) => p.id !== docId));
-      } else {
-        console.error("Error deleting product:", data.error);
-      }
-    } catch (error) {
-      console.error("Network error:", error);
-    }
-  };
-
 
 
   const handleSearch = () => {
@@ -169,10 +109,11 @@ const SearchPage = () => {
   // fetch(`https://sentimentor-sentimentanalyzer-f8043a0ff5c9.herokuapp.com/sentimentanalyzer?name=${encodeURIComponent(productName)}`)
   const analyzeReview = (productName) => {
     setAnalyzingProduct(productName);
-    
-    fetch(`http://127.0.0.1:8081/sentimentanalyzer?name=${encodeURIComponent(productName)}`)
+
+    fetch(`https://sentimentor-sentimentanalyzer-f8043a0ff5c9.herokuapp.com/sentimentanalyzer?name=${encodeURIComponent(productName)}`)
       .then((response) => response.json())
       .then((json) => {
+        console.log("Analyzed Product:", json);
         setReviewData(json);
         setAnalyzedProducts((prev) => [...prev, productName]);
         setProductRatings((prev) => ({
@@ -183,7 +124,7 @@ const SearchPage = () => {
         setShowComparison(false);
       });
   };
-  
+
 
 
   const revertAnalyze = (productName) => {
@@ -211,6 +152,66 @@ const SearchPage = () => {
     await auth.signOut();
     navigate('/login');
   };
+
+  const transformAnalysisToComparison = (analysisData) => {
+    return {
+      id: `analysis-${analysisData.analysisContent.name}`,
+      name: analysisData.analysisContent.name,
+      image: analysisData.image,
+      rating: analysisData.analysisContent.sentimentRating || 0,
+      price: analysisData.analysisContent.price || "",
+      amazonLink: analysisData.amazonLink || "",
+      categories: {
+        "Sound Quality": analysisData.analysisContent.soundQualityRating,
+        "Comfort & Fit": analysisData.analysisContent.comfortFitRating,
+        "Battery Life": analysisData.analysisContent.batteryLifeRating,
+        "Value": analysisData.analysisContent.valueForMoneyRating,
+        "Connectivity": analysisData.analysisContent.connectivityRating,
+        "Brand & Warranty": analysisData.analysisContent.brandWarrantyRating,
+        "User Feedback": analysisData.analysisContent.userFeedbackRating,
+        "Availability": analysisData.analysisContent.availabilityRating,
+      }
+    };
+  };
+
+  const transformSavedToComparison = (saved) => {
+    const a = saved.analysisContent || {};
+
+    return {
+      id: saved.id,
+      name: saved.name || a.name || "",
+      image: saved.image || a.image || "",
+      rating: a.sentimentRating || 3.0,
+
+      price: a.price || "",
+      amazonLink: saved.amazonLink || a.amazonLink || "",
+
+      categories: {
+        "Sound Quality": a.soundQualityRating || 3.0,
+        "Comfort & Fit": a.comfortFitRating || 3.0,
+        "Battery Life": a.batteryLifeRating || 3.0,
+        "Value": a.valueForMoneyRating || 3.0,
+        "Connectivity": a.connectivityRating || 3.0,
+        "Brand & Warranty": a.brandWarrantyRating || 3.0,
+        "User Feedback": a.userFeedbackRating || 3.0,
+        "Availability": a.availabilityRating || 3.0,
+      },
+    };
+  };
+
+
+  const handleCompare = (selectedSavedProducts, analysisData) => {
+    const currentAnalysisProduct = transformAnalysisToComparison(analysisData);
+    const transformedSaved = selectedSavedProducts.map(transformSavedToComparison);
+    const productsToCompare = [currentAnalysisProduct, ...transformedSaved];
+    const coloredProducts = productsToCompare.map((product, index) => ({
+      ...product,
+      color: colorPalette[index % colorPalette.length]
+    }));
+    setComparisonProducts(coloredProducts);
+    setShowComparison(true);
+  };
+
 
 
   return (
@@ -248,40 +249,6 @@ const SearchPage = () => {
                           referrerPolicy="no-referrer"
                         />
                       )}
-                      <div className="productActionsIcons">
-                        <div className="tooltip">
-                          <FaBookmark
-                            className={`bookmarkIcon ${savedProducts.some((p) => p.name === review.name) ? "saved" : ""}`}
-                            onClick={() => {
-                              const productInSaved = savedProducts.find((p) => p.name === review.name);
-
-                              if (!analyzedProducts.includes(review.name)) {
-                                return;
-                              }
-
-                              if (productInSaved) {
-                                deleteProduct(productInSaved.id);
-                              } else {
-                                saveProduct(review);
-                              }
-                            }}
-                            style={{
-                              cursor: analyzedProducts.includes(review.name) ? "pointer" : "not-allowed",
-                              opacity: analyzedProducts.includes(review.name) ? 1 : 0.5
-                            }}
-                          />
-                          <span className="tooltipTextButton">
-                            {savedProducts.some((p) => p.name === review.name)
-                              ? "Unsave"
-                              : analyzedProducts.includes(review.name)
-                                ? "Save"
-                                : "Analyze first!"}
-                          </span>
-
-                        </div>
-
-                      </div>
-
                       <div className="productInfoContainer">
                         <h3 className="productName">{review.name}</h3>
                         <div className="productActions">
@@ -307,15 +274,34 @@ const SearchPage = () => {
 
                           {analyzedProducts.includes(review.name) ? (
                             <div className="inlineRating">
-                              <span className="reviewSources">Rating ➝</span>
+                              <span className="reviewSourceText">Rating ➝</span>
                               <div className="analyzedStars">
-                                {[...Array(5)].map((_, i) => (
-                                  <FaStar
-                                    key={i}
-                                    className={`starPrevious ${i < Math.round(productRatings[review.name] || 0) ? "filledStarPrevious" : ""}`}
-                                    style={{ fontSize: "25px", marginRight: "2px" }}
-                                  />
-                                ))}
+                                {[...Array(5)].map((_, index) => {
+                                  const starNumber = index + 1;
+                                  const rating = productRatings[review.name] || 0;
+                                  if (rating >= starNumber) {
+                                    return (
+                                      <FaStar
+                                        key={index}
+                                        className="starAnalyzed filledStarAnalyzed"
+                                      />
+                                    );
+                                  } else if (rating >= starNumber - 0.5) {
+                                    return (
+                                      <FaStarHalfAlt
+                                        key={index}
+                                        className="starAnalyzed halfStarAnalyzed"
+                                      />
+                                    );
+                                  } else {
+                                    return (
+                                      <FaRegStar
+                                        key={index}
+                                        className="starAnalyzed emptyStarAnalyzed"
+                                      />
+                                    );
+                                  }
+                                })}
                                 <div className="analyzedRating">
                                   {productRatings[review.name]}/5.00
                                 </div>
@@ -323,18 +309,20 @@ const SearchPage = () => {
                             </div>
                           ) : (
                             <>
-                              <span className="reviewSources">Reviews ➝</span>
-                              {review.links.map((link, linkIndex) => (
-                                <a
-                                  key={linkIndex}
-                                  href={link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="reviewLinkButton"
-                                >
-                                  {linkIndex + 1}
-                                </a>
-                              ))}
+                              <span className="reviewSourceText">Reviews ➝</span>
+                              <div className="reviewSources">
+                                {review.links.map((link, linkIndex) => (
+                                  <a
+                                    key={linkIndex}
+                                    href={link}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="reviewLinkButton"
+                                  >
+                                    {linkIndex + 1}
+                                  </a>
+                                ))}
+                              </div>
                             </>
                           )}
                         </div>
@@ -351,29 +339,23 @@ const SearchPage = () => {
         </div>
         <div className="analysisContainer">
           {showComparison ? (
-            <>
-              <ComparisonSection 
-                products={comparisonProducts} 
-                onBack={() => setShowComparison(false)} 
-              />
-            </>
+            <ComparisonSection
+              products={comparisonProducts}
+              onBack={() => setShowComparison(false)}
+            />
+          ) : analyzingProduct !== null ? (
+            <LoadingScreen />
+          ) : reviewData ? (
+            <AnalysisSection
+              reviewData={reviewData}
+              expandedCategories={expandedCategories}
+              toggleCategory={toggleCategory}
+              savedProducts={savedProducts}
+              setSavedProducts={setSavedProducts}
+              onCompare={handleCompare}
+            />
           ) : (
-            reviewData ? (
-              <AnalysisSection
-                reviewData={reviewData}
-                expandedCategories={expandedCategories}
-                toggleCategory={toggleCategory}
-                savedProducts={savedProducts}
-                setSavedProducts={setSavedProducts}
-                onCompare={(selectedIds) => {
-                  const productsToCompare = savedProducts.filter((p) => selectedIds.includes(p.id));
-                  setComparisonProducts(productsToCompare);
-                  setShowComparison(true);
-                }}
-              />
-            ) : (
-              <WelcomeMessage />
-            )
+            <WelcomeMessage />
           )}
         </div>
       </div>

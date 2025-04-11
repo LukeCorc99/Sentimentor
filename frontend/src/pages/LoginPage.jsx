@@ -56,10 +56,13 @@ const LoginPage = () => {
   return (
     <div className="login-container">
       <form onSubmit={handleSubmit(handleLogin)} className="login-form">
-        <div className="lockIcon" style={{ marginBottom: '20px' }}>
-          <Lock style={{ fontSize: 30 }} />
+       
+        
+        <div className="welcome-section">
+          <h1 className="welcome-title">Welcome to Sentimentor</h1>
+          <p className="welcome-text">Create an account or sign in if you already have one</p>
+          <p className="app-description">Analyze and compare product reviews with AI-powered sentiment analysis.</p>
         </div>
-        <h2>Login</h2>
 
         <div className="input-group">
           <div className="icon">
@@ -100,7 +103,6 @@ const LoginPage = () => {
 
         {loginFailed && <p className="error-message">Login or registration failed. Please try again.</p>}
 
-        {/* Forgot Password Section */}
         <div className="forgot-password-section">
           <button
             type="button"
