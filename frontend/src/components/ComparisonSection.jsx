@@ -14,7 +14,7 @@ import '../styles/ComparisonSection.css';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react'
 
-
+// Register chart.js radar chart dependencies
 ChartJS.register(
   RadialLinearScale,
   PointElement,
@@ -25,68 +25,24 @@ ChartJS.register(
 );
 
 function ComparisonSection({ products, onBack }) {
-  const [serverComparisonResult, setServerComparisonResult] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [serverComparisonResult, setServerComparisonResult] = useState(null); // Data from backend comparison
+  const [isLoading, setIsLoading] = useState(true); // Loading spinner toggle
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Used to adjust width of chart to scale to screen size
 
-
-  // const response = await fetch("http://127.0.0.1:8082/compareproducts", {
-  // const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/compareproducts", {
-  const fetchComparisonFromServer = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/compareproducts", {
-      method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ analyses: products }),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Comparison from server:", data);
-        setServerComparisonResult(data);
-      } else {
-        console.error("Server error:", data.error);
-      }
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Network error:", error);
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (products && products.length > 1) {
-      fetchComparisonFromServer();
-    } else {
-      setIsLoading(false);
-    }
-  }, [products]);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowWidth(window.innerWidth);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
-
+  // Check if products are available for comparison. If no products are available, set to an empty array
   const effectiveProducts = (products && products.length > 0) ? products : [];
 
-
+  // Check if the server returned a comparison result. If not, set to null
   const finalWinnerProduct = serverComparisonResult?.comparison?.bestProductName
     ? effectiveProducts.find(product => product.name === serverComparisonResult.comparison.bestProductName)
     : null;
 
-
+  // Get the category labels from the first product's sentiment breakdown categories. If no products are available, set to an empty array
   const categoryLabels = effectiveProducts.length > 0
     ? Object.keys(effectiveProducts[0].categories)
     : [];
 
-
+  // Sort products to ensure the winner is always at the end of the list. This is so it is shown more prominently (on top) of the radar chart.
   const sortedProducts = effectiveProducts.slice().sort((a, b) => {
     if (finalWinnerProduct && a.id === finalWinnerProduct.id) return 1;
     if (finalWinnerProduct && b.id === finalWinnerProduct.id) return -1;
@@ -94,10 +50,13 @@ function ComparisonSection({ products, onBack }) {
   });
 
 
+  // Build radar chart dataset for each product. If product is the winner, highlight the product in green.
   const radarData = {
     labels: categoryLabels,
     datasets: sortedProducts.map((product) => {
-      const isWinner = finalWinnerProduct && product.id === finalWinnerProduct.id;
+      const isWinner = finalWinnerProduct && product.id === finalWinnerProduct.id; // Check if product is the winner
+
+      // Set the label to include "(winner)" if the product is the winner
       return {
         label: isWinner ? `${product.name} (winner)` : product.name,
         data: categoryLabels.map((label) => product.categories[label]),
@@ -120,6 +79,8 @@ function ComparisonSection({ products, onBack }) {
     }),
   };
 
+
+  // Radar chart display configuration
   const radarOptions = {
     scales: {
       r: {
@@ -157,6 +118,57 @@ function ComparisonSection({ products, onBack }) {
     maintainAspectRatio: false
   };
 
+  // Fetch comparison data from the server when the comparison screen loads. Hide the loading screen
+  useEffect(() => {
+    if (products && products.length > 1) {
+      fetchComparisonFromServer();
+    } else {
+      setIsLoading(false);
+    }
+  }, [products]);
+
+  // Update the window width when the window is resized. This is used to adjust the radar chart when the screen size changes.
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+
+  // Send selected products to the backend and retrieve comparison results
+  const fetchComparisonFromServer = async () => {
+    try {
+      setIsLoading(true);
+
+      // Localhost server for testing, heroku server for production
+      // const response = await fetch("http://127.0.0.1:8082/compareproducts", {
+      // const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/compareproducts", {
+      const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/compareproducts", {
+      method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ analyses: products }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Comparison from server:", data);
+        setServerComparisonResult(data); // Store comparison result
+      } else {
+        console.error("Server error:", data.error);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Network error:", error);
+      setIsLoading(false);
+    }
+  };
+
+  // Show loading screen whilst fetching comparison
   if (isLoading) {
     return (
       <div className="comparisonContainer">

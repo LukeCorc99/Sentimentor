@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Lock, Mail, Visibility, VisibilityOff } from '@mui/icons-material';
+import { Mail, Visibility, VisibilityOff } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { auth } from '../firebaseConfig';
@@ -7,6 +7,7 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswor
 import { useNavigate } from 'react-router-dom';
 import '../styles/LoginPage.css';
 
+// Login screen
 const LoginPage = () => {
   const {
     register,
@@ -14,12 +15,17 @@ const LoginPage = () => {
     getValues,
     formState: { errors }
   } = useForm();
+
+  // State variables for password visibility, login failure, and reset message
   const [isPasswordVisible, setPasswordVisible] = useState(false);
   const [loginFailed, setLoginFailed] = useState(false);
   const [resetMessage, setResetMessage] = useState('');
+
+  // Hook to navigate between routes
   const navigate = useNavigate();
 
-  const handleLogin = async (data) => {
+  // Handle login
+  const login = async (data) => {
     try {
       await signInWithEmailAndPassword(auth, data.email, data.password);
       navigate('/search');
@@ -29,7 +35,8 @@ const LoginPage = () => {
     }
   };
 
-  const handleRegistration = async (data) => {
+  // Handle registration
+  const registration = async (data) => {
     try {
       await createUserWithEmailAndPassword(auth, data.email, data.password);
       navigate('/search');
@@ -39,7 +46,8 @@ const LoginPage = () => {
     }
   };
 
-  const handleForgotPassword = async (email) => {
+  // Handles password reset. Sends an email to the user to reset password
+  const forgotPassword = async (email) => {
     try {
       if (!email) {
         setResetMessage('Please enter your email to reset your password.');
@@ -54,17 +62,17 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="login-container">
-      <form onSubmit={handleSubmit(handleLogin)} className="login-form">
+    <div className="loginContainer">
+      <form onSubmit={handleSubmit(login)} className="loginForm">
        
         
-        <div className="welcome-section">
-          <h1 className="welcome-title">Welcome to Sentimentor</h1>
-          <p className="welcome-text">Create an account or sign in if you already have one</p>
-          <p className="app-description">Analyze and compare product reviews with AI-powered sentiment analysis.</p>
+        <div className="welcomeSection">
+          <h1 className="welcomeHeader">Welcome to Sentimentor</h1>
+          <p className="welcomeText">Create an account or sign in if you already have one</p>
+          <p className="appDescription">Analyze and compare product reviews with AI-powered sentiment analysis.</p>
         </div>
 
-        <div className="input-group">
+        <div className="inputGroup">
           <div className="icon">
             <Mail />
           </div>
@@ -77,9 +85,9 @@ const LoginPage = () => {
             })}
           />
         </div>
-        {errors.email && <p className="error-message">{errors.email.message}</p>}
+        {errors.email && <p className="errorMessage">{errors.email.message}</p>}
 
-        <div className="input-group">
+        <div className="inputGroup">
           <input
             type={isPasswordVisible ? 'text' : 'password'}
             placeholder="Password"
@@ -92,26 +100,26 @@ const LoginPage = () => {
             {isPasswordVisible ? <VisibilityOff /> : <Visibility />}
           </IconButton>
         </div>
-        {errors.password && <p className="error-message">{errors.password.message}</p>}
+        {errors.password && <p className="errorMessage">{errors.password.message}</p>}
 
-        <button type="submit" className="login-button signin">
+        <button type="submit" className="loginButton signin">
           Sign In
         </button>
-        <button type="button" onClick={handleSubmit(handleRegistration)} className="login-button register">
+        <button type="button" onClick={handleSubmit(registration)} className="loginButton register">
           Create Account
         </button>
 
-        {loginFailed && <p className="error-message">Login or registration failed. Please try again.</p>}
+        {loginFailed && <p className="errorMessage">Login or registration failed. Please try again.</p>}
 
-        <div className="forgot-password-section">
+        <div className="forgotPasswordSection">
           <button
             type="button"
-            className="forgot-password-button"
-            onClick={() => handleForgotPassword(getValues('email'))}
+            className="forgotPasswordButton"
+            onClick={() => forgotPassword(getValues('email'))}
           >
             Forgot Password?
           </button>
-          {resetMessage && <p className="reset-message">{resetMessage}</p>}
+          {resetMessage && <p className="resetMessage">{resetMessage}</p>}
         </div>
       </form>
     </div>

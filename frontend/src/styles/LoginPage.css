@@ -3,7 +3,7 @@ html, body {
   overflow-x: hidden;
 }
 
-.login-container {
+.loginContainer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -13,7 +13,7 @@ html, body {
     margin: 0;
 }
 
-.login-form {
+.loginForm {
     width: 90%;
     max-width: 450px;
     background-color: white;
@@ -21,21 +21,21 @@ html, body {
     border-radius: 30px;
     padding: 40px 25px;
     text-align: center;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 25px #0000004d;
     position: relative;
 }
 
-.login-form h2 {
+.loginForm h2 {
     margin-bottom: 20px;
     font-size: 28px;
     color: #333;
 }
 
-.welcome-section {
+.welcomeSection {
     margin-bottom: 25px;
 }
 
-.welcome-title {
+.welcomeHeader {
   font-size: 53px;
   font-weight: bold;
   background: linear-gradient(to right, #60a5fa, #a855f7);
@@ -47,13 +47,13 @@ html, body {
   margin-bottom: 1rem;
 }
 
-.welcome-text {
+.welcomeText {
     color: #3a4a5a;
     font-size: 20px;
     margin-bottom: 12px;
 }
 
-.app-description {
+.appDescription {
     color: #556677;
     font-size: 16px;
     font-style: italic;
@@ -61,17 +61,7 @@ html, body {
     padding: 0 15px;
 }
 
-.app-feature-summary {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: rgba(240, 245, 250, 0.8);
-    border-radius: 10px;
-    font-size: 14px;
-    color: #455566;
-    line-height: 1.4;
-}
-
-.input-group {
+.inputGroup {
     display: flex;
     align-items: center;
     margin-bottom: 20px;
@@ -80,7 +70,7 @@ html, body {
     overflow: hidden;
 }
 
-.input-group input {
+.inputGroup input {
     flex: 1;
     padding: 12px;
     font-size: 18px;
@@ -88,7 +78,7 @@ html, body {
     outline: none;
 }
 
-.input-group .icon {
+.inputGroup .icon {
     padding: 0 12px;
     color: #555;
     display: flex;
@@ -96,7 +86,7 @@ html, body {
     justify-content: center;
 }
 
-.login-button {
+.loginButton {
     width: 100%;
     padding: 12px 20px;
     font-size: 18px;
@@ -108,20 +98,20 @@ html, body {
     transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.login-button:hover {
+.loginButton:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px #00000033;
 }
 
-.login-button.signin {
+.loginButton.signin {
     background: linear-gradient(#76da58, #80c5a3);
 }
 
-.login-button.register {
+.loginButton.register {
     background: linear-gradient(#58a8da, #80a6c5);
 }
 
-.forgot-password-button {
+.forgotPasswordButton {
     background: none;
     border: none;
     color: #3c6997;
@@ -131,23 +121,18 @@ html, body {
     text-decoration: underline;
 }
 
-.forgot-password-button:hover {
+.forgotPasswordButton:hover {
     color: #264a6e;
 }
 
-.error-message {
+.errorMessage {
     color: red;
     margin-bottom: 15px;
     font-size: 14px;
 }
 
-.reset-message {
+.resetMessage {
     color: #3c6997;
     margin-top: 10px;
     font-size: 14px;
-}
-
-.lockIcon {
-    color: #142536;
-    margin-bottom: 10px;
 }

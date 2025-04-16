@@ -1,22 +1,34 @@
 # Sentimentor 
-Senti
+
+<div align="center">
+  <img src="screenshots/welcomemessage.png" alt="Welcome" width="100%" />
+</div>
+
+[**Access Sentimentor here!**](https://sentimentor-b99323d2c946.herokuapp.com)
+(Some details may not load if you are using Safari. Chrome/Edge is recommended.)
+
 ## Overview 
-A Python and React.js microservice-based project designed to simplify product research by analyzing reviews from multiple sources. Using Natural Language Processing (NLP), it evaluates sentiment and provides an aggregated score, enabling users to make faster, informed decisions. It uses various frameworks to scrape multiple review web pages, analyze the content of these sources and compare the analysis.
+Have you ever grown tired of the daunting process of product research?
+Introducing **Sentimentor** - a microservice-based project built with Python and React.js that revolutionizes the way users can conduct product research.
+Sentimentor harnesses natural language processing (NLP) techniques to analyze reviews from multiple sources, delivering detailed sentiment analysis and comprehensive product breakdowns. This empowers the user to make faster and more informed decisions.
+With its highly intuitive and easy-to-use interface, Sentimentor fast-tracks the entire research process - from scraping review pages and extracting key insights, to comparing products side-by-side, so that you have all the information you need to choose the best option for you.
   
 
 ## Table of Contents 
 
-- [Installation](#installation) 
-
 - [Usage](#usage) 
+
+- [Installation](#local-installation) 
 
 - [Features](#features) 
 
 - [Contributors](#contributors) 
 
-  
 
-## Installation 
+## Usage 
+Simply access the application through the website: [https://sentimentor-b99323d2c946.herokuapp.com](https://sentimentor-b99323d2c946.herokuapp.com).
+
+## Local Installation 
 1. **Install Visual Studio Code**
    Make sure that Visual Studio Code is installed on your machine.
    - Go to the Visual Studio Code download page.
@@ -57,51 +69,41 @@ A Python and React.js microservice-based project designed to simplify product re
    ```
    pip install -r requirements.txt
    ```
-
-## Usage 
-1. **Activate the Backend Environment:**
-   Navigate to the backend folder and activate the virtual environment:
-   ```
-   cd backend
-   source venv\Scripts\activate
-   ```
-2. **Initialize Sentiment Analyzer Microservice:**
-   Navigate to the sentiment analyzer service and run it:
+9. **Start up backend microservices:**  
+   From the project's base directory, navigate to each microservice and run them.
    ```
    cd backend/sentimentanalyzer
    python main.py
    ```
-3. **Start the Frontend Development Server:**
-Open a new terminal, navigate to the frontend folder, and run the Vite server:
    ```
-   cd frontend
+   cd backend/productcomparator
+   python main.py
+   ```
+   ```
+   cd backend/reviewcollector
+   python main.py
+   ```
+10. **Run the application locally:**
+
+   Navigate back to the project root directory and run the application on a local host.
+   ```
+   cd frontend 
    npm run dev
    ```
-3. **Access the Application:**
-Open your browser and visit the link provided by Vite (e.g., http://localhost:5173) to interact with the application.
 
 
 ## Features 
 **1. User Registration and Login**
-Allow users to create accounts and sign in.
+Allow users to create accounts and sign in. Each account is provided with their own database, which the user can use to save product analyses of the products that they are interested in.
 
 **2. Product Search**
-Search for products to view detailed information and analyze sentiment around a specified product.
+Search for a product and initiate an in-depth analysis by aggregating reviews from multiple sources.
 
-**3. Sentiment Analysis**
-Analyze reviews across multiple sources and provide sentiment scores.
+**3. Product Analysis**
+Receive a detailed breakdown of the product, including a summary, pricing information, an option to search for the product on Amazon, and a sentiment rating along with a breakdown under various categories.
 
 **4. Product Comparison**
-Save and compare multiple products based on sentiment scores and other attributes.
-
-**5. Filter and Sort Options**
-Filter and sort products based on criteria like sentiment score and review count.
-
-**6. Settings Page**
-Adjust application preferences to suit user needs.
-
-**7. Help Page**
-Provide guidance on using the application's features.
+Save and compare up to four products side-by-side based on sentiment ratings, price, and various criteria such as value for money, comfort, etc., making it easier to determine the best option for your needs.
 
 
 ## Contributors 

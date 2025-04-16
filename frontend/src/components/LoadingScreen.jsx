@@ -1,5 +1,6 @@
 import '../styles/LoadingScreen.css';
 
+// Loading screen component
 function LoadingScreen() {
     return (
       <div className="analysis-container">

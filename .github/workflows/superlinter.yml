@@ -1,26 +1,29 @@
 name: SuperLinter
 
+# Run workflow on every push and pull request
 on: [push, pull_request]
 
 jobs:
+  # Linting job
   super-lint:
     name: Lint Code Base
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Use the latest Ubuntu environment
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3 # Clone the repo into the workflow runner
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # Fetch entire Git history (needed for linters)
 
       - name: Run Super-Linter
         uses: github/super-linter@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_PYTHON_BLACK: true
-          VALIDATE_JAVASCRIPT_ES: true
-          VALIDATE_ALL_CODEBASE: false
-          LOG_LEVEL: DEBUG
+          VALIDATE_PYTHON_BLACK: true # Python Black validation
+          VALIDATE_JAVASCRIPT_ES: true # JavaScript ES validation
+          VALIDATE_ALL_CODEBASE: false # # Lint only changed files
+          LOG_LEVEL: DEBUG # Show debug logging
 
+  # Pytest job        
   run-tests:
     runs-on: ubuntu-latest
     steps:
@@ -34,15 +37,20 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          # Install requirements for all services
           pip install -r backend/reviewcollector/requirements.txt
+          pip install -r backend/productcomparator/requirements.txt
+          pip install -r backend/sentimentanalyzer/requirements.txt
           pip install pytest
 
       - name: Run tests
         run: |
           cd backend
-          pytest tests/test_reviewcollector.py
+          pytest tests/test_reviewcollector.py tests/test_productcomparator.py tests/test_sentimentanalyzer.py
+        env:
+          FIREBASE_CREDENTIALS: '{"type":"service_account","project_id":"test-project"}'
 
-
+  # Deploy product comparator service
   deploy-product-comparator:
     runs-on: ubuntu-latest
     steps:
@@ -62,6 +70,7 @@ jobs:
           git commit -m "Deploy product comparator from CI"
           git push heroku master --force
 
+  # Deploy sentiment analyzer service
   deploy-sentiment-analyzer:
     runs-on: ubuntu-latest
     steps:
@@ -81,6 +90,7 @@ jobs:
           git commit -m "Deploy sentiment analyzer from CI"
           git push heroku master --force
 
+  # Deploy review collector service
   deploy-review-collector:
     runs-on: ubuntu-latest
     steps:
@@ -100,6 +110,7 @@ jobs:
           git commit -m "Deploy review collector from CI"
           git push heroku master --force
 
+  # Deploy frontend app
   deploy-app:
     runs-on: ubuntu-latest
     steps:

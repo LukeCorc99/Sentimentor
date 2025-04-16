@@ -4,10 +4,12 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { Navigate } from 'react-router-dom';
 import { auth } from '../firebaseConfig';
 
+// Used to protect routes that require authentication.
 const ProtectedRoute = ({ children }) => {
   const [isAuth, setIsAuth] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Check authentication state.
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setIsAuth(!!user);

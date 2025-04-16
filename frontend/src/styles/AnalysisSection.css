@@ -1,23 +1,22 @@
 .analysis-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    min-height: 90vh;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  min-height: 90vh;
+}
 
 .analysisCard {
   max-width: 35vw;
   width: 100%;
-  background: rgba(255, 255, 255, 0.1);
+  background: #ffffff1a;
   backdrop-filter: blur(12px);
   border-radius: 1.5rem;
   padding: 1.5rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 25px 50px -12px #00000040;
   color: #fff;
   transition: transform 0.3s ease;
 }
-
 
 .analysisContent {
   animation: fadeIn 0.6s ease-out;
@@ -33,6 +32,7 @@
   position: relative;
   margin-bottom: 1.5rem;
 }
+
 .analysisHeaderInfo {
   display: flex;
   align-items: center;
@@ -44,29 +44,29 @@
   height: 200px;
   border-radius: 1rem;
   object-fit: cover;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  border: 3px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 20px #00000033;
+  border: 3px solid #ffffff1a;
   transition: transform 0.3s ease;
 }
 
 @media (max-width: 1880px) {
   .analysisImage {
     width: 180px;
-    height: 180px;  
+    height: 180px;
   }
 }
 
 @media (max-width: 1820px) {
   .analysisImage {
     width: 160px;
-    height: 160px;  
+    height: 160px;
   }
 }
 
 @media (max-width: 1680px) {
   .analysisImage {
     width: 150px;
-    height: 150px;  
+    height: 150px;
   }
 }
 
@@ -95,19 +95,19 @@
 
 @media (max-width: 1880px) {
   .analysisTitle {
-    font-size: 2.2rem; 
+    font-size: 2.2rem;
   }
 }
 
 @media (max-width: 1820px) {
   .analysisTitle {
-    font-size: 2rem; 
+    font-size: 2rem;
   }
 }
 
 @media (max-width: 1680px) {
   .analysisTitle {
-    font-size: 1.8rem; 
+    font-size: 1.8rem;
   }
 }
 
@@ -181,7 +181,7 @@
 
 .priceSource {
   font-size: 1rem;
-  color: rgba(147, 197, 253, 0.7);
+  color: #93c5fdb3;
   text-overflow: ellipsis;
   overflow: hidden;
 }
@@ -212,7 +212,7 @@
 .amazonBtn:hover {
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 8px #0000004d;
 }
 
 .compareBtn {
@@ -227,7 +227,7 @@
   text-decoration: none;
   font-weight: 500;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
+  box-shadow: 0 4px 6px #007bff33;
   font-size: 1rem;
   margin-top: 0.2rem;
 }
@@ -237,7 +237,7 @@
 .compareBtn:hover {
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 8px #0000004d;
 }
 
 .ratingTitle {
@@ -300,7 +300,7 @@
 .ratingContainer {
   display: flex;
   align-items: center;
-  justify-content: center; 
+  justify-content: center;
 }
 
 .stars {
@@ -342,21 +342,21 @@
 
 .star.filled {
   color: #ffd700;
-  filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.4));
+  filter: drop-shadow(0 0 2px #ffd70066);
 }
 
 .star.empty {
-  color: rgba(255, 255, 255, 0.2);
+  color: #ffffff33;
 }
 
 .star.half {
-color: #ffd700;
+  color: #ffd700;
 }
 
 
-.sentiment{
+.sentiment {
   grid-column: 1;
-  text-align: center;  
+  text-align: center;
   justify-self: center;
   overflow: hidden;
   white-space: nowrap;
@@ -366,7 +366,7 @@ color: #ffd700;
 .sentimentBadge {
   display: flex;
   flex-direction: column;
-  align-items: center;   
+  align-items: center;
   padding: 0.5rem 1.5rem;
   border-radius: 1rem;
   font-weight: 600;
@@ -436,14 +436,6 @@ color: #ffd700;
   color: #f77299;
 }
 
-.compareButtonContainer {
-  margin-top: 1.1rem;
-  text-align: center;
-  grid-column: 3;
-  justify-self: center;
-}
-
-
 .compareText {
   margin-top: 0.5rem;
   font-size: 18px;
@@ -456,14 +448,14 @@ color: #ffd700;
 }
 
 .categoryItem {
-  background: rgba(255, 255, 255, 0.05);
+  background: #ffffff0d;
   border-radius: 0.75rem;
   overflow: hidden;
   transition: all 0.3s ease;
 }
 
 .categoryItem:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: #ffffff14;
   transform: translateY(-2px);
 }
 
@@ -568,23 +560,23 @@ color: #ffd700;
 .star.half-small {
   font-size: 1.5rem;
   color: #ffd700;
+}
+
+@media (max-width: 1880px) {
+  .star.half-small {
+    font-size: 1.4rem;
   }
-  
-  @media (max-width: 1880px) {
-    .star.half-small {
-      font-size: 1.4rem;
-    }
+}
+
+@media (max-width: 1680px) {
+  .star.half-small {
+    font-size: 1.3rem;
   }
-  
-  @media (max-width: 1680px) {
-    .star.half-small {
-      font-size: 1.3rem;
-    }
-  }
+}
 
 .star.empty-small {
   font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.2);
+  color: #ffffff33;
 }
 
 @media (max-width: 1880px) {
@@ -611,15 +603,23 @@ color: #ffd700;
 }
 
 .categoryDetails p {
-  color: rgba(255, 255, 255, 0.9);
+  color: #ffffffe6;
   line-height: 1.6;
 }
 
 
 @keyframes gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 @keyframes fadeIn {
@@ -627,10 +627,19 @@ color: #ffd700;
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.tooltip {
+  display: inline-block;
+  margin-left: 8px;
+  position: relative;
+  font-size: 16px;
+  cursor: pointer;
 }
 
 .tooltipContainer {
@@ -647,7 +656,7 @@ color: #ffd700;
 .tooltipText {
   visibility: hidden;
   width: 250px;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: #000000cc;
   color: #fff;
   text-align: left;
   padding: 8px;
@@ -661,18 +670,23 @@ color: #ffd700;
   text-align: center;
 }
 
+.tooltip:hover .tooltipText {
+  visibility: visible;
+  opacity: 1;
+}
+
 .compareBtnWrapper {
   position: relative;
-  display: inline-block; 
+  display: inline-block;
 }
 
 .compareTooltip {
   position: absolute;
-  top: 100%; 
-  right: -50%;  
+  top: 100%;
+  right: -50%;
   width: 400px;
   max-height: 500px;
-  background: rgba(0, 0, 0, 0.8);
+  background: #000000cc;
   color: #fff;
   border-radius: 0.5rem;
   padding: 1rem;
@@ -763,7 +777,7 @@ color: #ffd700;
 .compareNowBtn:hover {
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 8px #0000004d;
 }
 
 .deleteIcon {
@@ -801,24 +815,32 @@ color: #ffd700;
 .saveBtn:hover {
   color: #fff;
   transform: translateY(-2px);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 8px #0000004d;
 }
 
-.amazonBtn, .compareBtn, .saveBtn {
+.amazonBtn,
+.compareBtn,
+.saveBtn {
   white-space: nowrap;
   min-width: max-content;
   justify-content: center;
 }
 
 @media (max-width: 1680px) {
-  .amazonBtn, .compareBtn, .saveBtn {
+
+  .amazonBtn,
+  .compareBtn,
+  .saveBtn {
     font-size: 0.9rem;
     width: 15rem;
   }
 }
 
 @media (max-width: 1480px) {
-  .amazonBtn, .compareBtn, .saveBtn {
+
+  .amazonBtn,
+  .compareBtn,
+  .saveBtn {
     margin-left: 1rem;
     margin-right: -0.5rem;
   }

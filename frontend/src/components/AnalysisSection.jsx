@@ -1,28 +1,42 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FaAmazon, FaStar, FaStarHalfAlt, FaRegStar, FaExchangeAlt, FaTimes, FaBookmark } from "react-icons/fa";
 import '../styles/AnalysisSection.css';
 import PropTypes from 'prop-types';
 import { getAuth } from 'firebase/auth'
 
 
-
 function AnalysisSection({ reviewData, expandedCategories, toggleCategory, savedProducts = [], setSavedProducts, onCompare }) {
-  const [showCompareTooltip, setShowCompareTooltip] = useState(false);
-  const [selectedForCompare, setSelectedForCompare] = useState([]);
-  const isSaved = savedProducts.some(p => p.name === reviewData.analysisContent.name);
-  const [hoveredSaveButton, setHoveredSaveButton] = useState(false);
+  const [showCompareTooltip, setShowCompareTooltip] = useState(false);   // Controls whether the compare tooltip box is shown
+  const [selectedForCompare, setSelectedForCompare] = useState([]);   // Tracks which saved product IDs the user has selected for comparison
+  const [hoveredSaveButton, setHoveredSaveButton] = useState(false);   // Tracks whether the save button is currently hovered
+  const [buttonClicked, setButtonClicked] = useState(false);   // Tracks whether the product is saved or not, to toggle UI button display
 
-  const handleCompareToggle = () => {
-    setShowCompareTooltip((prev) => !prev);
+
+  // When analysis screen opens, check if current product is already saved
+  useEffect(() => {
+    // Check if the current product exists in the savedProducts array
+    const isProductAlreadySaved = savedProducts.some(
+      product => product.analysisContent && reviewData.analysisContent &&
+        product.analysisContent.name === reviewData.analysisContent.name
+    );
+
+    // If already saved, set buttonClicked to true to show "Product Saved!"
+    if (isProductAlreadySaved) {
+      setButtonClicked(true);
+    }
+  }, [savedProducts, reviewData]);
+
+
+  // Toggle compare tooltip visibility
+  const compareToggle = () => {
+    setShowCompareTooltip((isVisible) => !isVisible);
   };
 
-  const handleSave = async () => {
+
+  // Save the product to the backend and update saved products
+  const save = async () => {
     try {
       const user = getAuth().currentUser;
-      if (!user) {
-        console.error("No user is signed in, cannot save.");
-        return;
-      }
       const dataToSend = { ...reviewData, userId: user.uid };
 
       // const response = await fetch("http://127.0.0.1:8082/saveproduct", {
@@ -32,11 +46,14 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToSend)
       });
+
       const data = await response.json();
+
+      // If backend responded OK, add saved product to state
       if (response.ok) {
         console.log("Product saved successfully:", data.message, "Doc ID:", data.docId);
-        const newSavedProduct = { ...reviewData, id: data.docId };
-        setSavedProducts(prev => [...prev, newSavedProduct]);
+        const newSavedProduct = { ...reviewData, id: data.docId }; // Add the new product ID to the saved product data
+        setSavedProducts(currentList => [...currentList, newSavedProduct]); // Update the saved products state with the new product
       } else {
         console.error("Error saving product:", data.error);
       }
@@ -45,42 +62,58 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
     }
   };
 
-  const handleSaveToggle = () => {
-    if (isSaved) {
-      const savedProduct = savedProducts.find(p => p.name === reviewData.analysisContent.name);
-      handleDeleteProduct(savedProduct.id);
+
+  // Toggle between saving and unsaving a product
+  const saveToggle = () => {
+    if (buttonClicked) {
+      // If product already saved (button already clicked), find it and delete it
+      const savedProduct = savedProducts.find(p => 
+        p.analysisContent && reviewData.analysisContent && 
+        p.analysisContent.name === reviewData.analysisContent.name
+      );
+      if (savedProduct) {
+        deleteProduct(savedProduct.id);
+      }
+      setButtonClicked(false);
     } else {
-      handleSave();
+      save();
+      setButtonClicked(true);
     }
   };
 
-  const handleCheckboxChange = (productId) => {
+
+  // Toggle checkbox selection for product comparison
+  const checkboxChange = (productId) => {
     const selectedProduct = savedProducts.find(prod => prod.id === productId);
 
+    // If the product the user selected is the same as the current product being viewed, then do nothing.
     if (selectedProduct && selectedProduct.analysisContent &&
       reviewData.analysisContent &&
       selectedProduct.analysisContent.name === reviewData.analysisContent.name) {
       return;
     }
 
-    setSelectedForCompare((prev) => {
-      if (prev.includes(productId)) {
-        return prev.filter((id) => id !== productId);
+    // If the product is not the same, toggle its selection state
+    setSelectedForCompare((currentSelection) => {
+      if (currentSelection.includes(productId)) { // If already selected, remove it from the selection
+        return currentSelection.filter((id) => id !== productId);
       } else {
-        if (prev.length < 3) {
-          return [...prev, productId];
+        if (currentSelection.length < 3) { // Allow selection if less than 3 products are selected
+          return [...currentSelection, productId];
         } else {
-          return prev;
+          return currentSelection; // Do not allow more than 3 products to be selected
         }
       }
     });
   };
 
 
-  const handleCompareNow = () => {
+  // Compare selected products with the current product
+  const compareNow = () => {
+    // If the user has selected products for comparison, call onCompare with the selected products and the current product
     if (onCompare) {
-      const selectedSavedProducts = savedProducts.filter(prod =>
-        selectedForCompare.includes(prod.id)
+      const selectedSavedProducts = savedProducts.filter(product =>
+        selectedForCompare.includes(product.id)
       );
       onCompare(selectedSavedProducts, reviewData);
       setShowCompareTooltip(false);
@@ -88,16 +121,15 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
   };
 
 
-  const handleDeleteProduct = async (productId) => {
+  // Delete a saved product from the backend and update the saved products state
+  const deleteProduct = async (productId) => {
     try {
       const user = getAuth().currentUser
-      if (!user) {
-        console.error("No user is signed in.")
-        return
-      }
+
+      // Localhost server for testing, heroku server for production
       // const response = await fetch("http://127.0.0.1:8082/deleteproduct", {
       // const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/deleteproduct", {
-      const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/deleteproduct", {
+        const response = await fetch("https://sentimentor-productcomparator-116de15a416a.herokuapp.com/deleteproduct", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -107,10 +139,12 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
       });
 
       const data = await response.json()
+
+      // If backend responded OK, remove the deleted product from the saved products state
       if (response.ok) {
         console.log("Product deleted successfully:", data.message)
-        setSelectedForCompare((prev) => prev.filter((id) => id !== productId))
-        setSavedProducts((prev) => prev.filter((p) => p.id !== productId))
+        setSelectedForCompare((selectedIds) => selectedIds.filter((id) => id !== productId)) // Remove the deleted product from the selectedForCompare state
+        setSavedProducts((selectedIds) => selectedIds.filter((p) => p.id !== productId)) // Remove the deleted product from the saved products state
       } else {
         console.error("Error deleting product:", data.error)
       }
@@ -119,6 +153,7 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
     }
   }
 
+  // Check if the product is already selected for comparison
   const isCompareButtonDisabled = selectedForCompare.length === 0;
 
   return (
@@ -159,7 +194,7 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
                   </>
                 )}
                 <div className="compareBtnWrapper">
-                  <button className="compareBtn" type="button" onClick={handleCompareToggle}>
+                  <button className="compareBtn" type="button" onClick={compareToggle}>
                     <FaExchangeAlt /> Compare this Product
                   </button>
 
@@ -177,7 +212,7 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
                               <li
                                 key={prod.id}
                                 className={`compareProductItem ${isSelected ? 'selected' : ''} ${isSameProduct ? 'disabled' : ''}`}
-                                onClick={() => !isSameProduct && handleCheckboxChange(prod.id)}
+                                onClick={() => !isSameProduct && checkboxChange(prod.id)}
                               >
                                 {prod.image && (
                                   <img
@@ -191,7 +226,7 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
                                   className="deleteIcon"
                                   onClick={(event) => {
                                     event.stopPropagation();
-                                    handleDeleteProduct(prod.id);
+                                    deleteProduct(prod.id);
                                   }}
                                 />
                               </li>
@@ -203,7 +238,7 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
                       <div className="compareNowContainer">
                         <button
                           className={`compareNowBtn ${isCompareButtonDisabled ? 'disabled' : ''}`}
-                          onClick={handleCompareNow}
+                          onClick={compareNow}
                           disabled={isCompareButtonDisabled}
                           style={{
                             opacity: isCompareButtonDisabled ? 0.5 : 1,
@@ -217,14 +252,14 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
                   )}
                 </div>
                 <button
-                  className={`saveBtn ${isSaved ? "saved" : ""}`}
+                  className={`saveBtn ${buttonClicked ? "saved" : ""}`}
                   type="button"
-                  onClick={handleSaveToggle}
+                  onClick={saveToggle}
                   onMouseEnter={() => setHoveredSaveButton(true)}
                   onMouseLeave={() => setHoveredSaveButton(false)}
                 >
-                  <FaBookmark /> 
-                  {isSaved
+                  <FaBookmark />
+                  {buttonClicked
                     ? (hoveredSaveButton ? "Unsave Product?" : "Product Saved!")
                     : "Save For Comparison"}
                 </button>

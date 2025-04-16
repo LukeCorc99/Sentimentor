@@ -7,6 +7,8 @@ pytest==7.4.0
 python-dotenv==1.0.0 # Only used to run Scrapy from the command line. Has little significance in the actual code.
 firebase-admin==6.1.0
 pydantic==2.0.0 # Used for type checking in the BAML generated code.
+rapidfuzz==2.13.7
+
 
 
 

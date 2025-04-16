@@ -1,7 +1,8 @@
-import scrapy
-from urllib.parse import urljoin
+import scrapy  # Import Scrapy framework for web crawling
+from urllib.parse import urljoin  # Import urljoin to construct absolute URLs
 
 
+# Define a Scrapy spider for crawling headphone review sites
 class HeadphoneSpider(scrapy.Spider):
     name = "headphonespider"
 
@@ -28,6 +29,8 @@ class HeadphoneSpider(scrapy.Spider):
         "vs",
     ]
 
+    # Parsing method used for each URL. Targets selectors within the webpage to extract headphone reviews.
+    # The method is called for each URL in the start_urls list.
     def parse(self, response):
         if "whathifi.com" in response.url:
             yield from self.parseHeadphoneReviews(
@@ -125,6 +128,7 @@ class HeadphoneSpider(scrapy.Spider):
                 "a[class='D(f) Ai(c) Jc(c) Bdrs(8px) Pstart(12px) Py(6px) Td(n) Fz(14px) Td(n) C(engadgetGray) Bgc(paginationHover):h']::attr(href)",
             )
 
+    # Extracts product details from various review sites
     def parseHeadphoneReviews(
         self,
         response,
@@ -136,35 +140,44 @@ class HeadphoneSpider(scrapy.Spider):
         imgTag,
         nextPageTag,
     ):
+        # Select elements containing product names, links, images
         nameLinkProducts = response.css(f"{htmlContainer} > {htmlChildren}")
         imageProducts = response.css(f"{htmlContainer} > {htmlChildrenTwo}")
 
+        # Loop through name and image elements in parallel
         for nameProduct, imageProduct in zip(nameLinkProducts, imageProducts):
+            # Extract and clean product name
             rawName = nameProduct.css(nameTag).get()
             if rawName:
                 for word in self.removeWords:
                     rawName = rawName.replace(word, "")
                 cleanName = rawName.strip()
 
+                # Extract and normalize product link
                 productLink = nameProduct.css(linkTag).get()
                 if productLink:
                     productLink = urljoin(response.url, productLink)
                 else:
                     productLink = None
 
+                # Extract and normalize product image URL
                 imageURL = imageProduct.css(imgTag).get()
                 if imageURL:
                     imageURL = urljoin(response.url, imageURL)
                 else:
                     imageURL = None
 
+                # Yield structured product data
                 yield {
                     "name": cleanName,
                     "link": productLink,
                     "image": imageURL,
                 }
 
+        # Check if there's a link to the next page of results
         nextPage = response.css(nextPageTag).get()
         if nextPage:
             nextPageURL = urljoin(response.url, nextPage)
-            yield scrapy.Request(nextPageURL, callback=self.parse)
+            yield scrapy.Request(
+                nextPageURL, callback=self.parse
+            )  # Schedule another request to crawl the next page

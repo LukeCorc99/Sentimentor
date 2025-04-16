@@ -14,54 +14,68 @@ import LoadingScreen from '../components/LoadingScreen';
 import { getAuth } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 
-
+// Main screen. Interface that allows the searching of products, analyzing of reviews and comparison of products
 const SearchPage = () => {
-  const [reviews, setReviews] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredReviews, setFilteredReviews] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [reviewData, setReviewData] = useState(null);
-  const [analyzedProducts, setAnalyzedProducts] = useState([]);
-  const [productRatings, setProductRatings] = useState({});
-  const [savedProducts, setSavedProducts] = useState([]);
-  const [hoveredButton, setHoveredButton] = useState(null);
-  const [analyzingProduct, setAnalyzingProduct] = useState(null);
-  const [analyzingDots, setAnalyzingDots] = useState("");
-  const [expandedCategories, setExpandedCategories] = useState({});
-  const [animationKey, setAnimationKey] = useState(0);
-  const [comparisonProducts, setComparisonProducts] = useState([]);
-  const [showComparison, setShowComparison] = useState(false);
-
-
+  // State management for product reviews and search functionality
+  const [reviews, setReviews] = useState([]); // All product reviews from the database
+  const [searchQuery, setSearchQuery] = useState(''); // Current search input
+  const [filteredReviews, setFilteredReviews] = useState([]); // Reviews filtered by search term
+  const [isSearching, setIsSearching] = useState(false); // Controls search UI visibility
+  
+  // State for analysis and product data
+  const [reviewData, setReviewData] = useState(null); // Currently selected product analysis data
+  const [analyzedProducts, setAnalyzedProducts] = useState([]); // Track which products have been analyzed
+  const [productRatings, setProductRatings] = useState({}); // Store sentiment ratings by product name
+  const [savedProducts, setSavedProducts] = useState([]); // User's saved products from Firestore
+  
+  // UI interaction states
+  const [hoveredButton, setHoveredButton] = useState(null); // Track which button is being hovered
+  const [analyzingProduct, setAnalyzingProduct] = useState(null); // Currently analyzing product name
+  const [analyzingDots, setAnalyzingDots] = useState(""); // Loading animation dots
+  const [expandedCategories, setExpandedCategories] = useState({}); // Track which categories are expanded
+  const [animationKey, setAnimationKey] = useState(0); // Key for triggering animations
+  
+  // Comparison feature states
+  const [comparisonProducts, setComparisonProducts] = useState([]); // Products being compared
+  const [showComparison, setShowComparison] = useState(false); // Toggle comparison view
+  
+  // Firebase authentication and navigation
   const auth = getAuth();
   const navigate = useNavigate();
 
+  // Color palette for comparison charts
   const colorPalette = [
-    "rgba(255, 99, 132, 0.8)",
+    "rgba(250, 96, 130, 0.8)",
     "rgba(0, 153, 255, 0.8)",
     "rgba(255, 206, 86, 0.8)",
     "rgba(153, 102, 255, 0.8)"
   ];
 
+  // Fetch all product reviews from Firestore when application loads
   useEffect(() => {
     const fetchProducts = async () => {
       const querySnapshot = await getDocs(collection(db, "productReviews"))
       const reviewsData = querySnapshot.docs.map((doc) => doc.data())
+
       setReviews(reviewsData)
     }
     fetchProducts()
   }, [])
 
+
+  // Fetch user's saved products from Firestore when user is authenticated
   useEffect(() => {
     const user = auth.currentUser
 
     const fetchSavedProducts = async () => {
       const userDocRef = doc(db, 'users', user.uid)
       const savedCollRef = collection(userDocRef, 'savedProducts')
-      const snapshot = await getDocs(savedCollRef)
-      const saved = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+      const savedDocs = await getDocs(savedCollRef)
+
+      // Map through the documents, preserving the document ID as well as the data
+      const saved = savedDocs.docs.map(doc => ({
+        id: doc.id, // Include the Firestore document ID
+        ...doc.data() // Spread in all the document fields
       }))
       setSavedProducts(saved)
     }
@@ -69,6 +83,8 @@ const SearchPage = () => {
     fetchSavedProducts()
   }, [auth.currentUser])
 
+
+  // Set the filtered reviews when the number of reviews change
   useEffect(() => {
     if (reviews.length > 0) {
       setIsSearching(true);
@@ -76,48 +92,55 @@ const SearchPage = () => {
     }
   }, [reviews]);
 
+
+  // Set the loading animation dots when a product is being analyzed
   useEffect(() => {
     if (analyzingProduct !== null) {
       const intervalId = setInterval(() => {
-        setAnalyzingDots((prev) => (prev.length < 3 ? prev + "." : ""));
+        setAnalyzingDots((currentDots) => (currentDots.length < 3 ? currentDots + "." : "")); // Cycle through dots
       }, 500);
       return () => clearInterval(intervalId);
     } else {
-      setAnalyzingDots("");
+      setAnalyzingDots(""); // Reset dots when not analyzing
     }
   }, [analyzingProduct]);
 
 
+  // Scroll to the top of the page when the analysis screen displays
   useEffect(() => {
     if (reviewData) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [reviewData]);
 
-
-  const handleSearch = () => {
+  // Search function to filter reviews based on the user's input
+  const search = () => {
     setIsSearching(true);
-    setAnimationKey(prev => prev + 1);
+    setAnimationKey(currentKey => currentKey + 1); // Trigger animation by changing key
 
+    // Find reviews based on the search query, case insensitive
     const filtered = reviews.filter((review) =>
       review.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredReviews(filtered);
   };
 
-  // fetch(`http://127.0.0.1:8081/sentimentanalyzer?name=${encodeURIComponent(productName)}`)
-  // fetch(`https://sentimentor-sentimentanalyzer-f8043a0ff5c9.herokuapp.com/sentimentanalyzer?name=${encodeURIComponent(productName)}`)
-  const analyzeReview = (productName) => {
+  // Analyze a product using the sentiment analysis API
+  const analyzeProduct = (productName) => {
     setAnalyzingProduct(productName);
 
+    // fetch(`http://127.0.0.1:8081/sentimentanalyzer?name=${encodeURIComponent(productName)}`)
+    // fetch(`https://sentimentor-sentimentanalyzer-f8043a0ff5c9.herokuapp.com/sentimentanalyzer?name=${encodeURIComponent(productName)}`)
     fetch(`https://sentimentor-sentimentanalyzer-f8043a0ff5c9.herokuapp.com/sentimentanalyzer?name=${encodeURIComponent(productName)}`)
       .then((response) => response.json())
       .then((json) => {
         console.log("Analyzed Product:", json);
         setReviewData(json);
-        setAnalyzedProducts((prev) => [...prev, productName]);
-        setProductRatings((prev) => ({
-          ...prev,
+        setAnalyzedProducts((currentProducts) => [...currentProducts, productName]); // Add product to analyzed list
+
+        // Set the product rating based on the analysis result
+        setProductRatings((currentRatings) => ({
+          ...currentRatings,
           [productName]: json.analysisContent.sentimentRating,
         }));
         setAnalyzingProduct(null);
@@ -126,33 +149,43 @@ const SearchPage = () => {
   };
 
 
-
+  // Revert the analysis of a product
   const revertAnalyze = (productName) => {
-    setAnalyzedProducts((prev) => prev.filter((name) => name !== productName));
+    setAnalyzedProducts((previousAnalysis) => previousAnalysis.filter((name) => name !== productName)); // Remove product from analyzed list
 
-    setProductRatings((prev) => {
-      const updated = { ...prev };
+    // Remove the product rating from the state
+    setProductRatings((previousRating) => {
+      const updated = {...previousRating}; // Create a copy of the previous ratings object
       delete updated[productName];
       return updated;
     });
 
+    // Reset the review data if the analyzed product is the same as the current review data
     if (reviewData && reviewData.analysisContent.name === productName) {
       setReviewData(null);
     }
   };
 
+
+  // Toggle the expansion of categories in the analysis section
   const toggleCategory = (category) => {
-    setExpandedCategories(prev => ({
-      ...prev,
-      [category]: !prev[category]
-    }));
+    setExpandedCategories(currentState => {
+      const updatedState = { ...currentState };
+      // If category exists and is true, set to false. Otherwise, set to true
+      updatedState[category] = currentState[category] ? false : true;
+      return updatedState;
+    });
   };
 
+
+  // Sign out the user and navigate to the login page
   const handleSignOut = async () => {
     await auth.signOut();
     navigate('/login');
   };
 
+
+  // Transform analysis data to a format suitable for comparison. Uses fallback values if data is missing to avoid crashing
   const transformAnalysisToComparison = (analysisData) => {
     return {
       id: `analysis-${analysisData.analysisContent.name}`,
@@ -174,6 +207,8 @@ const SearchPage = () => {
     };
   };
 
+
+  // Transform saved product data to a format suitable for comparison. Uses fallback values if data is missing to avoid crashing
   const transformSavedToComparison = (saved) => {
     const a = saved.analysisContent || {};
 
@@ -200,13 +235,21 @@ const SearchPage = () => {
   };
 
 
+  // Handle the comparison of products. Transforms the analysis data and saved products to a comparison format, colors them, and sets them in state
   const handleCompare = (selectedSavedProducts, analysisData) => {
+    // Transform the current analysis data into the comparison format
     const currentAnalysisProduct = transformAnalysisToComparison(analysisData);
+
+    // Transform each selected saved product into the comparison format
     const transformedSaved = selectedSavedProducts.map(transformSavedToComparison);
+
+    // Combine the current product with saved products. The current product always appears first in the comparison
     const productsToCompare = [currentAnalysisProduct, ...transformedSaved];
+
+    // Assign colors to each product for visual identification in charts
     const coloredProducts = productsToCompare.map((product, index) => ({
       ...product,
-      color: colorPalette[index % colorPalette.length]
+      color: colorPalette[index]
     }));
     setComparisonProducts(coloredProducts);
     setShowComparison(true);
@@ -227,11 +270,11 @@ const SearchPage = () => {
               className="searchInput"
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  handleSearch();
+                  search();
                 }
               }}
             />
-            <button onClick={handleSearch} className="searchButton">
+            <button onClick={search} className="searchButton">
               <FaSearch className="searchIcon" />
             </button>
           </div>
@@ -261,7 +304,7 @@ const SearchPage = () => {
                                 revertAnalyze(review.name);
                               } else {
                                 setAnalyzingProduct(review.name);
-                                analyzeReview(review.name);
+                                analyzeProduct(review.name);
                               }
                             }}
                           >

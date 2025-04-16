@@ -1,6 +1,7 @@
 import { Search, BarChart2, Save, GitCompare } from 'lucide-react';
 import '../styles/WelcomeMessage.css';
 
+// Welcome message component
 function WelcomeMessage() {
   return (
     <div className="container">
@@ -26,11 +27,11 @@ function WelcomeMessage() {
                 },
                 {
                   icon: <Save className="icon" />,
-                  text: "Save products you've analyzed to compare later.",
+                  text: "Save products you've analyzed to compare with other products later.",
                 },
                 {
                   icon: <GitCompare className="icon" />,
-                  text: 'Use the "Compare Product" icon to compare saved products side-by-side.',
+                  text: 'Use the "Compare Product" icon to compare an analyzed product to previously saved products side-by-side.',
                 },
               ].map((item, index) => (
                 <div
