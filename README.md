@@ -5,7 +5,7 @@
 </div>
 
 [**Access Sentimentor here!**](https://sentimentor-b99323d2c946.herokuapp.com)
-(Some details may not load if you are using Safari. Chrome/Edge is recommended.)
+(Some details may not load if you are using Safari. Chrome/Edge is recommended. **Suitable for PC/Mac Only.**)
 
 ## Overview 
 Have you ever grown tired of the daunting process of product research?
