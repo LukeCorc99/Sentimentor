@@ -69,7 +69,7 @@ function AnalyzeProductReview(text: string) -> ProductAnalysis {
     - Reviews & User Feedback
     - Availability & Local Factors
 
-    - Based on the above categories and the review, generate an overall sentiment rating, displayed in the format x.xx, out of 5.00. Score between 0.00 and 1.00 if highly negative, 1.01 and 2.00 if negative, 2.01 and 3.00 if neutral, 3.01 and 4.00 if positive, and 4.01 and 5.00 if highly positive.
+    - Based on the above categories and the review, generate an overall sentiment rating, displayed in the format x.xx, out of 5.00. Score between 0.00 and 0.99 if highly negative, 1.00 and 1.99 if negative, 2.00 and 2.99 if neutral, 3.00 and 3.99 if positive, and 4.00 and 5.00 if highly positive.
     - Indicate if the sentiment rating is highly Positive, Positive, Neutral, Negative, or Highly Negative.
     
     {{ ctx.output_format }}

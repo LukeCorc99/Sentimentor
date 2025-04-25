@@ -300,10 +300,10 @@ function AnalysisSection({ reviewData, expandedCategories, toggleCategory, saved
                   <span className="tooltipTrigger">What do these scores mean?</span>
                   <span className="tooltipText">
                     <strong>Sentiment Score Meaning:</strong><br />
-                    <strong>0.00 - 1.00:</strong> Highly Negative<br />
-                    <strong>1.00 - 2.00:</strong> Negative<br />
-                    <strong>2.00 - 3.00:</strong> Neutral<br />
-                    <strong>3.00 - 4.00:</strong> Positive<br />
+                    <strong>0.00 - 0.99:</strong> Highly Negative<br />
+                    <strong>1.00 - 1.99:</strong> Negative<br />
+                    <strong>2.00 - 2.99:</strong> Neutral<br />
+                    <strong>3.00 - 3.99:</strong> Positive<br />
                     <strong>4.00 - 5.00:</strong> Highly Positive
                   </span>
                 </div>

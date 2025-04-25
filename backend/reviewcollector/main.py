@@ -115,7 +115,7 @@ def getAmazonLink(name):
     return f"https://www.amazon.com/s?k={urllib.parse.quote(name)}"
 
 
-# Flask route to get product reviews
+# Flask route to get product reviews. Only used for testing purposes.
 @app.route("/productreviews", methods=["GET"])
 def getProductReviews():
     try:
