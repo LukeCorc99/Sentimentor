@@ -179,7 +179,7 @@ const SearchPage = () => {
 
 
   // Sign out the user and navigate to the login page
-  const handleSignOut = async () => {
+  const signOut = async () => {
     await auth.signOut();
     navigate('/login');
   };
@@ -236,7 +236,7 @@ const SearchPage = () => {
 
 
   // Handle the comparison of products. Transforms the analysis data and saved products to a comparison format, colors them, and sets them in state
-  const handleCompare = (selectedSavedProducts, analysisData) => {
+  const compareNow = (selectedSavedProducts, analysisData) => {
     // Transform the current analysis data into the comparison format
     const currentAnalysisProduct = transformAnalysisToComparison(analysisData);
 
@@ -395,7 +395,7 @@ const SearchPage = () => {
               toggleCategory={toggleCategory}
               savedProducts={savedProducts}
               setSavedProducts={setSavedProducts}
-              onCompare={handleCompare}
+              onCompare={compareNow}
             />
           ) : (
             <WelcomeMessage />
@@ -403,7 +403,7 @@ const SearchPage = () => {
         </div>
       </div>
 
-      <button className="signoutBtn" onClick={handleSignOut}>
+      <button className="signoutBtn" onClick={signOut}>
         <FaPowerOff />
         <span>Sign Out</span>
       </button>

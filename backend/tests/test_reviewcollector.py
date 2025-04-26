@@ -3,6 +3,8 @@ import json
 from unittest.mock import patch, MagicMock, mock_open
 import sys
 import os
+import time
+
 
 # Mock firebase imports for CI/CD
 sys.modules["firebase_admin"] = MagicMock()
@@ -316,6 +318,15 @@ class TestProductReviewsEndpoint:
         assert response.status_code == 500
         assert "error" in data
         assert "File not found" in data["error"]
+
+
+# Test for the response time of the microservice
+class TestResponseTime:
+    def testMicroserviceResponseTime(self, client):
+        startTime = time.time()
+        response = client.get("/productreviews")
+        responseTime = time.time() - startTime
+        print(f"Response time: {responseTime:.5f} seconds")
 
 
 if __name__ == "__main__":

@@ -3,6 +3,8 @@ import json
 from unittest.mock import patch, MagicMock
 import sys
 import os
+import time
+
 
 # Mock firebase imports for CI/CD
 sys.modules["firebase_admin"] = MagicMock()
@@ -201,6 +203,15 @@ class TestAnalyzerEndpoint:
         assert "error" in data
         assert data["error"] == "Failed to analyze review"
         assert "message" in data
+
+
+# Test for the response time of the microservice
+class TestResponseTime:
+    def testMicroserviceResponseTime(self, client):
+        startTime = time.time()
+        response = client.get("/sentimentanalyzer?name=AppleAirPodsPro")
+        responseTime = time.time() - startTime
+        print(f"Response time: {responseTime:.5f} seconds")
 
 
 if __name__ == "__main__":

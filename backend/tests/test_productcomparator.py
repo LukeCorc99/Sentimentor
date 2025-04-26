@@ -3,6 +3,7 @@ import json
 from unittest.mock import patch, MagicMock
 import sys
 import os
+import time
 
 # Mock firebase imports for CI/CD
 sys.modules["firebase_admin"] = MagicMock()
@@ -26,16 +27,16 @@ def client():
         yield client
 
 
-# Tests for the productToReviewText function, which formats product data as text for analysis
+# Tests for the productToReviewText function, which formats product data to comparison format for analysis
 class TestProductToReviewText:
-    # Converting an empty product to review text
+    # Converting an empty product to comparison format
     def testEmptyProduct(self):
         product = {}
         result = productToReviewText(product)
         expected = "Name: \nPrice: \nRating: "
         assert result == expected
 
-    # Converting a complete product with categories to review text
+    # Converting a complete product with categories to comparison format
     def testCompleteProduct(self):
         product = {
             "name": "Test Headphones",
@@ -51,7 +52,7 @@ class TestProductToReviewText:
         expected = "Name: Test Headphones\nPrice: $100\nRating: 4.5\nsoundQuality: Excellent\nbatteryLife: 8 hours\ncomfort: Very good"
         assert result == expected
 
-    # Converting a product without categories to review text
+    # Converting a product without categories to comparison format
     def testProductWithoutCategories(self):
         product = {"name": "Test Headphones", "price": "$100", "rating": "4.5"}
         result = productToReviewText(product)
@@ -270,6 +271,19 @@ class TestDeleteProductEndpoint:
         assert response.status_code == 500
         assert "error" in data
         assert "Database connection error" in data["error"]
+
+
+# Test for the response time of the microservice
+class TestResponseTime:
+    def testMicroserviceResponseTime(self, client):
+        startTime = time.time()
+        response = client.post(
+            "/compareproducts",
+            json={"analyses": [{"name": "Product A", "price": "$80", "rating": "4.1"}]},
+            content_type="application/json",
+        )
+        responseTime = time.time() - startTime
+        print(f"Response time: {responseTime:.5f} seconds")
 
 
 if __name__ == "__main__":
